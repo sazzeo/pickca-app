@@ -47,14 +47,15 @@ export default function SignInScreen() {
       const responseData = response?.data?.data;
       const accessToken = responseData?.accessToken;
       const refreshToken = responseData?.refreshToken;
-      const nickname = responseData?.nickname ?? responseData?.member?.nickname;
+      const email = responseData?.email;
+      const nickname = responseData?.nickname;
 
-      if (!accessToken || !refreshToken || !nickname) {
+      if (!accessToken || !refreshToken || !email || !nickname) {
         Alert.alert("오류", "로그인 응답 형식이 올바르지 않습니다.");
         return;
       }
 
-      await signIn(accessToken, refreshToken, { nickname });
+      await signIn(accessToken, refreshToken, { email, nickname });
     } catch (error: unknown) {
       if (
         typeof error === "object" &&

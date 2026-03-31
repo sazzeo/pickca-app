@@ -11,6 +11,7 @@ const REFRESH_TOKEN_KEY = "__pca_rs";
 const USER_KEY = "__pca_ctx";
 
 export interface StoredUser {
+  email: string;
   nickname: string;
 }
 
