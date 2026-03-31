@@ -1,8 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { Colors } from "../../src/lib/colors";
 
 export default function TabsLayout() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -10,7 +11,7 @@ export default function TabsLayout() {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={Colors.brand.green} />
       </View>
     );
   }
@@ -22,37 +23,80 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#1976d2",
-        tabBarInactiveTintColor: "#999",
-        headerShown: true,
+        headerShown: false,
+        tabBarActiveTintColor: Colors.tab.active,
+        tabBarInactiveTintColor: Colors.tab.inactive,
+        tabBarStyle: {
+          backgroundColor: Colors.tab.bg,
+          borderTopColor: Colors.tab.border,
+          borderTopWidth: 1,
+          height: Platform.OS === "ios" ? 82 : 60,
+          paddingBottom: Platform.OS === "ios" ? 30 : 8,
+          paddingTop: 6,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "500",
+          marginTop: 2,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "단어장",
+          title: "홈",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="book-open" color={color} size={size} />
+            <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
         }}
       />
       <Tabs.Screen
-        name="quiz"
+        name="extract"
         options={{
-          title: "퀴즈",
+          title: "단어 추출",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="brain" color={color} size={size} />
+            <MaterialCommunityIcons
+              name="text-box-plus-outline"
+              color={color}
+              size={size}
+            />
           ),
         }}
+      />
+      <Tabs.Screen
+        name="wordbook"
+        options={{
+          title: "단어장",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="book-open-page-variant-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="study"
+        options={{
+          title: "학습",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="cards-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      {/* 기존 화면 — 탭에 노출되지 않도록 tabBarButton 숨김 */}
+      <Tabs.Screen
+        name="quiz"
+        options={{ href: null }}
       />
       <Tabs.Screen
         name="profile"
-        options={{
-          title: "프로필",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" color={color} size={size} />
-          ),
-        }}
+        options={{ href: null }}
       />
     </Tabs>
   );

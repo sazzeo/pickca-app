@@ -1,7 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
-import { Colors } from "@/lib/colors";
+import { Colors } from "../../lib/colors";
 
 interface GreetingSectionProps {
   isReturningUser?: boolean;

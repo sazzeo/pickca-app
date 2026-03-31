@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Colors } from "@/lib/colors";
+import { Colors } from "../../lib/colors";
 
 interface AppHeaderProps {
   onSettingsPress?: () => void;

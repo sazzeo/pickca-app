@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { AppHeader } from "@/components/common/AppHeader";
-import { Colors } from "@/lib/colors";
+import { Colors } from "../../src/lib/colors";
 
 export default function WordbookScreen() {
   return (

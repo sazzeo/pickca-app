@@ -14,7 +14,7 @@ import {
   setStoredUser,
   setTokens,
   StoredUser,
-} from "@/lib/storage";
+} from "../lib/storage";
 
 interface AuthContextType {
   user: StoredUser | null;

@@ -3,46 +3,58 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from "@react-native-google-signin/google-signin";
-import { useEffect } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import axios from "axios";
+import { useEffect, useRef } from "react";
+import { Alert, Platform, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/contexts/AuthContext";
-import axiosInstance from "@/lib/axios";
-
-GoogleSignin.configure({
-  iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-  webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-});
+import axiosInstance from "../../src/lib/axios";
 
 export default function SignInScreen() {
   const { signIn } = useAuth();
+  const inFlight = useRef(false);
 
   useEffect(() => {
     GoogleSignin.configure({
       iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
-      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
     });
   }, []);
 
   const handleGoogleSignIn = async () => {
+    if (inFlight.current) return;
+
     try {
-      await GoogleSignin.hasPlayServices();
+      inFlight.current = true;
+
+      if (Platform.OS === "android") {
+        await GoogleSignin.hasPlayServices();
+      }
+
       const { data } = await GoogleSignin.signIn();
       const idToken = data?.idToken;
 
       if (!idToken) {
-        Alert.alert("오류", "Google 로그인에 실패했습니다.");
+        Alert.alert("오류", "Google 인증 토큰을 가져오지 못했습니다.");
         return;
       }
 
       const response = await axiosInstance.post("/api/auth/social/google", {
         idToken,
       });
-      const { accessToken, refreshToken, member } = response.data.data;
 
-      await signIn(accessToken, refreshToken, { nickname: member.nickname });
+      const responseData = response?.data?.data;
+      const accessToken = responseData?.accessToken;
+      const refreshToken = responseData?.refreshToken;
+      const nickname = responseData?.nickname ?? responseData?.member?.nickname;
+
+      if (!accessToken || !refreshToken || !nickname) {
+        Alert.alert("오류", "로그인 응답 형식이 올바르지 않습니다.");
+        return;
+      }
+
+      await signIn(accessToken, refreshToken, { nickname });
     } catch (error: unknown) {
       if (
         typeof error === "object" &&
@@ -50,6 +62,7 @@ export default function SignInScreen() {
         "code" in error
       ) {
         const code = (error as { code: string }).code;
+
         if (code === statusCodes.SIGN_IN_CANCELLED) return;
         if (code === statusCodes.IN_PROGRESS) return;
         if (code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
@@ -57,7 +70,17 @@ export default function SignInScreen() {
           return;
         }
       }
-      Alert.alert("오류", "로그인 중 문제가 발생했습니다. 다시 시도해주세요.");
+
+      const message = axios.isAxiosError(error)
+        ? (error.response?.data?.error?.message as string | undefined) ??
+          error.message
+        : error instanceof Error
+          ? error.message
+          : "알 수 없는 오류";
+
+      Alert.alert("로그인 오류", message);
+    } finally {
+      inFlight.current = false;
     }
   };
 
