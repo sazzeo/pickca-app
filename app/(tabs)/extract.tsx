@@ -27,47 +27,49 @@ export default function ExtractScreen() {
     <View style={styles.container}>
       <AppHeader onSettingsPress={() => router.push("/(tabs)/profile")} />
       <View style={styles.body}>
-        <Text style={styles.title}>
-          단어를 <Text style={styles.titleHighlight}>Pick</Text>할게요
-        </Text>
-        <Text style={styles.description}>텍스트를 붙여넣거나 이미지를 올려보세요</Text>
+        <View>
+          <Text style={styles.title}>
+            단어를 <Text style={styles.titleHighlight}>Pick</Text>할게요
+          </Text>
+          <Text style={styles.description}>텍스트를 붙여넣거나 이미지를 올려보세요</Text>
 
-        <View style={styles.inputCard}>
-          <View style={styles.inputHeader}>
-            <Text style={styles.inputLabel}>텍스트 입력</Text>
-            <Text style={styles.counter}>
-              {inputText.length} / {maxLength}
-            </Text>
-          </View>
-          <View style={styles.divider} />
+          <View style={styles.inputCard}>
+            <View style={styles.inputHeader}>
+              <Text style={styles.inputLabel}>텍스트 입력</Text>
+              <Text style={styles.counter}>
+                {inputText.length} / {maxLength}
+              </Text>
+            </View>
+            <View style={styles.divider} />
 
-          <TextInput
-            style={styles.textInput}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder={
-              "영어 문장을 여기에 붙여넣어 보세요.\n\n예시 : Learning a new language can be challenging at first, but with consistent practice, exposure to real-world content, and the use of effective tools, anyone can gradually improve their vocabulary, comprehension, and confidence in communication over time."
-            }
-            placeholderTextColor={Colors.text.tertiary}
-            multiline
-            textAlignVertical="top"
-            maxLength={maxLength}
-          />
-
-          <View style={styles.inputBottomDivider} />
-
-          <Pressable
-            style={styles.uploadButton}
-            onPress={handleImageUpload}
-            android_ripple={{ color: Colors.brand.greenMid }}
-          >
-            <MaterialCommunityIcons
-              name="image-outline"
-              size={18}
-              color={Colors.text.secondary}
+            <TextInput
+              style={styles.textInput}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder={
+                "영어 문장을 여기에 붙여넣어 보세요.\n예시 : Learning a new language can be challenging at first, but with consistent practice, exposure to real-world content, and the use of effective tools, anyone can gradually improve their vocabulary, comprehension, and confidence in communication over time."
+              }
+              placeholderTextColor={Colors.text.tertiary}
+              multiline
+              textAlignVertical="top"
+              maxLength={maxLength}
             />
-            <Text style={styles.uploadButtonText}>이미지 업로드</Text>
-          </Pressable>
+
+            <View style={styles.inputBottomDivider} />
+
+            <Pressable
+              style={styles.uploadButton}
+              onPress={handleImageUpload}
+              android_ripple={{ color: Colors.brand.greenMid }}
+            >
+              <MaterialCommunityIcons
+                name="image-outline"
+                size={18}
+                color={Colors.text.secondary}
+              />
+              <Text style={styles.uploadButtonText}>이미지 업로드</Text>
+            </Pressable>
+          </View>
         </View>
 
         <Pressable
@@ -101,6 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingTop: 20,
+    paddingBottom: 12,
   },
   title: {
     fontSize: 22,
@@ -154,7 +157,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     fontSize: 14,
     color: Colors.text.secondary,
-    lineHeight: 15,
+    lineHeight: 28,
   },
   inputBottomDivider: {
     height: 1,
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
     color: Colors.text.secondary,
   },
   extractButton: {
-    marginTop: 24,
+    marginTop: "auto",
     borderRadius: 8,
     backgroundColor: "#DDDDDD",
     height: 44,
