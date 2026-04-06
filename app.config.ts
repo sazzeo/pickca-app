@@ -1,8 +1,5 @@
-/**
- * Google iOS 클라이언트 ID(xxx.apps.googleusercontent.com)에서
- * 리버스 URL 스킴(com.googleusercontent.apps.xxx)을 만든다.
- * .env에 EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID가 없으면 플러그인은 문자열 형태(Firebase 경로)로 둔다.
- */
+import { Colors } from "./src/lib/colors";
+
 function googleSignInPlugin():
   | string
   | [string, { iosUrlScheme: string }] {
@@ -30,7 +27,7 @@ export default {
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",
-      backgroundColor: "#1976d2",
+      backgroundColor: Colors.brand.greenLight,
     },
     ios: {
       supportsTablet: true,
@@ -39,7 +36,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: "#1976d2",
+        backgroundColor: Colors.brand.greenLight,
       },
       package: "cloud.pickca.app",
     },
@@ -54,7 +51,7 @@ export default {
       [
         "expo-splash-screen",
         {
-          backgroundColor: "#1976d2",
+          backgroundColor: Colors.brand.greenLight,
           image: "./assets/splash-icon.png",
           imageWidth: 200,
         },
