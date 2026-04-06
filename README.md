@@ -39,7 +39,24 @@ EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=...
 ```bash
 # 기존 실행 중이면 Ctrl+C
 pnpm ios
+# Android
+pnpm android
 ```
+
+## Android Studio에서 실행
+
+1. **Android Studio**를 연다.
+2. 상단 메뉴 **Tools → Device Manager**(또는 홈 화면의 **Device Manager**)를 연다.
+3. 사용할 가상 기기(AVD) 옆 **재생(▶)** 버튼으로 에뮬레이터를 켠다. (기기가 없으면 **Create Device**로 새 AVD를 만든다.)
+4. 에뮬레이터가 부팅된 뒤, 프로젝트 루트 터미널에서 아래를 실행한다.
+
+```bash
+pnpm android
+```
+
+`expo run:android`가 연결된 에뮬레이터(또는 USB로 연결된 기기)에 개발 빌드를 설치하고 실행한다. Metro 번들러가 별도로 필요하면 같은 루트에서 `pnpm start`를 켜 두면 된다.
+
+네이티브 프로젝트만 Android Studio에서 열어 보고 싶다면(Gradle 동기화·로그캣 등), 저장소에 `android/`가 있을 때 **File → Open**으로 `pickca-app/android` 폴더를 연다. (`android/`는 `expo prebuild` 등으로 생성된다.)
 
 ## `npx expo run:ios`는 언제 쓰나?
 
@@ -48,7 +65,7 @@ pnpm ios
 
 ### 다시 `npx expo run:ios`가 필요한 경우
 
-- `app.json`의 iOS 네이티브 설정 변경 (예: `ios.bundleIdentifier`, 권한, 플러그인)
+- `app.config.ts`의 iOS 네이티브 설정 변경 (예: `ios.bundleIdentifier`, 권한, 플러그인)
 - 네이티브 라이브러리 추가/업데이트
 - `ios/` 프로젝트 변경 또는 Pod 관련 변경
 - 시뮬레이터/기기에서 개발 빌드 앱을 삭제한 경우
@@ -60,4 +77,4 @@ pnpm ios
 - `로그인 중 오류가 발생했습니다`
   - `.env` 누락 또는 iOS/Web Client ID 오설정 가능성이 큽니다.
 - iOS에서 로그인 실패
-  - Google Cloud Console의 iOS OAuth Client Bundle ID와 `app.json`의 `ios.bundleIdentifier`가 일치하는지 확인하세요.
+  - Google Cloud Console의 iOS OAuth Client Bundle ID와 `app.config.ts`의 `ios.bundleIdentifier`가 일치하는지 확인하세요.
