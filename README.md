@@ -2,6 +2,14 @@
 
 픽카 모바일 앱(Expo + React Native) 개발용 안내 문서입니다.
 
+## 문서
+
+| 파일 | 내용 |
+|------|------|
+| [AGENTS.md](./AGENTS.md) | AI 에이전트용 규칙·스택 |
+| [CLAUDE.md](./CLAUDE.md) | 개발 컨벤션·인증·라우팅 |
+| [DESIGN.md](./DESIGN.md) | 디자인 시스템(색·간격·모션) |
+
 ## Google 로그인 설정 (iOS 개발 빌드 기준)
 
 `@react-native-google-signin/google-signin`은 네이티브 SDK를 사용하므로, 개발 빌드(`pnpm ios`, `npx expo run:ios`)에서는 **iOS Client ID**가 반드시 필요합니다.

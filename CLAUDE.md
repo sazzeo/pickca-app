@@ -21,7 +21,7 @@
 
 ### UI
 - **React Native Paper** — MUI Material Design 3 기반, 웹의 MUI와 유사한 API
-- 테마: `src/lib/theme.ts` (primary: `#1976d2`, 웹과 동일)
+- 테마: `src/lib/theme.ts` (primary 그린 `#4A7C1F`, `DESIGN.md` 참고)
 
 ### API
 - `axios` — Spring 서버 API 호출
@@ -143,3 +143,10 @@ pnpm generate
 | 환경변수 접두사 | `NEXT_PUBLIC_` | `EXPO_PUBLIC_` |
 | Google 로그인 | `@react-oauth/google` (브라우저 SDK) | `@react-native-google-signin/google-signin` |
 | PDF | `@react-pdf/renderer` | 해당 없음 |
+
+---
+
+## Design System
+
+UI·시각 작업 전에 **`DESIGN.md`**를 읽는다. 색·간격·모션·레이아웃 원칙은 여기에 정의한다.  
+`src/lib/colors.ts` / `src/lib/theme.ts`와 충돌하면 먼저 `DESIGN.md`와 맞출지 결정한 뒤 수정한다.
