@@ -1,26 +1,63 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Pressable, StyleSheet, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 import { Text } from "react-native-paper";
 
 import { AppHeader } from "@/components/common/AppHeader";
 import { Colors } from "../../src/lib/colors";
+import {
+  isLikelyNetworkError,
+  requestExtractedWords,
+} from "../../src/lib/wordExtraction";
 
 export default function ExtractScreen() {
   const [inputText, setInputText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const maxLength = 2000;
-  const isSubmitEnabled = inputText.trim().length > 0;
+  const isSubmitEnabled = inputText.trim().length > 0 && !isSubmitting;
 
   const handleImageUpload = () => {
     Alert.alert("안내", "이미지 업로드 기능은 준비 중이에요.");
   };
 
-  const handleExtract = () => {
-    if (!isSubmitEnabled) {
+  const handleExtract = async () => {
+    const trimmed = inputText.trim();
+    if (!trimmed || isSubmitting) {
       return;
     }
-    Alert.alert("안내", "단어 추출 기능 연동 전 화면입니다.");
+    setIsSubmitting(true);
+    try {
+      const words = await requestExtractedWords(trimmed);
+      if (words.length === 0) {
+        Alert.alert(
+          "추출된 단어 없음",
+          "추출된 단어가 없어요. 다른 문장으로 시도해 보세요.",
+        );
+        return;
+      }
+      // 추출 결과로 단어 목록 전달은 추후 (params / 전역 상태 등)
+      router.push("/extract-result");
+    } catch (e) {
+      if (isLikelyNetworkError(e)) {
+        Alert.alert(
+          "연결 오류",
+          "네트워크를 확인한 뒤 다시 시도해 주세요.",
+        );
+        return;
+      }
+      const message = e instanceof Error ? e.message : "알 수 없는 오류가 났어요.";
+      Alert.alert("오류", message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -32,6 +69,19 @@ export default function ExtractScreen() {
             단어를 <Text style={styles.titleHighlight}>Pick</Text>할게요
           </Text>
           <Text style={styles.description}>텍스트를 붙여넣거나 이미지를 올려보세요</Text>
+
+          {__DEV__ && (
+            <Pressable
+              onPress={() => router.push("/extract-result")}
+              style={styles.devPreviewLink}
+              accessibilityRole="button"
+              accessibilityLabel="추출 결과 화면 미리보기"
+            >
+              <Text style={styles.devPreviewText}>
+                추출 결과 화면 미리보기 (개발 전용)
+              </Text>
+            </Pressable>
+          )}
 
           <View style={styles.inputCard}>
             <View style={styles.inputHeader}>
@@ -80,14 +130,18 @@ export default function ExtractScreen() {
           onPress={handleExtract}
           disabled={!isSubmitEnabled}
         >
-          <Text
-            style={[
-              styles.extractButtonText,
-              isSubmitEnabled && styles.extractButtonTextEnabled,
-            ]}
-          >
-            단어 추출하기
-          </Text>
+          {isSubmitting ? (
+            <ActivityIndicator color={Colors.text.white} />
+          ) : (
+            <Text
+              style={[
+                styles.extractButtonText,
+                inputText.trim().length > 0 && styles.extractButtonTextEnabled,
+              ]}
+            >
+              단어 추출하기
+            </Text>
+          )}
         </Pressable>
       </View>
     </View>
@@ -117,10 +171,21 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 6,
-    marginBottom: 28,
+    marginBottom: 8,
     fontSize: 14,
     color: Colors.text.secondary,
     letterSpacing: -0.2,
+  },
+  devPreviewLink: {
+    alignSelf: "flex-start",
+    marginBottom: 20,
+    paddingVertical: 4,
+  },
+  devPreviewText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: Colors.brand.green,
+    textDecorationLine: "underline",
   },
   inputCard: {
     borderWidth: 1,
