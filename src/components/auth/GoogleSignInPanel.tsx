@@ -7,15 +7,16 @@ import axios from "axios";
 import { useEffect, useRef } from "react";
 import { Alert, Platform, StyleSheet, View } from "react-native";
 
+import { useGoogleLogin } from "@/api/generated/auth/auth";
+import type { AuthTokenResponse } from "@/api/generated/pickcaAPI.schemas";
 import { useAuth } from "@/contexts/AuthContext";
-import axiosInstance from "@/lib/axios";
 
-/**
- * 개발 빌드·스토어 빌드 전용. Expo Go 번들에는 이 파일을 lazy import 하지 않는다.
- */
+type GoogleAuthPayload = AuthTokenResponse & { email?: string };
+
 export default function GoogleSignInPanel() {
   const { signIn } = useAuth();
   const inFlight = useRef(false);
+  const { mutateAsync: googleLogin } = useGoogleLogin();
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -42,18 +43,19 @@ export default function GoogleSignInPanel() {
         return;
       }
 
-      const response = await axiosInstance.post("/api/auth/social/google", {
-        idToken,
-      });
+      const authRes = await googleLogin({ data: { idToken } });
+      const payload = authRes.data as GoogleAuthPayload | undefined;
+      const accessToken = payload?.accessToken;
+      const refreshToken = payload?.refreshToken;
+      const nickname = payload?.nickname;
+      const email = payload?.email;
 
-      const responseData = response?.data?.data;
-      const accessToken = responseData?.accessToken;
-      const refreshToken = responseData?.refreshToken;
-      const email = responseData?.email;
-      const nickname = responseData?.nickname;
-
-      if (!accessToken || !refreshToken || !email || !nickname) {
+      if (!accessToken || !refreshToken || !nickname) {
         Alert.alert("오류", "로그인 응답 형식이 올바르지 않습니다.");
+        return;
+      }
+      if (!email || typeof email !== "string") {
+        Alert.alert("오류", "이메일 정보를 받지 못했습니다.");
         return;
       }
 
