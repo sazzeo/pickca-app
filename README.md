@@ -36,6 +36,20 @@ EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=...
 
 환경 변수 변경 후에는 번들러/앱을 재시작해야 반영됩니다.
 
+**Metro(번들러)** 는 보통 아래처럼 켠다.
+
+```bash
+pnpm start
+```
+
+번들 캐시 때문에 이상하면 Metro 캐시를 비우고 다시 켠다. (`npx expo start --clear`와 동일)
+
+```bash
+pnpm start:clear
+```
+
+**앱을 다시 빌드해 설치**할 때는 플랫폼별로 다음을 쓴다.
+
 ```bash
 # 기존 실행 중이면 Ctrl+C
 pnpm ios
@@ -54,7 +68,7 @@ pnpm android
 pnpm android
 ```
 
-`expo run:android`가 연결된 에뮬레이터(또는 USB로 연결된 기기)에 개발 빌드를 설치하고 실행한다. Metro 번들러가 별도로 필요하면 같은 루트에서 `pnpm start`를 켜 두면 된다.
+`expo run:android`가 연결된 에뮬레이터(또는 USB로 연결된 기기)에 개발 빌드를 설치하고 실행한다. Metro는 보통 **다른 터미널**에서 `pnpm start` 또는 `pnpm start:clear`로 켜 두면 된다.
 
 네이티브 프로젝트만 Android Studio에서 열어 보고 싶다면(Gradle 동기화·로그캣 등), 저장소에 `android/`가 있을 때 **File → Open**으로 `pickca-app/android` 폴더를 연다. (`android/`는 `expo prebuild` 등으로 생성된다.)
 

@@ -56,7 +56,7 @@ pickca-app/
 │       ├── storage.ts          # SecureStore 토큰 관리
 │       └── theme.ts            # React Native Paper 테마
 ├── assets/                     # 이미지·폰트
-├── app.json                    # Expo 설정
+├── app.config.ts               # Expo 설정
 ├── orval.config.ts             # API 코드 생성 설정
 └── CLAUDE.md                   # Claude/Cursor용 상세 가이드
 ```
