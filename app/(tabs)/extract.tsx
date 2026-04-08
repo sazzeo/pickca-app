@@ -3,7 +3,6 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Pressable,
   StyleSheet,
   TextInput,
@@ -11,6 +10,7 @@ import {
 } from "react-native";
 import { Text } from "react-native-paper";
 
+import { AlertDialog } from "@/components/common/AlertDialog";
 import { AppHeader } from "@/components/common/AppHeader";
 import { Colors } from "@/lib/colors";
 import {
@@ -18,14 +18,49 @@ import {
   requestExtractedWords,
 } from "@/lib/wordExtraction";
 
+interface AlertDialogState {
+  visible: boolean;
+  title: string;
+  description?: string;
+  actionLabel?: string;
+}
+
 export default function ExtractScreen() {
   const [inputText, setInputText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [alertDialog, setAlertDialog] = useState<AlertDialogState>({
+    visible: false,
+    title: "",
+  });
   const maxLength = 2000;
   const isSubmitEnabled = inputText.trim().length > 0 && !isSubmitting;
 
+  const showAlertDialog = ({
+    title,
+    description,
+    actionLabel,
+  }: Omit<AlertDialogState, "visible">) => {
+    setAlertDialog({
+      visible: true,
+      title,
+      description,
+      actionLabel,
+    });
+  };
+
+  const closeAlertDialog = () => {
+    setAlertDialog((prev) => ({
+      ...prev,
+      visible: false,
+    }));
+  };
+
   const handleImageUpload = () => {
-    Alert.alert("안내", "이미지 업로드 기능은 준비 중이에요.");
+    showAlertDialog({
+      title: "이미지 업로드는 준비 중이에요",
+      description: "다음 업데이트에서 사용할 수 있어요.",
+      actionLabel: "확인",
+    });
   };
 
   const handleExtract = async () => {
@@ -37,24 +72,30 @@ export default function ExtractScreen() {
     try {
       const words = await requestExtractedWords(trimmed);
       if (words.length === 0) {
-        Alert.alert(
-          "추출된 단어 없음",
-          "추출된 단어가 없어요. 다른 문장으로 시도해 보세요.",
-        );
+        showAlertDialog({
+          title: "단어가 추출되지 않았어요",
+          description: "추출 가능한 단어가 없어요",
+          actionLabel: "다시 시도하기",
+        });
         return;
       }
       // 추출 결과로 단어 목록 전달은 추후 (params / 전역 상태 등)
       router.push("/extract-result");
     } catch (e) {
       if (isLikelyNetworkError(e)) {
-        Alert.alert(
-          "연결 오류",
-          "네트워크를 확인한 뒤 다시 시도해 주세요.",
-        );
+        showAlertDialog({
+          title: "연결에 실패했어요",
+          description: "네트워크를 확인한 뒤 다시 시도해 주세요.",
+          actionLabel: "다시 시도하기",
+        });
         return;
       }
       const message = e instanceof Error ? e.message : "알 수 없는 오류가 났어요.";
-      Alert.alert("오류", message);
+      showAlertDialog({
+        title: "오류가 발생했어요",
+        description: message,
+        actionLabel: "확인",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -144,6 +185,14 @@ export default function ExtractScreen() {
           )}
         </Pressable>
       </View>
+
+      <AlertDialog
+        visible={alertDialog.visible}
+        title={alertDialog.title}
+        description={alertDialog.description}
+        actionLabel={alertDialog.actionLabel}
+        onAction={closeAlertDialog}
+      />
     </View>
   );
 }
