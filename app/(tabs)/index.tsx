@@ -1,5 +1,7 @@
 import { router } from "expo-router";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AppHeader } from "@/components/common/AppHeader";
 import { ExtractionCard } from "@/components/home/ExtractionCard";
@@ -10,6 +12,8 @@ import { Colors } from "@/lib/colors";
 
 export default function HomeScreen() {
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
+  const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
 
   const isReturningUser = true; // 추후 API 연동 시 실제 방문 기록으로 대체
 
@@ -19,7 +23,10 @@ export default function HomeScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: tabBarApproxHeight + 24 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <GreetingSection
@@ -29,7 +36,7 @@ export default function HomeScreen() {
 
         {/* 메뉴 섹션 */}
         <View style={styles.sectionHeader}>
-          {/* 섹션 레이블은 의도적으로 비워둠 — 디자인상 "메뉴" 텍스트만 표시 */}
+          <Text style={styles.sectionLabel}>메뉴</Text>
         </View>
 
         <ExtractionCard onPress={() => router.push("/(tabs)/extract")} />
@@ -66,6 +73,11 @@ const styles = StyleSheet.create({
   sectionHeader: {
     paddingHorizontal: 20,
     paddingBottom: 8,
+  },
+  sectionLabel: {
+    fontSize: 12,
+    color: Colors.text.secondary,
+    fontWeight: "500",
   },
   quickRow: {
     flexDirection: "row",

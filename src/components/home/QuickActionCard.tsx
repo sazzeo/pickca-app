@@ -17,8 +17,8 @@ const CARD_CONFIG = {
     icon: "book-open-page-variant-outline" as const,
     iconBg: Colors.brand.greenLight,
     iconColor: Colors.brand.green,
-    labelTop: "저장된 단어",
-    labelBottom: "전체 보기",
+    cardTitle: "내 단어장",
+    subtitle: "저장된 단어\n전체 보기",
     actionLabel: "보기",
     actionBg: Colors.brand.greenLight,
     actionColor: Colors.brand.green,
@@ -27,8 +27,8 @@ const CARD_CONFIG = {
     icon: "cards-outline" as const,
     iconBg: Colors.action.yellowLight,
     iconColor: "#C08A00",
-    labelTop: "오늘 복습할",
-    labelBottom: "단어 카드",
+    cardTitle: "학습하기",
+    subtitle: "오늘 복습할\n단어 카드",
     actionLabel: "시작",
     actionBg: Colors.action.yellowLight,
     actionColor: "#A07000",
@@ -57,8 +57,8 @@ export function QuickActionCard({ variant, count, onPress }: QuickActionCardProp
 
       {/* 텍스트 영역 */}
       <View style={styles.textArea}>
-        <Text style={styles.labelTop}>{config.labelTop}</Text>
-        <Text style={styles.labelBottom}>{config.labelBottom}</Text>
+        <Text style={styles.cardTitle}>{config.cardTitle}</Text>
+        <Text style={styles.subtitle}>{config.subtitle}</Text>
       </View>
 
       {/* 하단: 카운트 + 액션 버튼 */}
@@ -98,17 +98,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   textArea: {
-    gap: 2,
+    gap: 4,
   },
-  labelTop: {
-    fontSize: 12,
-    color: Colors.text.secondary,
-    fontWeight: "400",
-  },
-  labelBottom: {
+  cardTitle: {
     fontSize: 14,
     color: Colors.text.primary,
     fontWeight: "600",
+  },
+  subtitle: {
+    fontSize: 12,
+    color: Colors.text.secondary,
+    fontWeight: "400",
+    lineHeight: 17,
   },
   bottomRow: {
     flexDirection: "row",
