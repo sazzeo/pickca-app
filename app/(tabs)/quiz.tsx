@@ -2,6 +2,8 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Colors } from "@/lib/colors";
+
 export default function QuizScreen() {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
@@ -18,7 +20,7 @@ export default function QuizScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.bg.white,
   },
   content: {
     flex: 1,
@@ -26,6 +28,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   description: {
-    color: "#666",
+    color: Colors.text.secondary,
   },
 });

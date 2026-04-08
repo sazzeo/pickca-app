@@ -3,6 +3,7 @@ import { Button, Divider, List, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { Colors } from "@/lib/colors";
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
@@ -22,7 +23,7 @@ export default function ProfileScreen() {
           />
         </List.Section>
         <View style={styles.footer}>
-          <Button mode="outlined" onPress={signOut} textColor="#d32f2f">
+          <Button mode="outlined" onPress={signOut} textColor={Colors.semantic.danger}>
             로그아웃
           </Button>
         </View>
@@ -34,7 +35,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.bg.white,
   },
   content: {
     flex: 1,

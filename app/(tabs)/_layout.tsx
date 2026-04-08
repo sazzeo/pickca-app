@@ -27,63 +27,14 @@ export default function TabsLayout() {
         headerShown: false,
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "홈",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="home" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="extract"
-        options={{
-          title: "단어 추출",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="text-box-plus-outline"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wordbook"
-        options={{
-          title: "단어장",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="book-open-page-variant-outline"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="study"
-        options={{
-          title: "학습",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="cards-outline"
-              color={color}
-              size={size}
-            />
-          ),
-        }}
-      />
-      {/* 기존 화면 — 탭에 노출되지 않도록 tabBarButton 숨김 */}
-      <Tabs.Screen
-        name="quiz"
-        options={{ href: null }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{ href: null }}
-      />
+      {/* 탭 아이콘·레이블은 BottomTabBar의 TAB_CONFIG에서 관리한다 */}
+      <Tabs.Screen name="index" options={{ title: "홈" }} />
+      <Tabs.Screen name="extract" options={{ title: "단어 추출" }} />
+      <Tabs.Screen name="wordbook" options={{ title: "단어장" }} />
+      <Tabs.Screen name="study" options={{ title: "학습" }} />
+      {/* 탭바 미노출 화면 */}
+      <Tabs.Screen name="quiz" options={{ href: null }} />
+      <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>
   );
 }
