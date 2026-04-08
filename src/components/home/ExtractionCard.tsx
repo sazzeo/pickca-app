@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 
-import { Colors } from "../../lib/colors";
+import { Colors } from "@/lib/colors";
 
 interface ExtractionCardProps {
   onPress?: () => void;

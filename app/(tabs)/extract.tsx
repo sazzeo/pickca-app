@@ -12,11 +12,11 @@ import {
 import { Text } from "react-native-paper";
 
 import { AppHeader } from "@/components/common/AppHeader";
-import { Colors } from "../../src/lib/colors";
+import { Colors } from "@/lib/colors";
 import {
   isLikelyNetworkError,
   requestExtractedWords,
-} from "../../src/lib/wordExtraction";
+} from "@/lib/wordExtraction";
 
 export default function ExtractScreen() {
   const [inputText, setInputText] = useState("");

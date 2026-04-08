@@ -24,4 +24,16 @@ export default [
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
+  {
+    files: ["app/**/*.ts", "app/**/*.tsx", "src/**/*.ts", "src/**/*.tsx"],
+    ignores: ["src/api/generated/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: ["../*", "../../*", "../../../*", "../../../../*"],
+        },
+      ],
+    },
+  },
 ];

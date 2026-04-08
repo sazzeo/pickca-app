@@ -6,7 +6,7 @@ import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider } from "@/contexts/AuthContext";
-import { theme } from "../src/lib/theme";
+import { theme } from "@/lib/theme";
 
 SplashScreen.preventAutoHideAsync();
 

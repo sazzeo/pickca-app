@@ -3,7 +3,7 @@ import { Redirect, Tabs } from "expo-router";
 import { ActivityIndicator, Platform, View } from "react-native";
 
 import { useAuth } from "@/contexts/AuthContext";
-import { Colors } from "../../src/lib/colors";
+import { Colors } from "@/lib/colors";
 
 export default function TabsLayout() {
   const { isAuthenticated, isLoading } = useAuth();

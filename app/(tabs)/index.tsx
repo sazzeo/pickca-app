@@ -6,7 +6,7 @@ import { ExtractionCard } from "@/components/home/ExtractionCard";
 import { GreetingSection } from "@/components/home/GreetingSection";
 import { QuickActionCard } from "@/components/home/QuickActionCard";
 import { useAuth } from "@/contexts/AuthContext";
-import { Colors } from "../../src/lib/colors";
+import { Colors } from "@/lib/colors";
 
 export default function HomeScreen() {
   const { user } = useAuth();
