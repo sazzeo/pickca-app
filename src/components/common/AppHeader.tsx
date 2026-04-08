@@ -50,8 +50,6 @@ export function AppHeader({ onSettingsPress }: AppHeaderProps) {
 const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: Colors.bg.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
   },
   container: {
     height: 52,
@@ -79,16 +77,18 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   logoTextPick: {
-    color: Colors.brand.green,
+    color: Colors.text.primary,
   },
   logoTextCa: {
-    color: Colors.text.primary,
+    color: Colors.action.yellow,
   },
   settingsButton: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.bg.default,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: Colors.divider,
+    backgroundColor: Colors.bg.white,
     alignItems: "center",
     justifyContent: "center",
   },
