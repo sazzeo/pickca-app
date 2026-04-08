@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
@@ -31,10 +31,14 @@ export function ExtractionCard({ onPress }: ExtractionCardProps) {
         </View>
 
         {/* CTA 버튼 */}
-        <TouchableOpacity
-          style={styles.ctaButton}
+        <Pressable
+          style={({ pressed }) => [
+            styles.ctaButton,
+            pressed && styles.ctaButtonPressed,
+          ]}
           onPress={onPress}
-          activeOpacity={0.85}
+          accessibilityRole="button"
+          accessibilityLabel="단어 추출하러 가기"
         >
           <Text style={styles.ctaText}>지금 추출하러 가기</Text>
           <MaterialCommunityIcons
@@ -42,7 +46,7 @@ export function ExtractionCard({ onPress }: ExtractionCardProps) {
             size={18}
             color={Colors.text.primary}
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -98,6 +102,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 4,
     marginTop: 4,
+  },
+  ctaButtonPressed: {
+    opacity: 0.85,
   },
   ctaText: {
     fontSize: 15,

@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { router } from "expo-router";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -11,6 +12,7 @@ interface AppHeaderProps {
 
 export function AppHeader({ onSettingsPress }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
+  const handleSettingsPress = onSettingsPress ?? (() => router.push("/(tabs)/profile"));
 
   return (
     <View style={[styles.wrapper, { paddingTop: insets.top }]}>
@@ -30,18 +32,22 @@ export function AppHeader({ onSettingsPress }: AppHeaderProps) {
           </Text>
         </View>
 
-        {/* 설정 버튼 */}
-        <TouchableOpacity
-          style={styles.settingsButton}
-          onPress={onSettingsPress}
-          activeOpacity={0.7}
+        {/* 설정 버튼 — 항상 표시, 기본값은 프로필 화면 이동 */}
+        <Pressable
+          style={({ pressed }) => [
+            styles.settingsButton,
+            pressed && styles.settingsButtonPressed,
+          ]}
+          onPress={handleSettingsPress}
+          accessibilityRole="button"
+          accessibilityLabel="설정"
         >
           <MaterialCommunityIcons
             name="cog-outline"
             size={22}
             color={Colors.text.secondary}
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );
@@ -91,5 +97,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bg.white,
     alignItems: "center",
     justifyContent: "center",
+  },
+  settingsButtonPressed: {
+    opacity: 0.7,
   },
 });
