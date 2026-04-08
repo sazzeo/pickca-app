@@ -1,12 +1,16 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import { ActivityIndicator, Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 
 export default function TabsLayout() {
   const { isAuthenticated, isLoading } = useAuth();
+  const insets = useSafeAreaInsets();
+  const tabBarBottomPadding = Platform.OS === "ios" ? Math.max(insets.bottom, 20) : Math.max(insets.bottom, 10);
+  const tabBarHeight = 50 + tabBarBottomPadding;
 
   if (isLoading) {
     return (
@@ -24,20 +28,24 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarShowLabel: true,
         tabBarActiveTintColor: Colors.tab.active,
         tabBarInactiveTintColor: Colors.tab.inactive,
         tabBarStyle: {
           backgroundColor: Colors.tab.bg,
           borderTopColor: Colors.tab.border,
           borderTopWidth: 1,
-          height: Platform.OS === "ios" ? 82 : 60,
-          paddingBottom: Platform.OS === "ios" ? 30 : 8,
-          paddingTop: 6,
+          height: tabBarHeight,
+          paddingBottom: tabBarBottomPadding,
+          paddingTop: 8,
         },
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: "500",
           marginTop: 2,
+        },
+        tabBarItemStyle: {
+          paddingTop: 2,
         },
       }}
     >
