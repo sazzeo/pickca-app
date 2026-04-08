@@ -51,7 +51,7 @@ export function AlertDialog({
 const styles = StyleSheet.create({
   modalContainer: {
     marginHorizontal: 8,
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: Colors.bg.white,
   },
   content: {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    fontSize: 34 / 1.7,
+    fontSize: 20,
     fontWeight: "700",
     color: Colors.text.primary,
     textAlign: "center",
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 8,
-    fontSize: 16 / 1.05,
+    fontSize: 15,
     color: Colors.text.tertiary,
     textAlign: "center",
   },

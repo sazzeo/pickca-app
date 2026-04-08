@@ -39,7 +39,7 @@ export function ConfirmDialog({
   onConfirm,
 }: ConfirmDialogProps) {
   const confirmBackgroundColor =
-    tone === "danger" ? "#BF3F2F" : Colors.brand.green;
+    tone === "danger" ? Colors.semantic.danger : Colors.brand.green;
 
   return (
     <Portal>
