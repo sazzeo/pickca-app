@@ -60,16 +60,20 @@
 
 ```
 app/
-├── _layout.tsx           # 루트 레이아웃 (QueryClient, PaperProvider, AuthProvider)
-├── index.tsx             # 진입점 → 인증 여부에 따라 리다이렉트
+├── _layout.tsx              # 루트 레이아웃 (QueryClient, PaperProvider, AuthProvider)
+├── index.tsx                # 진입점 → 인증 여부에 따라 리다이렉트
+├── extract-result.tsx       # 단어 추출 결과 화면 (탭 외부 화면)
 ├── (auth)/
-│   ├── _layout.tsx       # 비인증 Guard (로그인 상태면 탭으로 리다이렉트)
-│   └── sign-in.tsx       # 소셜 로그인 화면
+│   ├── _layout.tsx          # 비인증 Guard (로그인 상태면 탭으로 리다이렉트)
+│   └── sign-in.tsx          # 소셜 로그인 화면
 └── (tabs)/
-    ├── _layout.tsx        # 인증 Guard + 탭바 (미인증이면 로그인으로 리다이렉트)
-    ├── index.tsx          # 단어장 탭
-    ├── quiz.tsx           # 퀴즈 탭
-    └── profile.tsx        # 프로필·로그아웃 탭
+    ├── _layout.tsx          # 인증 Guard + 탭바 (미인증이면 로그인으로 리다이렉트)
+    ├── index.tsx            # 홈 탭
+    ├── extract.tsx          # 단어 추출 탭
+    ├── wordbook.tsx         # 단어장 탭
+    ├── study.tsx            # 학습 탭
+    ├── quiz.tsx             # 퀴즈 화면 (탭바 미노출 — href: null)
+    └── profile.tsx          # 프로필·로그아웃 화면 (탭바 미노출 — href: null)
 ```
 
 ---
@@ -106,8 +110,8 @@ pnpm generate
 ### Google 로그인 세팅
 
 1. [Google Cloud Console](https://console.cloud.google.com/)에서 OAuth 2.0 클라이언트 생성
-   - iOS Client ID (Bundle ID: `com.pickca.app`)
-   - Android Client ID (Package: `com.pickca.app`, SHA-1 지문 필요)
+   - iOS Client ID (Bundle ID: `cloud.pickca.app`)
+   - Android Client ID (Package: `cloud.pickca.app`, SHA-1 지문 필요)
    - Web Client ID (Expo Go 테스트 및 Android 토큰 검증용)
 2. `.env`에 각 Client ID 입력
 
