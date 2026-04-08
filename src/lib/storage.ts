@@ -1,14 +1,53 @@
 /**
- * 토큰 저장소 — expo-secure-store 사용 (웹의 localStorage 역할)
+ * 토큰 저장소
  *
- * SecureStore는 iOS Keychain / Android Keystore에 암호화 저장하므로
- * 웹의 난독화(obfuscate)가 불필요하다. 더 안전함.
+ * 네이티브: expo-secure-store (iOS Keychain / Android Keystore)
+ * 웹(개발용): AsyncStorage 폴백
  */
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
 const ACCESS_TOKEN_KEY = "__pca_s";
 const REFRESH_TOKEN_KEY = "__pca_rs";
 const USER_KEY = "__pca_ctx";
+
+async function getItem(key: string): Promise<string | null> {
+  try {
+    if (typeof SecureStore.getItemAsync === "function") {
+      return await SecureStore.getItemAsync(key);
+    }
+  } catch {
+    // 웹 환경에서 SecureStore 미지원 시 AsyncStorage로 폴백한다.
+  }
+
+  return AsyncStorage.getItem(key);
+}
+
+async function setItem(key: string, value: string): Promise<void> {
+  try {
+    if (typeof SecureStore.setItemAsync === "function") {
+      await SecureStore.setItemAsync(key, value);
+      return;
+    }
+  } catch {
+    // 웹 환경에서 SecureStore 미지원 시 AsyncStorage로 폴백한다.
+  }
+
+  await AsyncStorage.setItem(key, value);
+}
+
+async function deleteItem(key: string): Promise<void> {
+  try {
+    if (typeof SecureStore.deleteItemAsync === "function") {
+      await SecureStore.deleteItemAsync(key);
+      return;
+    }
+  } catch {
+    // 웹 환경에서 SecureStore 미지원 시 AsyncStorage로 폴백한다.
+  }
+
+  await AsyncStorage.removeItem(key);
+}
 
 export interface StoredUser {
   email: string;
@@ -16,33 +55,33 @@ export interface StoredUser {
 }
 
 export async function getAccessToken(): Promise<string | null> {
-  return SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+  return getItem(ACCESS_TOKEN_KEY);
 }
 
 export async function getRefreshToken(): Promise<string | null> {
-  return SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+  return getItem(REFRESH_TOKEN_KEY);
 }
 
 export async function setTokens(
   accessToken: string,
   refreshToken: string
 ): Promise<void> {
-  await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
-  await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+  await setItem(ACCESS_TOKEN_KEY, accessToken);
+  await setItem(REFRESH_TOKEN_KEY, refreshToken);
 }
 
 export async function clearTokens(): Promise<void> {
-  await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-  await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-  await SecureStore.deleteItemAsync(USER_KEY);
+  await deleteItem(ACCESS_TOKEN_KEY);
+  await deleteItem(REFRESH_TOKEN_KEY);
+  await deleteItem(USER_KEY);
 }
 
 export async function setStoredUser(user: StoredUser): Promise<void> {
-  await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
+  await setItem(USER_KEY, JSON.stringify(user));
 }
 
 export async function getStoredUser(): Promise<StoredUser | null> {
-  const raw = await SecureStore.getItemAsync(USER_KEY);
+  const raw = await getItem(USER_KEY);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as StoredUser;
