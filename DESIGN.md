@@ -1,5 +1,10 @@
 # Design System — Pickca App
 
+> **이 앱은 React Native(Expo) 앱이다.**
+> CSS 없음. 모든 스타일은 `StyleSheet.create({})` API로 숫자 값만 사용한다.
+> "CSS 잡는다" 대신 "StyleSheet 수정한다"고 말한다.
+> 실제 렌더링 기준은 iOS 시뮬레이터 / Android 에뮬레이터 — `localhost:8081` 웹 미리보기가 아님.
+
 ## Product Context
 
 - **What this is:** 영어 텍스트에서 단어를 추출해 단어장을 만들고, 플래시카드·퀴즈로 암기하는 **React Native(Expo)** 모바일 앱.

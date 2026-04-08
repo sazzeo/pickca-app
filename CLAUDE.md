@@ -117,6 +117,31 @@ pnpm generate
 
 ---
 
+## ⚠️ 이 프로젝트는 React Native 앱이다
+
+**CSS 없다. 브라우저 없다. DOM 없다.**
+
+| 웹 | 이 앱 |
+|----|-------|
+| CSS / StyleSheet (`.css`, `style=""`) | `StyleSheet.create({})` — React Native API |
+| `px`, `em`, `rem` 단위 | 숫자만 (`width: 20`, `fontSize: 14`) |
+| `display: flex` (CSS) | `flexDirection: "row"` (기본값이 column) |
+| `className`, `id` | `style={styles.xxx}` |
+| `div`, `span`, `p` | `View`, `Text`, `Pressable` |
+| `border-radius: 8px` | `borderRadius: 8` |
+| 브라우저 DevTools / 웹 렌더링 확인 | iOS 시뮬레이터 / Android 에뮬레이터 |
+| React Navigation 웹 탭바 동작 | 커스텀 컴포넌트로 직접 구현 |
+
+### UI 작업 원칙
+
+- "CSS 잡는다"는 표현은 이 프로젝트에 해당하지 않는다. `StyleSheet` 수정이다.
+- React Navigation의 내장 탭바(`tabBarStyle`, `tabBarLabelStyle` 등)는 웹에서 렌더링이 깨진다. **탭바는 커스텀 컴포넌트로 직접 그린다** (`src/components/common/BottomTabBar.tsx`).
+- `localhost:8081` 웹 미리보기는 참고용. **실제 기준은 iOS 시뮬레이터 / Android 에뮬레이터**다. 웹과 네이티브 렌더링이 다를 수 있다.
+- Flexbox는 기본 `flexDirection: "column"` (웹은 `row`). 헷갈리지 않도록 항상 명시한다.
+- 숫자 단위에 `px` 붙이지 않는다. `{ fontSize: 14 }` (O), `{ fontSize: "14px" }` (X).
+
+---
+
 ## 개발 컨벤션
 
 ### 패키지 매니저
