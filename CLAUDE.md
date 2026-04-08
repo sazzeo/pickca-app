@@ -153,6 +153,75 @@ pnpm generate
 - `prettier.config.mjs` 설정 적용
 - 자동 수정: `pnpm lint:fix`, `pnpm fm:fix`
 
+### 터치 프리미티브
+- **`Pressable`만 사용한다.** `TouchableOpacity` / `TouchableHighlight` 사용 금지.
+- pressed 상태: `style={({ pressed }) => [styles.foo, pressed && styles.fooPressed]}`
+- pressed 스타일은 보통 `opacity: 0.7~0.85` 또는 `backgroundColor` 변경.
+
+```tsx
+// ✅ 올바른 사용
+<Pressable
+  style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+  onPress={handlePress}
+  accessibilityRole="button"
+  accessibilityLabel="설명"
+>
+  <Text>버튼</Text>
+</Pressable>
+
+// ❌ 사용 금지
+<TouchableOpacity onPress={handlePress}>...</TouchableOpacity>
+```
+
+### 컬러 시스템
+- **모든 색상 값은 `src/lib/colors.ts`의 `Colors` 토큰을 사용한다.**
+- 파일 안에 `"#XXXXXX"` 형태의 하드코딩 색상 값 금지.
+- `Colors`에 없는 색이 필요하면 `colors.ts`에 먼저 토큰을 추가하고 사용한다.
+
+```tsx
+// ✅ 올바른 사용
+backgroundColor: Colors.brand.green,
+color: Colors.text.secondary,
+
+// ❌ 금지
+backgroundColor: "#4A7C1F",
+color: "#666",
+```
+
+**토큰 카테고리 요약:**
+
+| 카테고리 | 설명 |
+|----------|------|
+| `Colors.brand.*` | 그린 계열 (green, greenDark, greenLight, greenMid, greenSurface) |
+| `Colors.action.*` | 옐로 계열 (yellow, yellowLight, yellowDark, yellowDeep) |
+| `Colors.text.*` | 텍스트 (primary, secondary, tertiary, white) |
+| `Colors.bg.*` | 배경 (default, white, card, muted) |
+| `Colors.border.*` | 테두리 (input, button) |
+| `Colors.semantic.*` | 시맨틱 (danger) |
+| `Colors.disabled.*` | 비활성화 (bg, text) |
+| `Colors.divider` | 구분선 |
+| `Colors.tab.*` | 탭바 전용 |
+
+### 타입 위치
+- 화면 컴포넌트 파일에서 도메인 타입을 `export`하지 않는다.
+- API 응답·도메인 데이터 타입은 `src/types/` 에 둔다.
+- orval 생성 타입은 `src/api/generated/` 에 있으며 직접 수정 금지.
+
+```ts
+// ✅ 올바른 위치
+// src/types/word.ts
+export type ExtractWordItem = { ... };
+
+// ❌ 금지: 화면 파일에서 도메인 타입 export
+// app/extract-result.tsx
+export type ExtractWordItem = { ... };
+```
+
+### 탭 설정 관리
+- 탭 아이콘·레이블은 **`src/components/common/BottomTabBar.tsx`의 `TAB_CONFIG`에서만** 관리한다.
+- `(tabs)/_layout.tsx`의 `Tabs.Screen`에 `tabBarIcon`을 추가하지 않는다 (커스텀 탭바가 무시함).
+- 탭을 추가할 때: `TAB_CONFIG`에 항목 추가 → `_layout.tsx`에 `Tabs.Screen` 추가 (title만).
+
 ### 커밋 메시지
 ```
 {type}({scope}): {한국어 설명}
