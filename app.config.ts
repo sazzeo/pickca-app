@@ -1,4 +1,4 @@
-import { Colors } from "./src/lib/colors";
+const BRAND_GREEN_LIGHT = "#EEF3E4";
 
 function googleSignInPlugin():
   | string
@@ -27,7 +27,7 @@ export default {
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",
-      backgroundColor: Colors.brand.greenLight,
+      backgroundColor: BRAND_GREEN_LIGHT,
     },
     ios: {
       supportsTablet: true,
@@ -36,7 +36,7 @@ export default {
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
-        backgroundColor: Colors.brand.greenLight,
+        backgroundColor: BRAND_GREEN_LIGHT,
       },
       package: "cloud.pickca.app",
     },
@@ -51,7 +51,7 @@ export default {
       [
         "expo-splash-screen",
         {
-          backgroundColor: Colors.brand.greenLight,
+          backgroundColor: BRAND_GREEN_LIGHT,
           image: "./assets/splash-icon.png",
           imageWidth: 200,
         },
