@@ -102,9 +102,14 @@ const DECK_SLOT_HEIGHT = 280;
 export default function ExtractResultScreen() {
   const insets = useSafeAreaInsets();
   const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
-  const initialWords: ExtractWordItem[] = wordsParam
-    ? (JSON.parse(wordsParam) as ExtractWordItem[])
-    : __DEV__ ? MOCK_EXTRACT_WORDS : [];
+  const initialWords: ExtractWordItem[] = (() => {
+    if (!wordsParam) return __DEV__ ? MOCK_EXTRACT_WORDS : [];
+    try {
+      return JSON.parse(wordsParam) as ExtractWordItem[];
+    } catch {
+      return [];
+    }
+  })();
   const [words] = useState<ExtractWordItem[]>(initialWords);
   const [cursor, setCursor] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
