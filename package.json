@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-navigation/bottom-tabs": "7.15.9",
     "@tanstack/eslint-plugin-query": "^5.67.0",
     "@types/react": "~18.3.12",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
