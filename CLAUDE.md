@@ -30,7 +30,7 @@
 
 #### orval 사용 컨벤션
 
-- **생성 명령**: `npm run generate` (Spring API가 `localhost:8200`에서 실행 중이어야 함)
+- **생성 명령**: `pnpm generate` (Spring API가 `localhost:8200`에서 실행 중이어야 함)
 - **생성 위치**: `src/api/generated/` — 직접 수정 금지, 재생성 시 덮어씌워짐
 - **API 호출은 반드시 orval 생성 훅을 사용한다.** `axiosInstance`를 직접 호출하지 않는다.
 - **예외**: `src/lib/axios.ts` 내부의 토큰 갱신 로직은 인터셉터 무한루프 방지를 위해 raw `axios`를 직접 사용 (웹과 동일 정책)
@@ -68,13 +68,31 @@ app/
 │   └── sign-in.tsx          # 소셜 로그인 화면
 └── (tabs)/
     ├── _layout.tsx          # 인증 Guard + 탭바 (미인증이면 로그인으로 리다이렉트)
-    ├── index.tsx            # 홈 탭
-    ├── extract.tsx          # 단어 추출 탭
-    ├── wordbook.tsx         # 단어장 탭
-    ├── study.tsx            # 학습 탭
-    ├── quiz.tsx             # 퀴즈 화면 (탭바 미노출 — href: null)
+    ├── index.tsx            # 홈 탭 (단어장·학습 카운트는 API 미연동, 하드코딩 상태)
+    ├── extract.tsx          # 단어 추출 탭 ✅ API 연동 완료
+    ├── wordbook.tsx         # 단어장 탭 🚧 준비 중
+    ├── study.tsx            # 학습 탭 🚧 준비 중
+    ├── quiz.tsx             # 퀴즈 화면 (탭바 미노출 — href: null) 🚧 준비 중
     └── profile.tsx          # 프로필·로그아웃 화면 (탭바 미노출 — href: null)
 ```
+
+## 구현 현황 및 알려진 제약
+
+### 완료
+- Google 로그인: `GoogleSignInPanel.tsx` — 이메일은 Google SDK 응답(`data.user.email`)에서 가져온다. Spring `AuthTokenResponse`에 email 없음 (의도적)
+- 단어 추출: `extract.tsx` → `useExtract` 훅 → `extract-result.tsx` 에 JSON params로 단어 전달
+- 탭바: `BottomTabBar.tsx` 커스텀 구현 (React Navigation 내장 탭바는 웹 미리보기에서 렌더링 깨짐)
+- 인증 가드: `(tabs)/_layout.tsx`, `(auth)/_layout.tsx`
+
+### API 연동 필요 (백엔드 선행 작업 포함)
+- **단어장에 추가하기**: `POST /api/wordbooks/{id}/words`에 `wordIds: number[]` 필요 → 현재 `WordResponse`에 `id` 없음. 백엔드 수정 + `pnpm generate` 후 연동 가능 (`api/TODOS.md` 참고)
+- **홈 화면 카운트**: `index.tsx`의 `count={84}`, `count={18}` 하드코딩 → 단어장 API 연동 시 교체
+- **CEFR 멤버 레벨 설정**: 프로필 화면에 미구현 (`PATCH /api/members/me/cefr-level`)
+- **단어장·학습·퀴즈 탭**: 전체 미구현 (준비 중)
+
+### API 타입 갱신 필요
+- `WordResponseCollectStatus`에 `PARTIAL` 없음 — v0.0.1.2에서 추가됐으나 앱 타입에 미반영
+- 갱신 방법: Spring 서버 기동 후 `pnpm generate`
 
 ---
 
@@ -175,7 +193,271 @@ pnpm generate
 
 ---
 
+## 컴포넌트 컨벤션
+
+### Export 규칙
+
+| 파일 위치 | Export 방식 | 이유 |
+|-----------|-------------|------|
+| `app/**/*.tsx` (화면) | `export default function` | Expo Router가 default export를 라우트로 인식 |
+| `src/components/**/*.tsx` | `export function` (named) | 배럴 re-export 없이 직접 import, 이름 추적 용이 |
+
+### Props 인터페이스
+
+```tsx
+// 컴포넌트 바로 위에 interface로 정의
+interface QuickActionCardProps {
+  variant: "wordbook" | "study";
+  count: number;
+  onPress?: () => void;
+}
+
+export function QuickActionCard({ variant, count, onPress }: QuickActionCardProps) { ... }
+```
+
+- 해당 파일에서만 쓰는 타입은 같은 파일에 정의 — 별도 `types.ts` 만들지 않는다
+- `type`이 아닌 `interface` 사용 (extends 가능, 오류 메시지 명확)
+- 여러 파일에서 공유하는 타입은 가장 가까운 도메인 파일에 정의
+
+### StyleSheet 위치
+
+```tsx
+export function MyComponent() { ... }
+
+// 항상 파일 맨 아래, 하나만
+const styles = StyleSheet.create({
+  container: { flex: 1, flexDirection: "column" },
+  title: { fontSize: 16, fontWeight: "700" },
+});
+```
+
+- `StyleSheet.create({})` 파일당 하나, 맨 아래에 위치
+- key는 camelCase
+- **인라인 스타일 금지** — 동적 값 합성만 예외:
+  ```tsx
+  // ✅ 동적 합성 — 허용
+  <View style={[styles.wrapper, { paddingTop: insets.top }]} />
+
+  // ❌ 정적 인라인 — 금지
+  <View style={{ flex: 1, backgroundColor: Colors.bg.white }} />
+  ```
+
+### 상수/설정 객체
+
+컴포넌트별 고정 설정은 UPPER_SNAKE_CASE 상수 객체를 **컴포넌트 외부 파일 상단**에 정의한다.
+
+```tsx
+const TAB_CONFIG: Record<string, { label: string; icon: string; activeIcon: string }> = {
+  index: { label: "홈", icon: "home-outline", activeIcon: "home" },
+  extract: { label: "단어 추출", icon: "text-box-plus-outline", activeIcon: "text-box-plus" },
+};
+
+export function BottomTabBar() {
+  const config = TAB_CONFIG[route.name]; // 파악하기 쉬움, 테스트 가능
+  ...
+}
+```
+
+---
+
+## 터치 이벤트 컨벤션
+
+**`Pressable`만 사용한다. `TouchableOpacity`, `TouchableHighlight` 사용 금지.**
+
+```tsx
+// ✅ 올바른 방법
+<Pressable
+  style={({ pressed }) => [
+    styles.button,
+    pressed && styles.buttonPressed,
+  ]}
+  onPress={handlePress}
+  hitSlop={12}                             // 작은 버튼의 탭 영역 확장
+  accessibilityRole="button"               // 필수
+  accessibilityLabel="단어 추출하기"        // 필수
+>
+  <Text>단어 추출하기</Text>
+</Pressable>
+
+// ❌ 금지
+<TouchableOpacity activeOpacity={0.7} onPress={handlePress}>
+  ...
+</TouchableOpacity>
+```
+
+pressed 피드백: `opacity: 0.85` 정도의 `pressedButton` 스타일을 항상 준비.
+
+---
+
+## 색상 컨벤션
+
+```tsx
+// ✅ 올바른 방법
+backgroundColor: Colors.brand.green
+color: Colors.text.secondary
+
+// ❌ 금지 — 하드코딩 색상
+backgroundColor: "#4A7C1F"
+color: "#666"
+```
+
+- 모든 색상은 `src/lib/colors.ts`의 `Colors` 상수를 사용한다
+- `DESIGN.md`에 정의되지 않은 색상이 필요하면 먼저 `colors.ts`에 추가 후 사용
+
+---
+
+## 상태 관리 원칙
+
+| 상태 종류 | 방법 |
+|-----------|------|
+| 서버 데이터 (목록, 상세) | `useQuery` (React Query) |
+| 서버 변경 (생성, 수정) | `useMutation` (React Query) |
+| UI 상태 (모달 visible, 입력값) | `useState` |
+| 전역 인증 | `useAuth()` — `AuthContext` |
+
+- **Zustand, Jotai, Redux 등 추가 전역 상태 라이브러리 추가 금지**
+- 서버 데이터는 절대 `useState`에 직접 담지 않는다 — React Query 캐시가 정답
+- 화면 간 데이터 전달은 router params 사용 (전역 상태 남발 금지)
+
+---
+
+## 화면 레이아웃 패턴
+
+```tsx
+// 탭 화면 — AppHeader가 상단 safe area 내부 처리
+export default function ExtractScreen() {
+  const insets = useSafeAreaInsets();
+  const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
+
+  return (
+    <View style={styles.container}>
+      <AppHeader />
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: tabBarApproxHeight + 24 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        ...
+      </ScrollView>
+    </View>
+  );
+}
+
+// 탭 외부 화면 (모달형) — 직접 safe area 처리
+export default function ExtractResultScreen() {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={styles.screen}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>...</View>
+      ...
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>...</View>
+    </View>
+  );
+}
+```
+
+- `SafeAreaView` 직접 사용 시 `edges` 명시: `edges={["bottom"]}` 또는 `edges={["top"]}`
+- 하단 safe area: `Math.max(insets.bottom, N)` 패턴 — 최소값 보장
+
+---
+
+## 에러 처리 패턴
+
+```tsx
+// 간단한 오류 알림 — 네이티브 Alert
+Alert.alert("오류", "로그인에 실패했어요.");
+
+// 사용자 액션이 필요한 경우 — AlertDialog 컴포넌트
+const [alertDialog, setAlertDialog] = useState({ visible: false, title: "" });
+showAlertDialog({ title: "단어가 추출되지 않았어요", actionLabel: "다시 시도하기" });
+
+// 네트워크 오류 분기
+import { isLikelyNetworkError } from "@/lib/wordExtraction";
+catch (e) {
+  if (isLikelyNetworkError(e)) {
+    showAlertDialog({ title: "연결에 실패했어요", description: "네트워크를 확인해 주세요." });
+    return;
+  }
+  ...
+}
+
+// async 핸들러 기본 패턴
+const handleSubmit = async () => {
+  setIsSubmitting(true);
+  try {
+    await doSomething();
+  } catch (e) {
+    // 에러 처리
+  } finally {
+    setIsSubmitting(false); // 반드시 finally에서 해제
+  }
+};
+```
+
+---
+
+## 화면 간 데이터 전달
+
+```tsx
+// 단순 값
+router.push({ pathname: "/detail", params: { id: "123" } });
+
+// 객체·배열 — JSON 직렬화
+router.push({
+  pathname: "/extract-result",
+  params: { words: JSON.stringify(mappedWords) },
+});
+
+// 수신측
+const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
+const words = wordsParam ? (JSON.parse(wordsParam) as ExtractWordItem[]) : [];
+```
+
+---
+
+## ScrollView + 키보드 처리
+
+```tsx
+// ScrollView 안에 Pressable / TextInput이 있을 때 — 필수
+<ScrollView keyboardShouldPersistTaps="handled">...</ScrollView>
+
+// 멀티라인 TextInput — Android 텍스트 상단 정렬
+<TextInput multiline textAlignVertical="top" />
+```
+
+---
+
+## 아이콘
+
+```tsx
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+// 타입 추론 실패 시 as never 허용
+<MaterialCommunityIcons name={iconName as never} size={24} color={color} />
+```
+
+- `@expo/vector-icons`의 `MaterialCommunityIcons`만 사용
+- 다른 아이콘 패키지 추가 금지
+
+---
+
+## 개발 전용 코드
+
+```tsx
+// 개발 전용 UI — 프로덕션 빌드에서 자동 제거
+{__DEV__ && (
+  <Pressable onPress={() => router.push("/extract-result")}>
+    <Text>추출 결과 미리보기 (개발 전용)</Text>
+  </Pressable>
+)}
+
+// 목업 데이터 — MOCK_ prefix, API 연동 시 제거·교체
+const MOCK_WORDS: WordItem[] = [{ id: "1", lemma: "mesmerizing", ... }];
+const initialWords = wordsParam ? JSON.parse(wordsParam) : __DEV__ ? MOCK_WORDS : [];
+```
+
+---
+
 ## Design System
 
-UI·시각 작업 전에 **`DESIGN.md`**를 읽는다. 색·간격·모션·레이아웃 원칙은 여기에 정의한다.  
+UI·시각 작업 전에 **`DESIGN.md`**를 읽는다. 색·간격·모션·레이아웃 원칙은 여기에 정의한다.
 `src/lib/colors.ts` / `src/lib/theme.ts`와 충돌하면 먼저 `DESIGN.md`와 맞출지 결정한 뒤 수정한다.
