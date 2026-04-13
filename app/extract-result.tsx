@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
   Pressable,
@@ -101,7 +101,11 @@ const DECK_SLOT_HEIGHT = 280;
 
 export default function ExtractResultScreen() {
   const insets = useSafeAreaInsets();
-  const [words] = useState<ExtractWordItem[]>(MOCK_EXTRACT_WORDS);
+  const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
+  const initialWords: ExtractWordItem[] = wordsParam
+    ? (JSON.parse(wordsParam) as ExtractWordItem[])
+    : __DEV__ ? MOCK_EXTRACT_WORDS : [];
+  const [words] = useState<ExtractWordItem[]>(initialWords);
   const [cursor, setCursor] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 
@@ -154,7 +158,7 @@ export default function ExtractResultScreen() {
           <Text style={styles.backLabel}>뒤로</Text>
         </Pressable>
 
-        <Text style={styles.headerTitle} numberOfLines={1} pointerEvents="none">
+        <Text style={styles.headerTitle} numberOfLines={1}>
           추출 결과
         </Text>
 
