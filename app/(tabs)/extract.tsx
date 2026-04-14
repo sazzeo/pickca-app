@@ -15,6 +15,7 @@ import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { AlertDialog } from "@/components/common/AlertDialog";
 import { AppHeader } from "@/components/common/AppHeader";
 import { useAuth } from "@/contexts/AuthContext";
+import { useExtractContext } from "@/contexts/ExtractContext";
 import { Colors } from "@/lib/colors";
 import { isLikelyNetworkError } from "@/lib/wordExtraction";
 
@@ -44,6 +45,7 @@ interface AlertDialogState {
 export default function ExtractScreen() {
   const { mutateAsync: extractWords } = useExtract();
   const { user } = useAuth();
+  const { setExtractedWords } = useExtractContext();
   const [inputText, setInputText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alertDialog, setAlertDialog] = useState<AlertDialogState>({
@@ -101,10 +103,8 @@ export default function ExtractScreen() {
         });
         return;
       }
-      router.push({
-        pathname: "/extract-result",
-        params: { words: JSON.stringify(words.map(mapWord)) },
-      });
+      setExtractedWords(words.map(mapWord));
+      router.push("/extract-result");
     } catch (e) {
       if (isLikelyNetworkError(e)) {
         showAlertDialog({

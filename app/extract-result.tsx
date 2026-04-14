@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   Pressable,
@@ -10,11 +10,10 @@ import {
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useExtractContext } from "@/contexts/ExtractContext";
 import { Colors } from "@/lib/colors";
 import type { ExtractWordItem } from "@/types/word";
 
-// TODO: API 연동 시 아래 mock 데이터와 useState 초기값을 제거하고
-//       extract.tsx에서 router params 또는 전역 상태로 전달받는 방식으로 교체한다
 const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   {
     id: "1",
@@ -95,15 +94,10 @@ const DECK_SLOT_HEIGHT = 280;
 
 export default function ExtractResultScreen() {
   const insets = useSafeAreaInsets();
-  const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
-  const initialWords: ExtractWordItem[] = (() => {
-    if (!wordsParam) return __DEV__ ? MOCK_EXTRACT_WORDS : [];
-    try {
-      return JSON.parse(wordsParam) as ExtractWordItem[];
-    } catch {
-      return [];
-    }
-  })();
+  const { extractedWords } = useExtractContext();
+  const initialWords = extractedWords.length > 0
+    ? extractedWords
+    : __DEV__ ? MOCK_EXTRACT_WORDS : [];
   const [words] = useState<ExtractWordItem[]>(initialWords);
   const [cursor, setCursor] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
