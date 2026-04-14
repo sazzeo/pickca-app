@@ -1,4 +1,4 @@
-/** 픽카 브랜드 컬러 시스템 */
+/** 픽카 브랜드 컬러 시스템 — 모든 스타일 값은 이 파일에서만 참조한다 */
 export const Colors = {
   /** 브랜드 그린 계열 */
   brand: {
@@ -6,12 +6,18 @@ export const Colors = {
     greenDark: "#3A6218",
     greenLight: "#EEF3E4",
     greenMid: "#C8DDA8",
+    /** 입력 카드·업로드 버튼 등 연한 그린 서페이스 */
+    greenSurface: "#DDE6D1",
   },
 
   /** 액션 컬러 */
   action: {
     yellow: "#E9B83A",
     yellowLight: "#FDF6E0",
+    /** 학습 카드 아이콘 컬러 */
+    yellowDark: "#C08A00",
+    /** 학습 카드 텍스트 액션 컬러 */
+    yellowDeep: "#A07000",
   },
 
   /** 텍스트 */
@@ -27,6 +33,8 @@ export const Colors = {
     default: "#F8F8F8",
     white: "#FFFFFF",
     card: "#FFFFFF",
+    /** 덱 뒷장 등 무채색 서브 서페이스 */
+    muted: "#E8E8E8",
   },
 
   /** 탭바 */
@@ -39,4 +47,24 @@ export const Colors = {
 
   /** 구분선 */
   divider: "#EEEEEE",
+
+  /** 테두리 */
+  border: {
+    /** 입력 카드 테두리 */
+    input: "#D7D3CB",
+    /** 아웃라인 버튼 테두리 */
+    button: "#D0D0D0",
+  },
+
+  /** 시맨틱 — 성공·오류·경고 (추후 확장) */
+  semantic: {
+    /** 파괴 액션 버튼 (삭제·되돌리기 불가) */
+    danger: "#BF3F2F",
+  },
+
+  /** 비활성화 상태 */
+  disabled: {
+    bg: "#DDDDDD",
+    text: "#A3A3A3",
+  },
 } as const;

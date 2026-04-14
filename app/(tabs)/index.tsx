@@ -15,7 +15,8 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
 
-  const isReturningUser = true; // 추후 API 연동 시 실제 방문 기록으로 대체
+  // TODO: API 연동 시 실제 방문 기록으로 대체
+  const isReturningUser = true;
 
   return (
     <View style={styles.container}>
@@ -43,6 +44,7 @@ export default function HomeScreen() {
 
         {/* 빠른 실행 카드 2개 */}
         <View style={styles.quickRow}>
+          {/* TODO: API 연동 시 실제 단어장·학습 카운트로 교체 */}
           <QuickActionCard
             variant="wordbook"
             count={84}

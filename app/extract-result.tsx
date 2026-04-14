@@ -11,16 +11,10 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "@/lib/colors";
+import type { ExtractWordItem } from "@/types/word";
 
-/** 미리보기용 — API 연동 시 제거·교체 */
-export type ExtractWordItem = {
-  id: string;
-  lemma: string;
-  meaningKo: string;
-  pos: string;
-  pronunciation: string;
-};
-
+// TODO: API 연동 시 아래 mock 데이터와 useState 초기값을 제거하고
+//       extract.tsx에서 router params 또는 전역 상태로 전달받는 방식으로 교체한다
 const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   {
     id: "1",
@@ -163,9 +157,11 @@ export default function ExtractResultScreen() {
           <Text style={styles.backLabel}>뒤로</Text>
         </Pressable>
 
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          추출 결과
-        </Text>
+        <View style={styles.headerTitleWrapper} pointerEvents="none">
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            추출 결과
+          </Text>
+        </View>
 
         <Pressable
           style={({ pressed }) => [
@@ -173,7 +169,7 @@ export default function ExtractResultScreen() {
             pressed && styles.selectAllButtonPressed,
           ]}
           onPress={() => {
-            /* 전체 선택: 기능 미구현 */
+            /* TODO: 전체 선택 기능 구현 */
           }}
           accessibilityRole="button"
           accessibilityLabel="전체 선택"
@@ -319,7 +315,7 @@ export default function ExtractResultScreen() {
             pressed && styles.ctaPressed,
           ]}
           onPress={() => {
-            /* 단어장 추가: 추후 API */
+            /* TODO: 픽한 단어를 단어장에 추가하는 API 연동 */
           }}
           accessibilityRole="button"
           accessibilityLabel="단어장에 추가하기"
@@ -360,10 +356,12 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     color: Colors.text.secondary,
   },
-  headerTitle: {
+  headerTitleWrapper: {
     position: "absolute",
     left: 72,
     right: 72,
+  },
+  headerTitle: {
     fontSize: 17,
     fontWeight: "700",
     color: Colors.text.primary,
@@ -455,7 +453,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: -28,
     borderRadius: 16,
-    backgroundColor: "#E8E8E8",
+    backgroundColor: Colors.bg.muted,
     opacity: 0.95,
   },
   backCardLemma: {
@@ -524,7 +522,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#D0D0D0",
+    borderColor: Colors.border.button,
     backgroundColor: Colors.bg.white,
     alignItems: "center",
   },

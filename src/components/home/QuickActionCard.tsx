@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
@@ -26,12 +26,12 @@ const CARD_CONFIG = {
   study: {
     icon: "cards-outline" as const,
     iconBg: Colors.action.yellowLight,
-    iconColor: "#C08A00",
+    iconColor: Colors.action.yellowDark,
     cardTitle: "학습하기",
     subtitle: "오늘 복습할\n단어 카드",
     actionLabel: "시작",
     actionBg: Colors.action.yellowLight,
-    actionColor: "#A07000",
+    actionColor: Colors.action.yellowDeep,
   },
 } as const;
 
@@ -39,10 +39,10 @@ export function QuickActionCard({ variant, count, onPress }: QuickActionCardProp
   const config = CARD_CONFIG[variant];
 
   return (
-    <TouchableOpacity
-      style={styles.card}
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       onPress={onPress}
-      activeOpacity={0.8}
+      accessibilityRole="button"
     >
       {/* 상단: 아이콘 + 라벨 */}
       <View style={styles.topRow}>
@@ -73,7 +73,7 @@ export function QuickActionCard({ variant, count, onPress }: QuickActionCardProp
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -86,6 +86,9 @@ const styles = StyleSheet.create({
     gap: 10,
     borderWidth: 1,
     borderColor: Colors.divider,
+  },
+  cardPressed: {
+    opacity: 0.8,
   },
   topRow: {
     flexDirection: "row",

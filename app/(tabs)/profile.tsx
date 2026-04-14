@@ -3,6 +3,7 @@ import { Divider, List, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/contexts/AuthContext";
+import { Colors } from "@/lib/colors";
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
@@ -27,8 +28,8 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.bg.white,
     padding: 16,
-    backgroundColor: "#fff",
   },
   header: {
     paddingVertical: 24,

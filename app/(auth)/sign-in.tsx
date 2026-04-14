@@ -16,6 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "@/contexts/AuthContext";
 import axiosInstance from "@/lib/axios";
 import { createMemberIdFromEmail } from "@/lib/member";
+import { Colors } from "@/lib/colors";
 
 /** Expo Go에서는 이 모듈을 절대 로드하지 않는다(네이티브 구글 SDK 없음). */
 const GoogleSignInPanel = lazy(() =>
@@ -143,7 +144,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.bg.white,
   },
   content: {
     flex: 1,
@@ -154,14 +155,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "bold",
-    color: "#1976d2",
+    color: Colors.brand.green,
   },
   subtitle: {
-    color: "#666",
+    color: Colors.text.secondary,
     marginBottom: 24,
   },
   expoGoMessage: {
-    color: "#666",
+    color: Colors.text.secondary,
     textAlign: "center",
     lineHeight: 22,
   },
@@ -170,12 +171,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   devHint: {
-    color: "#888",
+    color: Colors.text.tertiary,
     marginBottom: 8,
   },
   devInput: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: Colors.border.input,
     borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 10,

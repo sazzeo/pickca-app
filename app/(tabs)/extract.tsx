@@ -173,7 +173,10 @@ export default function ExtractScreen() {
             <View style={styles.inputBottomDivider} />
 
             <Pressable
-              style={styles.uploadButton}
+              style={({ pressed }) => [
+                styles.uploadButton,
+                pressed && styles.uploadButtonPressed,
+              ]}
               onPress={handleImageUpload}
               android_ripple={{ color: Colors.brand.greenMid }}
               accessibilityRole="button"
@@ -266,7 +269,7 @@ const styles = StyleSheet.create({
   },
   inputCard: {
     borderWidth: 1,
-    borderColor: "#D7D3CB",
+    borderColor: Colors.border.input,
     borderRadius: 16,
     backgroundColor: Colors.bg.default,
     paddingHorizontal: 16,
@@ -289,7 +292,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#D7D3CB",
+    backgroundColor: Colors.border.input,
     marginTop: 10,
   },
   textInput: {
@@ -303,7 +306,7 @@ const styles = StyleSheet.create({
   },
   inputBottomDivider: {
     height: 1,
-    backgroundColor: "#D7D3CB",
+    backgroundColor: Colors.border.input,
     marginBottom: 8,
   },
   uploadButton: {
@@ -311,10 +314,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: "#DDE6D1",
+    backgroundColor: Colors.brand.greenSurface,
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 9,
+  },
+  uploadButtonPressed: {
+    opacity: 0.8,
   },
   uploadButtonText: {
     fontSize: 14,
@@ -324,7 +330,7 @@ const styles = StyleSheet.create({
   extractButton: {
     marginTop: "auto",
     borderRadius: 8,
-    backgroundColor: "#DDDDDD",
+    backgroundColor: Colors.disabled.bg,
     height: 44,
     alignItems: "center",
     justifyContent: "center",
@@ -333,7 +339,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brand.green,
   },
   extractButtonText: {
-    color: "#A3A3A3",
+    color: Colors.disabled.text,
     fontSize: 14,
     fontWeight: "700",
   },
