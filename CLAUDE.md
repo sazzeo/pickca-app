@@ -83,16 +83,13 @@ app/
 - 단어 추출: `extract.tsx` → `useExtract` 훅 → `extract-result.tsx` 에 JSON params로 단어 전달
 - 탭바: `BottomTabBar.tsx` 커스텀 구현 (React Navigation 내장 탭바는 웹 미리보기에서 렌더링 깨짐)
 - 인증 가드: `(tabs)/_layout.tsx`, `(auth)/_layout.tsx`
+- PENDING 단어 재조회: `extract-result.tsx` — 첫 PENDING 카드 직전에 `GET /api/words`로 미수집 단어 일괄 재조회, words/history 부분 업데이트
 
 ### API 연동 필요 (백엔드 선행 작업 포함)
 - **단어장에 추가하기**: `POST /api/wordbooks/{id}/words`에 `wordIds: number[]` 필요 → 현재 `WordResponse`에 `id` 없음. 백엔드 수정 + `pnpm generate` 후 연동 가능 (`api/TODOS.md` 참고)
 - **홈 화면 카운트**: `index.tsx`의 `count={84}`, `count={18}` 하드코딩 → 단어장 API 연동 시 교체
 - **CEFR 멤버 레벨 설정**: 프로필 화면에 미구현 (`PATCH /api/members/me/cefr-level`)
 - **단어장·학습·퀴즈 탭**: 전체 미구현 (준비 중)
-
-### API 타입 갱신 필요
-- `WordResponseCollectStatus`에 `PARTIAL` 없음 — v0.0.1.2에서 추가됐으나 앱 타입에 미반영
-- 갱신 방법: Spring 서버 기동 후 `pnpm generate`
 
 ---
 
