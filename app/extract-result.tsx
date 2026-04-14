@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -10,11 +10,13 @@ import {
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { getWords1 } from "@/api/generated/word/word";
+import { useAuth } from "@/contexts/AuthContext";
+import { mapWord } from "@/lib/wordExtraction";
 import { Colors } from "@/lib/colors";
 import type { ExtractWordItem } from "@/types/word";
 
-// TODO: API 연동 시 아래 mock 데이터와 useState 초기값을 제거하고
-//       extract.tsx에서 router params 또는 전역 상태로 전달받는 방식으로 교체한다
+// 개발 전용 목업 — 앞 2개는 DONE(뜻 있음), 나머지는 PENDING(뜻 없음)으로 재조회 트리거 흐름 확인 가능
 const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   {
     id: "1",
@@ -22,6 +24,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "매혹적인",
     pos: "adj",
     pronunciation: "[ məˈsmərʌɪzɪŋ ]",
+    collectStatus: "DONE",
   },
   {
     id: "2",
@@ -29,20 +32,23 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "이해하다, 알다",
     pos: "v",
     pronunciation: "[ ˌʌndərˈstænd ]",
+    collectStatus: "DONE",
   },
   {
     id: "3",
     lemma: "genuine",
-    meaningKo: "진짜의, 진심의",
-    pos: "adj",
-    pronunciation: "[ ˈdʒenjuɪn ]",
+    meaningKo: "—",
+    pos: "?",
+    pronunciation: "",
+    collectStatus: "PENDING",
   },
   {
     id: "4",
     lemma: "learning",
-    meaningKo: "학습",
-    pos: "n",
-    pronunciation: "[ ˈlɜːrnɪŋ ]",
+    meaningKo: "—",
+    pos: "?",
+    pronunciation: "",
+    collectStatus: "PENDING",
   },
   {
     id: "5",
@@ -50,6 +56,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "도전적인",
     pos: "adj",
     pronunciation: "[ ˈtʃælɪndʒɪŋ ]",
+    collectStatus: "DONE",
   },
   {
     id: "6",
@@ -57,6 +64,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "어휘",
     pos: "n",
     pronunciation: "[ voʊˈkæbjəleri ]",
+    collectStatus: "DONE",
   },
   {
     id: "7",
@@ -64,6 +72,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "일관된, 꾸준한",
     pos: "adj",
     pronunciation: "[ kənˈsɪstənt ]",
+    collectStatus: "DONE",
   },
   {
     id: "8",
@@ -71,6 +80,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "자신감",
     pos: "n",
     pronunciation: "[ ˈkɑːnfɪdəns ]",
+    collectStatus: "DONE",
   },
   {
     id: "9",
@@ -78,6 +88,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "의사소통",
     pos: "n",
     pronunciation: "[ kəˌmjuːnɪˈkeɪʃn ]",
+    collectStatus: "DONE",
   },
   {
     id: "10",
@@ -85,6 +96,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
     meaningKo: "점차, 서서히",
     pos: "adv",
     pronunciation: "[ ˈɡrædʒuəli ]",
+    collectStatus: "DONE",
   },
 ];
 
@@ -95,6 +107,7 @@ const DECK_SLOT_HEIGHT = 280;
 
 export default function ExtractResultScreen() {
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
   const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
   const initialWords: ExtractWordItem[] = (() => {
     if (!wordsParam) return __DEV__ ? MOCK_EXTRACT_WORDS : [];
@@ -104,9 +117,12 @@ export default function ExtractResultScreen() {
       return [];
     }
   })();
-  const [words] = useState<ExtractWordItem[]>(initialWords);
+  const [words, setWords] = useState<ExtractWordItem[]>(initialWords);
   const [cursor, setCursor] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+
+  // 세션 내 재조회는 한 번만 — 중복 API 호출 방지
+  const hasFetched = useRef(false);
 
   const total = words.length;
   const current = words[cursor];
@@ -125,7 +141,47 @@ export default function ExtractResultScreen() {
   const advance = (picked: boolean) => {
     if (!current) return;
     setHistory((h) => [{ ...current, picked }, ...h]);
-    setCursor((c) => c + 1);
+    const nextCursor = cursor + 1;
+    setCursor(nextCursor);
+
+    // 첫 PENDING/PARTIAL 단어 직전에 도달했을 때 전체 미수집 단어를 한 번에 재조회
+    // 이미 재조회한 세션에서는 재호출 없음
+    if (!hasFetched.current) {
+      const firstPendingIdx = words.findIndex(
+        (w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED",
+      );
+      // firstPendingIdx === 0이면 화면 진입 직후부터 PENDING — 이 케이스는 미처리(TODO)
+      if (firstPendingIdx > 0 && nextCursor === firstPendingIdx - 1) {
+        hasFetched.current = true;
+        const pendingLemmas = words
+          .filter((w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED")
+          .map((w) => w.lemma);
+
+        getWords1({ words: pendingLemmas, memberId: user?.memberId ?? 0 })
+          .then((response) => {
+            const updated = response.data?.words ?? [];
+            if (updated.length === 0) return;
+            const updatedMap = new Map(updated.map((w) => [w.word, w]));
+            setWords((prev) =>
+              prev.map((item) => {
+                const fresh = updatedMap.get(item.lemma);
+                if (!fresh || fresh.collectStatus === item.collectStatus) return item;
+                return mapWord(fresh);
+              }),
+            );
+            setHistory((prev) =>
+              prev.map((item) => {
+                const fresh = updatedMap.get(item.lemma);
+                if (!fresh || fresh.collectStatus === item.collectStatus) return item;
+                return { ...mapWord(fresh), picked: item.picked };
+              }),
+            );
+          })
+          .catch(() => {
+            // 재조회 실패 시 기존 데이터 유지 (graceful degradation)
+          });
+      }
+    }
   };
 
   /** 확인한 단어 목록에서 픽(체크) 여부 토글 */

@@ -11,28 +11,11 @@ import {
 import { Text } from "react-native-paper";
 
 import { useExtract } from "@/api/generated/word/word";
-import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { AlertDialog } from "@/components/common/AlertDialog";
 import { AppHeader } from "@/components/common/AppHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
-import { isLikelyNetworkError } from "@/lib/wordExtraction";
-
-const POS_SHORT: Record<string, string> = {
-  NOUN: "n", VERB: "v", ADJECTIVE: "adj", ADVERB: "adv",
-  PREPOSITION: "prep", CONJUNCTION: "conj", INTERJECTION: "interj", PRONOUN: "pron",
-};
-
-function mapWord(w: WordResponse) {
-  const first = w.meanings[0];
-  return {
-    id: w.word,
-    lemma: w.word,
-    meaningKo: w.primaryMeanings ?? first?.koreanPrimary ?? "—",
-    pos: POS_SHORT[first?.partOfSpeech ?? ""] ?? "?",
-    pronunciation: w.phonetic ? `[ ${w.phonetic} ]` : "",
-  };
-}
+import { isLikelyNetworkError, mapWord } from "@/lib/wordExtraction";
 
 interface AlertDialogState {
   visible: boolean;
