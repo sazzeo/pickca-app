@@ -58,10 +58,12 @@ pickca-app/
 │   │   ├── common/             # 공통 컴포넌트 (AppHeader 등)
 │   │   └── home/               # 홈 화면 컴포넌트 (ExtractionCard, GreetingSection 등)
 │   ├── contexts/
-│   │   └── AuthContext.tsx     # 전역 인증 상태
+│   │   ├── AuthContext.tsx     # 전역 인증 상태
+│   │   └── ExtractContext.tsx  # 화면 간 단어 추출 결과 전달
 │   └── lib/
 │       ├── axios.ts            # axiosInstance + fetcher (orval mutator)
 │       ├── colors.ts           # 색상 상수
+│       ├── member.ts           # 이메일 기반 memberId 생성 유틸
 │       ├── storage.ts          # SecureStore 토큰 관리
 │       ├── theme.ts            # React Native Paper 테마
 │       └── wordExtraction.ts   # 단어 추출 API 호출 유틸
@@ -293,6 +295,7 @@ backgroundColor: "#4A7C1F"
 | 서버 변경 (생성, 수정, 삭제) | `useMutation` (React Query) |
 | UI 상태 (모달 visible, 입력값 등) | `useState` |
 | 전역 인증 상태 | `useAuth()` — `AuthContext` |
+| 화면 간 임시 데이터 (객체·배열) | `useExtractContext()` — `ExtractContext` 패턴 |
 
 - **Zustand, Jotai, Redux 등 추가 전역 상태 라이브러리 추가 금지**
 - 서버 데이터는 절대 `useState`에 직접 담지 않는다 — React Query 캐시가 정답
@@ -363,22 +366,21 @@ if (isLikelyNetworkError(error)) {
 ## 화면 간 데이터 전달
 
 ```tsx
-// 단순 값 — router params
+// 단순 값 (id, 문자열 등) — router params
 router.push({ pathname: "/detail", params: { id: "123" } });
 
-// 객체·배열 — JSON.stringify → useLocalSearchParams → JSON.parse
-router.push({
-  pathname: "/extract-result",
-  params: { words: JSON.stringify(mappedWords) },
-});
+// 객체·배열 — React Context 사용 (URL params는 크기 제한이 있어 부적합)
+// src/contexts/ExtractContext.tsx 패턴 참고
+const { setExtractedWords } = useExtractContext();
+setExtractedWords(mappedWords);
+router.push("/extract-result");
 
 // extract-result.tsx에서 수신
-const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
-const words = wordsParam ? (JSON.parse(wordsParam) as ExtractWordItem[]) : [];
+const { extractedWords } = useExtractContext();
 ```
 
-- 전역 상태(Zustand 등) 없이 params로 전달 — AuthContext 제외
-- params는 문자열만 가능 → 객체/배열은 항상 JSON 직렬화
+- 단순 값(id, 문자열)은 router params 사용
+- 객체·배열처럼 URL에 맞지 않는 데이터는 React Context 사용
 
 ---
 

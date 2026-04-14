@@ -80,7 +80,7 @@ app/
 
 ### 완료
 - Google 로그인: `GoogleSignInPanel.tsx` — 이메일은 Google SDK 응답(`data.user.email`)에서 가져온다. Spring `AuthTokenResponse`에 email 없음 (의도적)
-- 단어 추출: `extract.tsx` → `useExtract` 훅 → `extract-result.tsx` 에 JSON params로 단어 전달
+- 단어 추출: `extract.tsx` → `useExtract` 훅 → `ExtractContext`로 단어 전달 → `extract-result.tsx` 표시
 - 탭바: `BottomTabBar.tsx` 커스텀 구현 (React Navigation 내장 탭바는 웹 미리보기에서 렌더링 깨짐)
 - 인증 가드: `(tabs)/_layout.tsx`, `(auth)/_layout.tsx`
 
@@ -383,10 +383,12 @@ color: "#666"
 | 서버 변경 (생성, 수정) | `useMutation` (React Query) |
 | UI 상태 (모달 visible, 입력값) | `useState` |
 | 전역 인증 | `useAuth()` — `AuthContext` |
+| 화면 간 임시 데이터 (객체·배열) | `useExtractContext()` — `ExtractContext` 패턴 |
 
 - **Zustand, Jotai, Redux 등 추가 전역 상태 라이브러리 추가 금지**
 - 서버 데이터는 절대 `useState`에 직접 담지 않는다 — React Query 캐시가 정답
-- 화면 간 데이터 전달은 router params 사용 (전역 상태 남발 금지)
+- 화면 간 단순 값(id, 문자열) 전달은 router params 사용 (전역 상태 남발 금지)
+- 객체·배열처럼 URL params에 맞지 않는 데이터는 React Context 사용 (`ExtractContext` 참고)
 
 ---
 
@@ -467,18 +469,17 @@ const handleSubmit = async () => {
 ## 화면 간 데이터 전달
 
 ```tsx
-// 단순 값
+// 단순 값 (id, 문자열 등) — router params 사용
 router.push({ pathname: "/detail", params: { id: "123" } });
 
-// 객체·배열 — JSON 직렬화
-router.push({
-  pathname: "/extract-result",
-  params: { words: JSON.stringify(mappedWords) },
-});
+// 객체·배열 — React Context 사용 (URL params는 크기 제한이 있어 대용량에 부적합)
+// src/contexts/ExtractContext.tsx 패턴 참고
+const { setExtractedWords } = useExtractContext();
+setExtractedWords(words);
+router.push("/extract-result");
 
 // 수신측
-const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
-const words = wordsParam ? (JSON.parse(wordsParam) as ExtractWordItem[]) : [];
+const { extractedWords } = useExtractContext();
 ```
 
 ---
