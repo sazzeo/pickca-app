@@ -7,6 +7,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
+import { createMemberIdFromEmail } from "@/lib/member";
+
 const ACCESS_TOKEN_KEY = "__pca_s";
 const REFRESH_TOKEN_KEY = "__pca_rs";
 const USER_KEY = "__pca_ctx";
@@ -50,8 +52,26 @@ async function deleteItem(key: string): Promise<void> {
 }
 
 export interface StoredUser {
+  memberId: number;
   email: string;
   nickname: string;
+}
+
+function parseStoredUser(raw: string): StoredUser | null {
+  try {
+    const parsed = JSON.parse(raw) as Partial<StoredUser>;
+    if (!parsed.email || !parsed.nickname) {
+      return null;
+    }
+
+    return {
+      memberId: parsed.memberId ?? createMemberIdFromEmail(parsed.email),
+      email: parsed.email,
+      nickname: parsed.nickname,
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function getAccessToken(): Promise<string | null> {
@@ -83,9 +103,5 @@ export async function setStoredUser(user: StoredUser): Promise<void> {
 export async function getStoredUser(): Promise<StoredUser | null> {
   const raw = await getItem(USER_KEY);
   if (!raw) return null;
-  try {
-    return JSON.parse(raw) as StoredUser;
-  } catch {
-    return null;
-  }
+  return parseStoredUser(raw);
 }

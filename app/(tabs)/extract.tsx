@@ -14,6 +14,7 @@ import { useExtract } from "@/api/generated/word/word";
 import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { AlertDialog } from "@/components/common/AlertDialog";
 import { AppHeader } from "@/components/common/AppHeader";
+import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 import { isLikelyNetworkError } from "@/lib/wordExtraction";
 
@@ -42,6 +43,7 @@ interface AlertDialogState {
 
 export default function ExtractScreen() {
   const { mutateAsync: extractWords } = useExtract();
+  const { user } = useAuth();
   const [inputText, setInputText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alertDialog, setAlertDialog] = useState<AlertDialogState>({
@@ -86,7 +88,10 @@ export default function ExtractScreen() {
     }
     setIsSubmitting(true);
     try {
-      const result = await extractWords({ data: { text: trimmed } });
+      const result = await extractWords({
+        data: { text: trimmed },
+        params: { memberId: user?.memberId ?? 0 },
+      });
       const words = result.data?.words ?? [];
       if (words.length === 0) {
         showAlertDialog({
@@ -171,6 +176,8 @@ export default function ExtractScreen() {
               style={styles.uploadButton}
               onPress={handleImageUpload}
               android_ripple={{ color: Colors.brand.greenMid }}
+              accessibilityRole="button"
+              accessibilityLabel="이미지 업로드"
             >
               <MaterialCommunityIcons
                 name="image-outline"
@@ -189,6 +196,8 @@ export default function ExtractScreen() {
           ]}
           onPress={handleExtract}
           disabled={!isSubmitEnabled}
+          accessibilityRole="button"
+          accessibilityLabel="단어 추출하기"
         >
           {isSubmitting ? (
             <ActivityIndicator color={Colors.text.white} />

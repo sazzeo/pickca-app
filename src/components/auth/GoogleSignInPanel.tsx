@@ -9,6 +9,7 @@ import { Alert, Platform, StyleSheet, View } from "react-native";
 
 import { useGoogleLogin } from "@/api/generated/auth/auth";
 import { useAuth } from "@/contexts/AuthContext";
+import { createMemberIdFromEmail } from "@/lib/member";
 
 export default function GoogleSignInPanel() {
   const { signIn } = useAuth();
@@ -51,13 +52,24 @@ export default function GoogleSignInPanel() {
       const accessToken = payload?.accessToken;
       const refreshToken = payload?.refreshToken;
       const nickname = payload?.nickname;
+      const responseMemberId = (
+        payload as { memberId?: number; id?: number; userId?: number } | undefined
+      )?.memberId ?? (
+        payload as { memberId?: number; id?: number; userId?: number } | undefined
+      )?.id ?? (
+        payload as { memberId?: number; id?: number; userId?: number } | undefined
+      )?.userId;
 
       if (!accessToken || !refreshToken || !nickname) {
         Alert.alert("오류", "로그인 응답 형식이 올바르지 않습니다.");
         return;
       }
 
-      await signIn(accessToken, refreshToken, { email, nickname });
+      await signIn(accessToken, refreshToken, {
+        memberId: responseMemberId ?? createMemberIdFromEmail(email),
+        email,
+        nickname,
+      });
     } catch (error: unknown) {
       if (typeof error === "object" && error !== null && "code" in error) {
         const code = (error as { code: string }).code;
