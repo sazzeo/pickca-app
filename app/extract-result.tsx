@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
   Pressable,
@@ -95,7 +95,16 @@ const DECK_SLOT_HEIGHT = 280;
 
 export default function ExtractResultScreen() {
   const insets = useSafeAreaInsets();
-  const [words] = useState<ExtractWordItem[]>(MOCK_EXTRACT_WORDS);
+  const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
+  const initialWords: ExtractWordItem[] = (() => {
+    if (!wordsParam) return __DEV__ ? MOCK_EXTRACT_WORDS : [];
+    try {
+      return JSON.parse(wordsParam) as ExtractWordItem[];
+    } catch {
+      return [];
+    }
+  })();
+  const [words] = useState<ExtractWordItem[]>(initialWords);
   const [cursor, setCursor] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
 

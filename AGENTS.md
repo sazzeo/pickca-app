@@ -170,6 +170,263 @@ pnpm fm:fix            # Prettier 자동 포맷
 
 ---
 
+## 컴포넌트 구조 컨벤션
+
+### Export 규칙
+
+```tsx
+// 화면 파일 (app/**/*.tsx) — Expo Router 요구사항
+export default function ExtractScreen() { ... }
+
+// 재사용 컴포넌트 (src/components/**/*.tsx) — named export 필수
+export function AppHeader({ onSettingsPress }: AppHeaderProps) { ... }
+```
+
+- `app/` 하위 화면: `export default function` (Expo Router가 default export를 라우트로 인식)
+- `src/components/` 하위 컴포넌트: `export function` (named export) — 배럴 re-export 없이 직접 import
+
+### Props 타입 정의
+
+```tsx
+// 컴포넌트 바로 위에 interface로 정의
+interface AlertDialogProps {
+  visible: boolean;
+  title: string;
+  description?: string;
+  onAction: () => void;
+}
+
+export function AlertDialog({ visible, title, ... }: AlertDialogProps) { ... }
+```
+
+- `interface {컴포넌트명}Props` 네이밍
+- 해당 파일에서만 쓰는 타입은 같은 파일에 정의 — 별도 `types.ts` 파일 생성 금지
+
+### StyleSheet 위치
+
+```tsx
+export function MyComponent() { ... }
+
+// 항상 파일 맨 아래에 한 번만 선언
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+  title: { fontSize: 16, fontWeight: "700" },
+});
+```
+
+- `StyleSheet.create({})` 블록은 파일당 하나, 파일 맨 아래에 위치
+- 스타일 key는 camelCase
+- 인라인 스타일 `style={{ ... }}` 금지 — 동적 값 합성만 예외:
+  ```tsx
+  // ✅ 허용 — 동적 값과 정적 스타일 합성
+  <View style={[styles.wrapper, { paddingTop: insets.top }]} />
+
+  // ❌ 금지 — 정적 스타일을 인라인으로
+  <View style={{ flex: 1, backgroundColor: "#fff" }} />
+  ```
+
+### 상수/설정 객체
+
+```tsx
+// 컴포넌트 외부, 파일 상단에 UPPER_SNAKE_CASE로 정의
+const TAB_CONFIG: Record<string, { label: string; icon: string }> = {
+  index: { label: "홈", icon: "home-outline" },
+  extract: { label: "단어 추출", icon: "text-box-plus-outline" },
+};
+
+export function BottomTabBar() {
+  const config = TAB_CONFIG[route.name];
+  ...
+}
+```
+
+---
+
+## 터치 이벤트 컨벤션
+
+**신규 코드는 `Pressable`만 사용한다.** `TouchableOpacity`, `TouchableHighlight` 사용 금지.
+
+```tsx
+// ✅ 올바른 방법
+<Pressable
+  style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
+  onPress={handlePress}
+  hitSlop={12}
+  accessibilityRole="button"
+  accessibilityLabel="단어 추출하기"
+>
+  <Text>단어 추출하기</Text>
+</Pressable>
+
+// ❌ 금지
+<TouchableOpacity onPress={handlePress} activeOpacity={0.7}>
+  <Text>단어 추출하기</Text>
+</TouchableOpacity>
+```
+
+- pressed 피드백: `({ pressed }) => [styles.btn, pressed && styles.btnPressed]` 패턴
+- 작은 버튼 탭 영역 확장: `hitSlop={12}`
+- **모든 Pressable에 `accessibilityRole` + `accessibilityLabel` 필수**
+
+---
+
+## 색상 컨벤션
+
+```tsx
+// ✅ 올바른 방법
+backgroundColor: Colors.brand.green
+
+// ❌ 금지 — 하드코딩 색상
+backgroundColor: "#4A7C1F"
+```
+
+- 모든 색상은 `src/lib/colors.ts`의 `Colors` 상수를 사용한다
+- `DESIGN.md`에 없는 색상이 필요하면 먼저 `colors.ts`에 추가하고 사용
+
+---
+
+## 상태 관리 원칙
+
+| 상태 종류 | 방법 |
+|-----------|------|
+| 서버 데이터 (목록, 상세) | `useQuery` (React Query) |
+| 서버 변경 (생성, 수정, 삭제) | `useMutation` (React Query) |
+| UI 상태 (모달 visible, 입력값 등) | `useState` |
+| 전역 인증 상태 | `useAuth()` — `AuthContext` |
+
+- **Zustand, Jotai, Redux 등 추가 전역 상태 라이브러리 추가 금지**
+- 서버 데이터는 절대 `useState`에 직접 담지 않는다 — React Query 캐시가 정답
+
+---
+
+## 화면 레이아웃 패턴
+
+```tsx
+// 탭 화면 — 상단 safe area를 AppHeader 내부에서 처리
+export default function ExtractScreen() {
+  const insets = useSafeAreaInsets();
+  const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
+
+  return (
+    <View style={styles.container}>
+      <AppHeader />
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: tabBarApproxHeight + 24 }}
+      >
+        ...
+      </ScrollView>
+    </View>
+  );
+}
+
+// 탭 외부 화면 (modal 등) — 직접 safe area 처리
+export default function ExtractResultScreen() {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={styles.screen}>
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>...</View>
+      ...
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>...</View>
+    </View>
+  );
+}
+```
+
+- `SafeAreaView`를 직접 쓸 때는 `edges` 명시 (`edges={["bottom"]}`, `edges={["top"]}`)
+- 상단 safe area는 주로 `useSafeAreaInsets().top`으로 헤더에 적용
+- 하단 safe area는 탭바 또는 footer에 `Math.max(insets.bottom, N)` 패턴
+
+---
+
+## 에러 처리 패턴
+
+```tsx
+// 간단한 오류 — Alert.alert (네이티브 OS 알림)
+Alert.alert("오류", "로그인에 실패했어요.");
+
+// 사용자 확인이 필요한 흐름 — AlertDialog 컴포넌트
+const [alertDialog, setAlertDialog] = useState({ visible: false, title: "" });
+showAlertDialog({ title: "단어가 추출되지 않았어요", actionLabel: "다시 시도하기" });
+
+// 네트워크 오류 분기
+import { isLikelyNetworkError } from "@/lib/wordExtraction";
+if (isLikelyNetworkError(error)) {
+  // 네트워크 오류 메시지
+}
+```
+
+- async 핸들러는 반드시 `try-catch-finally` — `finally`에서 로딩 상태 해제
+- 중복 API 호출 방지: `const [isSubmitting, setIsSubmitting] = useState(false)` + `disabled={isSubmitting}`
+
+---
+
+## 화면 간 데이터 전달
+
+```tsx
+// 단순 값 — router params
+router.push({ pathname: "/detail", params: { id: "123" } });
+
+// 객체·배열 — JSON.stringify → useLocalSearchParams → JSON.parse
+router.push({
+  pathname: "/extract-result",
+  params: { words: JSON.stringify(mappedWords) },
+});
+
+// extract-result.tsx에서 수신
+const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
+const words = wordsParam ? (JSON.parse(wordsParam) as ExtractWordItem[]) : [];
+```
+
+- 전역 상태(Zustand 등) 없이 params로 전달 — AuthContext 제외
+- params는 문자열만 가능 → 객체/배열은 항상 JSON 직렬화
+
+---
+
+## ScrollView + 키보드 처리
+
+```tsx
+// ScrollView 안에 Pressable / 입력 필드가 있을 때
+<ScrollView keyboardShouldPersistTaps="handled">
+  <TextInput ... />
+  <Pressable onPress={...}>...</Pressable>
+</ScrollView>
+
+// 멀티라인 TextInput — Android 텍스트 정렬
+<TextInput multiline textAlignVertical="top" ... />
+```
+
+---
+
+## 아이콘 사용
+
+```tsx
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+// 타입 오류 시 as never 캐스트 허용
+<MaterialCommunityIcons name={iconName as never} size={24} color={color} />
+```
+
+- `@expo/vector-icons`의 `MaterialCommunityIcons`만 사용
+- 다른 아이콘 패키지 추가 금지
+
+---
+
+## 개발 전용 코드
+
+```tsx
+// __DEV__ 블록 — 프로덕션 빌드에서 자동 제거
+{__DEV__ && (
+  <Pressable onPress={() => router.push("/extract-result")}>
+    <Text>추출 결과 미리보기 (개발 전용)</Text>
+  </Pressable>
+)}
+
+// 목업 데이터 — MOCK_ prefix 사용, API 연동 시 제거·교체
+const MOCK_WORDS: WordItem[] = [{ ... }];
+```
+
+---
+
 ## 금지 사항
 
 - `src/api/generated/` 파일 직접 수정 금지 — `pnpm generate`로 재생성
@@ -182,10 +439,33 @@ pnpm fm:fix            # Prettier 자동 포맷
 
 ## 체크리스트 (코드 작성 후 검증)
 
-- [ ] API 호출 시 orval 생성 훅을 사용하는가
+### API / 인증
+- [ ] API 호출 시 orval 생성 훅을 사용하는가 (`axiosInstance` 직접 호출 금지)
 - [ ] 토큰 접근 시 `src/lib/storage.ts`의 함수를 사용하는가
 - [ ] SecureStore 호출에 `await`가 빠짐없이 붙어 있는가
 - [ ] 브라우저 전용 API(`window`, `localStorage`)가 사용되지 않는가
-- [ ] 새 화면 추가 시 인증 Guard가 적용된 레이아웃 안에 배치되었는가
 - [ ] 환경변수 접두사가 `EXPO_PUBLIC_`인가
+
+### 컴포넌트 / UI
+- [ ] 화면 파일은 `export default function`, 컴포넌트는 `export function`인가
+- [ ] `Pressable`을 사용했는가 (`TouchableOpacity` 사용 금지)
+- [ ] 모든 `Pressable`에 `accessibilityRole` + `accessibilityLabel`이 있는가
+- [ ] 인라인 스타일(`style={{ ... }}`)을 쓰지 않았는가 (동적 합성 제외)
+- [ ] 하드코딩 색상 대신 `Colors.*`를 사용하는가
+- [ ] `StyleSheet.create({})` 블록이 파일 맨 아래에 하나만 있는가
+- [ ] 상수 설정 객체는 UPPER_SNAKE_CASE로 컴포넌트 외부에 정의했는가
+
+### 레이아웃 / 상호작용
+- [ ] 화면 상단/하단 safe area 처리가 되어 있는가 (`useSafeAreaInsets`)
+- [ ] ScrollView 내 Pressable이 있으면 `keyboardShouldPersistTaps="handled"`가 있는가
+- [ ] 멀티라인 TextInput에 `textAlignVertical="top"`이 있는가 (Android)
+- [ ] 새 화면 추가 시 인증 Guard가 적용된 레이아웃 안에 배치되었는가
+
+### 상태 관리 / 에러
+- [ ] 서버 데이터를 `useState`에 직접 담지 않았는가 (React Query 사용)
+- [ ] async 핸들러에 `try-catch-finally`가 있는가
+- [ ] 중복 제출 방지 로직(`isSubmitting` 또는 `inFlight ref`)이 있는가
+
+### 일반
 - [ ] 주석이 한국어로 작성되었는가
+- [ ] 목업 데이터·개발 전용 코드에 `MOCK_` prefix / `__DEV__` 블록이 있는가

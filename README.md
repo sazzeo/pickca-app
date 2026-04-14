@@ -38,7 +38,21 @@ EXPO_PUBLIC_API_URL=http://localhost:8200
 EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID=...
 EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=...
 EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=...
+
+# 개발용 이메일 로그인 (Expo Go / 웹 미리보기 전용)
+EXPO_PUBLIC_EXPO_GO_DEV_LOGIN=1
 ```
+
+## 개발용 이메일 로그인
+
+Expo Go 또는 `pnpm start` 웹 미리보기(`localhost:8081`)에서는 네이티브 Google SDK를 쓸 수 없습니다. 이때 소셜 인증 없이 이메일만으로 바로 로그인할 수 있습니다.
+
+**조건:**
+1. Spring API 서버가 `local` 프로파일로 실행 중이어야 합니다 (`./gradlew :api:bootRun`)
+2. `.env`에 `EXPO_PUBLIC_EXPO_GO_DEV_LOGIN=1` 설정
+3. 입력하는 이메일이 DB에 존재해야 합니다 (없으면 오류 알림)
+
+로그인 성공 시 실제 JWT(access/refresh token)가 발급됩니다. dev 전용 더미 토큰이 아닙니다.
 
 ## 설정 후 실행
 
@@ -64,6 +78,16 @@ pnpm ios
 # Android
 pnpm android
 ```
+
+## Orval API 코드 생성
+
+`orval` 생성 명령은 아래와 같습니다.
+
+```bash
+pnpm generate
+```
+
+실행 전에 Spring API 서버가 `http://localhost:8200`에서 켜져 있어야 하며, 생성 결과는 `src/api/generated/`에 반영됩니다.
 
 ## Android Studio에서 실행
 

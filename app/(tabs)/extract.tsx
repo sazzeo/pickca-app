@@ -10,13 +10,29 @@ import {
 } from "react-native";
 import { Text } from "react-native-paper";
 
+import { useExtract } from "@/api/generated/word/word";
+import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { AlertDialog } from "@/components/common/AlertDialog";
 import { AppHeader } from "@/components/common/AppHeader";
+import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
-import {
-  isLikelyNetworkError,
-  requestExtractedWords,
-} from "@/lib/wordExtraction";
+import { isLikelyNetworkError } from "@/lib/wordExtraction";
+
+const POS_SHORT: Record<string, string> = {
+  NOUN: "n", VERB: "v", ADJECTIVE: "adj", ADVERB: "adv",
+  PREPOSITION: "prep", CONJUNCTION: "conj", INTERJECTION: "interj", PRONOUN: "pron",
+};
+
+function mapWord(w: WordResponse) {
+  const first = w.meanings[0];
+  return {
+    id: w.word,
+    lemma: w.word,
+    meaningKo: w.primaryMeanings ?? first?.koreanPrimary ?? "—",
+    pos: POS_SHORT[first?.partOfSpeech ?? ""] ?? "?",
+    pronunciation: w.phonetic ? `[ ${w.phonetic} ]` : "",
+  };
+}
 
 interface AlertDialogState {
   visible: boolean;
@@ -26,6 +42,8 @@ interface AlertDialogState {
 }
 
 export default function ExtractScreen() {
+  const { mutateAsync: extractWords } = useExtract();
+  const { user } = useAuth();
   const [inputText, setInputText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [alertDialog, setAlertDialog] = useState<AlertDialogState>({
@@ -70,7 +88,11 @@ export default function ExtractScreen() {
     }
     setIsSubmitting(true);
     try {
-      const words = await requestExtractedWords(trimmed);
+      const result = await extractWords({
+        data: { text: trimmed },
+        params: { memberId: user?.memberId ?? 0 },
+      });
+      const words = result.data?.words ?? [];
       if (words.length === 0) {
         showAlertDialog({
           title: "단어가 추출되지 않았어요",
@@ -79,8 +101,10 @@ export default function ExtractScreen() {
         });
         return;
       }
-      // TODO: orval 연동 후 words를 router params 또는 전역 상태로 extract-result에 전달
-      router.push("/extract-result");
+      router.push({
+        pathname: "/extract-result",
+        params: { words: JSON.stringify(words.map(mapWord)) },
+      });
     } catch (e) {
       if (isLikelyNetworkError(e)) {
         showAlertDialog({

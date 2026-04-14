@@ -14,6 +14,8 @@ import { Button, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useAuth } from "@/contexts/AuthContext";
+import axiosInstance from "@/lib/axios";
+import { createMemberIdFromEmail } from "@/lib/member";
 import { Colors } from "@/lib/colors";
 
 /** Expo Go에서는 이 모듈을 절대 로드하지 않는다(네이티브 구글 SDK 없음). */
@@ -34,40 +36,57 @@ const expoGoDevLoginEnabled =
 
 function ExpoGoDevLoginForm() {
   const { signIn } = useAuth();
-  const [nickname, setNickname] = useState("dev");
+  const [email, setEmail] = useState("dev@pickca.local");
   const [submitting, setSubmitting] = useState(false);
 
   const handleDevSignIn = useCallback(async () => {
-    const nick = nickname.trim();
-    if (!nick) {
-      Alert.alert("입력 오류", "닉네임을 입력하세요.");
+    const normalizedEmail = email.trim().toLowerCase();
+    const isEmailValid = /\S+@\S+\.\S+/.test(normalizedEmail);
+    if (!isEmailValid) {
+      Alert.alert("입력 오류", "올바른 이메일을 입력하세요.");
       return;
     }
+
     try {
       setSubmitting(true);
-      await signIn("dev_access_token", "dev_refresh_token", {
-        email: `${nick}@dev.local`,
-        nickname: nick,
+      // orval 훅 없음 — dev 전용 엔드포인트라 axiosInstance 직접 사용
+      const res = await axiosInstance.post<{
+        data: { accessToken: string; refreshToken: string; email: string; nickname: string };
+      }>("/api/auth/dev/login", { email: normalizedEmail });
+      const { accessToken, refreshToken, email: resEmail, nickname } = res.data.data;
+      await signIn(accessToken, refreshToken, {
+        memberId: createMemberIdFromEmail(resEmail),
+        email: resEmail,
+        nickname,
       });
     } catch (e) {
-      Alert.alert("로그인 오류", e instanceof Error ? e.message : "알 수 없는 오류");
+      console.error("[DevLogin] error:", e);
+      const axiosError = e as { response?: { status?: number; data?: { error?: { message?: string } } } };
+      const status = axiosError.response?.status;
+      const message =
+        status === 404
+          ? `DB에 존재하지 않는 이메일입니다.\n(${normalizedEmail})`
+          : axiosError.response?.data?.error?.message ??
+            (e instanceof Error ? e.message : "알 수 없는 오류");
+      Alert.alert("로그인 오류", message);
     } finally {
       setSubmitting(false);
     }
-  }, [nickname, signIn]);
+  }, [email, signIn]);
 
   return (
     <View style={styles.devForm}>
       <Text variant="bodySmall" style={styles.devHint}>
-        개발용 로그인입니다. 닉네임만 입력하면 바로 진입할 수 있습니다.
+        개발용 로그인입니다. 이메일만 입력하면 바로 진입할 수 있습니다.
       </Text>
       <RNTextInput
-        placeholder="닉네임"
-        value={nickname}
-        onChangeText={setNickname}
+        placeholder="이메일"
+        value={email}
+        onChangeText={setEmail}
         style={styles.devInput}
         autoCapitalize="none"
         autoCorrect={false}
+        keyboardType="email-address"
         editable={!submitting}
       />
       <Button

@@ -37,7 +37,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
 
   const visibleRoutes = state.routes.filter((route) => {
     const { options } = descriptors[route.key];
-    return options.href !== null;
+    return (options as { href?: string | null }).href !== null;
   });
 
   return (
