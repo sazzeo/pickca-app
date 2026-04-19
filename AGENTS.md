@@ -55,8 +55,9 @@ pickca-app/
 │   │   └── generated/          # orval 생성 파일 — 직접 수정 금지
 │   ├── components/
 │   │   ├── auth/               # 인증 관련 컴포넌트 (GoogleSignInPanel 등)
-│   │   ├── common/             # 공통 컴포넌트 (AppHeader 등)
-│   │   └── home/               # 홈 화면 컴포넌트 (ExtractionCard, GreetingSection 등)
+│   │   ├── common/             # 공통 컴포넌트 (AppHeader, BottomTabBar 등)
+│   │   ├── home/               # 홈 화면 컴포넌트 (ExtractionCard, GreetingSection 등)
+│   │   └── wordbook/           # 단어장 화면 컴포넌트 (WordbookGroupCard 등)
 │   ├── contexts/
 │   │   └── AuthContext.tsx     # 전역 인증 상태
 │   └── lib/

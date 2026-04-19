@@ -87,7 +87,7 @@ pnpm android
 pnpm generate
 ```
 
-실행 전에 Spring API 서버가 `http://localhost:8200`에서 켜져 있어야 하며, 생성 결과는 `src/api/generated/`에 반영됩니다.
+실행 전에 Spring API 서버가 `http://localhost:8200`에서 켜져 있어야 하며, 생성 결과는 `src/api/generated/`에 반영됩니다. 생성 코드는 저장소에 포함되어 있으므로, OpenAPI 스펙이 바뀐 뒤에는 `pnpm generate`로 갱신한 다음 변경분을 커밋하면 됩니다.
 
 ## Android Studio에서 실행
 
