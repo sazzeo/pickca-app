@@ -15,6 +15,7 @@ import { AlertDialog } from "@/components/common/AlertDialog";
 import { AppHeader } from "@/components/common/AppHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
+import { saveExtractDraft } from "@/lib/extractDraftStorage";
 import { isLikelyNetworkError, mapWord } from "@/lib/wordExtraction";
 
 interface AlertDialogState {
@@ -84,10 +85,12 @@ export default function ExtractScreen() {
         });
         return;
       }
-      router.push({
-        pathname: "/extract-result",
-        params: { words: JSON.stringify(words.map(mapWord)) },
+      const mappedWords = words.map(mapWord);
+      await saveExtractDraft({
+        sourceText: trimmed,
+        words: mappedWords,
       });
+      router.push("/extract-result");
     } catch (e) {
       if (isLikelyNetworkError(e)) {
         showAlertDialog({

@@ -13,6 +13,7 @@ export function mapWord(w: WordResponse): ExtractWordItem {
   const first = w.meanings[0];
   return {
     id: w.word,
+    wordId: typeof w.id === "number" ? w.id : undefined,
     lemma: w.word,
     meaningKo: w.primaryMeanings ?? first?.koreanPrimary ?? "—",
     pos: POS_SHORT[first?.partOfSpeech ?? ""] ?? "?",

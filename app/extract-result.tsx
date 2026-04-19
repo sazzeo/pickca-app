@@ -1,7 +1,8 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
-import { useRef, useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -11,15 +12,23 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { getWords1 } from "@/api/generated/word/word";
+import { AlertDialog } from "@/components/common/AlertDialog";
+import { WordbookSelectModal } from "@/components/common/WordbookSelectModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { mapWord } from "@/lib/wordExtraction";
 import { Colors } from "@/lib/colors";
+import {
+  clearExtractDraft,
+  getExtractDraft,
+  saveExtractDraft,
+} from "@/lib/extractDraftStorage";
 import type { ExtractWordItem } from "@/types/word";
 
 // 개발 전용 목업 — 앞 2개는 DONE(뜻 있음), 나머지는 PENDING(뜻 없음)으로 재조회 트리거 흐름 확인 가능
 const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   {
     id: "1",
+    wordId: 1,
     lemma: "mesmerizing",
     meaningKo: "매혹적인",
     pos: "adj",
@@ -28,6 +37,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "2",
+    wordId: 2,
     lemma: "understand",
     meaningKo: "이해하다, 알다",
     pos: "v",
@@ -36,6 +46,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "3",
+    wordId: 3,
     lemma: "genuine",
     meaningKo: "—",
     pos: "?",
@@ -44,6 +55,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "4",
+    wordId: 4,
     lemma: "learning",
     meaningKo: "—",
     pos: "?",
@@ -52,6 +64,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "5",
+    wordId: 5,
     lemma: "challenging",
     meaningKo: "도전적인",
     pos: "adj",
@@ -60,6 +73,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "6",
+    wordId: 6,
     lemma: "vocabulary",
     meaningKo: "어휘",
     pos: "n",
@@ -68,6 +82,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "7",
+    wordId: 7,
     lemma: "consistent",
     meaningKo: "일관된, 꾸준한",
     pos: "adj",
@@ -76,6 +91,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "8",
+    wordId: 8,
     lemma: "confidence",
     meaningKo: "자신감",
     pos: "n",
@@ -84,6 +100,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "9",
+    wordId: 9,
     lemma: "communication",
     meaningKo: "의사소통",
     pos: "n",
@@ -92,6 +109,7 @@ const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
   },
   {
     id: "10",
+    wordId: 10,
     lemma: "gradually",
     meaningKo: "점차, 서서히",
     pos: "adv",
@@ -108,21 +126,40 @@ const DECK_SLOT_HEIGHT = 280;
 export default function ExtractResultScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
-  const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
-  const initialWords: ExtractWordItem[] = (() => {
-    if (!wordsParam) return __DEV__ ? MOCK_EXTRACT_WORDS : [];
-    try {
-      return JSON.parse(wordsParam) as ExtractWordItem[];
-    } catch {
-      return [];
-    }
-  })();
-  const [words, setWords] = useState<ExtractWordItem[]>(initialWords);
+  const [sourceText, setSourceText] = useState("");
+  const [words, setWords] = useState<ExtractWordItem[]>([]);
   const [cursor, setCursor] = useState(0);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [isHydrating, setIsHydrating] = useState(true);
+  const [wordbookModalVisible, setWordbookModalVisible] = useState(false);
+  const [alertDialog, setAlertDialog] = useState<{
+    visible: boolean;
+    title: string;
+    description?: string;
+    actionLabel?: string;
+  }>({
+    visible: false,
+    title: "",
+  });
 
   // 세션 내 재조회는 한 번만 — 중복 API 호출 방지
   const hasFetched = useRef(false);
+
+  useEffect(() => {
+    const hydrate = async () => {
+      const draft = await getExtractDraft();
+      if (draft) {
+        setSourceText(draft.sourceText);
+        setWords(draft.words);
+      } else if (__DEV__) {
+        setWords(MOCK_EXTRACT_WORDS);
+      } else {
+        setWords([]);
+      }
+      setIsHydrating(false);
+    };
+    void hydrate();
+  }, []);
 
   const total = words.length;
   const current = words[cursor];
@@ -162,13 +199,18 @@ export default function ExtractResultScreen() {
             const updated = response.data?.words ?? [];
             if (updated.length === 0) return;
             const updatedMap = new Map(updated.map((w) => [w.word, w]));
-            setWords((prev) =>
-              prev.map((item) => {
+            setWords((prev) => {
+              const nextWords = prev.map((item) => {
                 const fresh = updatedMap.get(item.lemma);
                 if (!fresh || fresh.collectStatus === item.collectStatus) return item;
                 return mapWord(fresh);
-              }),
-            );
+              });
+              void saveExtractDraft({
+                sourceText,
+                words: nextWords,
+              });
+              return nextWords;
+            });
             setHistory((prev) =>
               prev.map((item) => {
                 const fresh = updatedMap.get(item.lemma);
@@ -194,6 +236,60 @@ export default function ExtractResultScreen() {
   };
 
   const isDeckDone = cursor >= total;
+  const pickedCount = history.filter((item) => item.picked).length;
+  const pickedWordIds = history
+    .filter((item) => item.picked && typeof item.wordId === "number")
+    .map((item) => item.wordId as number);
+
+  const showAlertDialog = (payload: {
+    title: string;
+    description?: string;
+    actionLabel?: string;
+  }) => {
+    setAlertDialog({
+      visible: true,
+      title: payload.title,
+      description: payload.description,
+      actionLabel: payload.actionLabel,
+    });
+  };
+
+  const closeAlertDialog = () => {
+    setAlertDialog((prev) => ({ ...prev, visible: false }));
+  };
+
+  const handleSaveWordbook = () => {
+    if (!isDeckDone) {
+      showAlertDialog({
+        title: "모든 단어를 확인해 주세요",
+        description: "카드를 끝까지 확인한 뒤 저장할 수 있어요.",
+      });
+      return;
+    }
+    if (pickedCount === 0) {
+      showAlertDialog({
+        title: "픽한 단어가 없어요",
+        description: "단어를 하나 이상 픽한 뒤 다시 시도해 주세요.",
+      });
+      return;
+    }
+    if (pickedWordIds.length === 0) {
+      showAlertDialog({
+        title: "저장할 단어 ID를 찾지 못했어요",
+        description: "단어 정보를 다시 불러온 뒤 저장해 주세요.",
+      });
+      return;
+    }
+    setWordbookModalVisible(true);
+  };
+
+  if (isHydrating) {
+    return (
+      <View style={[styles.screen, styles.loadingContainer]}>
+        <ActivityIndicator color={Colors.brand.greenDark} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.screen}>
@@ -370,15 +466,41 @@ export default function ExtractResultScreen() {
             styles.cta,
             pressed && styles.ctaPressed,
           ]}
-          onPress={() => {
-            /* TODO: 픽한 단어를 단어장에 추가하는 API 연동 */
-          }}
+          onPress={handleSaveWordbook}
           accessibilityRole="button"
           accessibilityLabel="단어장에 추가하기"
         >
           <Text style={styles.ctaLabel}>단어장에 추가하기</Text>
         </Pressable>
       </View>
+      <AlertDialog
+        visible={alertDialog.visible}
+        title={alertDialog.title}
+        description={alertDialog.description}
+        actionLabel={alertDialog.actionLabel}
+        onAction={closeAlertDialog}
+      />
+      <WordbookSelectModal
+        visible={wordbookModalVisible}
+        onDismiss={() => setWordbookModalVisible(false)}
+        wordIds={pickedWordIds}
+        sourceText={sourceText}
+        memberId={user?.memberId ?? 0}
+        onSuccess={(count) => {
+          void clearExtractDraft();
+          showAlertDialog({
+            title: "단어장에 저장했어요",
+            description: `${count}개 단어가 저장되었어요.`,
+            actionLabel: "확인",
+          });
+        }}
+        onError={(message) => {
+          showAlertDialog({
+            title: "저장에 실패했어요",
+            description: message,
+          });
+        }}
+      />
     </View>
   );
 }
@@ -387,6 +509,10 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: Colors.bg.default,
+  },
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
   header: {
     position: "relative",
@@ -675,6 +801,9 @@ const styles = StyleSheet.create({
   },
   ctaPressed: {
     opacity: 0.9,
+  },
+  ctaDisabled: {
+    opacity: 0.7,
   },
   ctaLabel: {
     fontSize: 15,

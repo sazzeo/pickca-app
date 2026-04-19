@@ -3,6 +3,7 @@ import type { WordResponseCollectStatus } from "@/api/generated/pickcaAPI.schema
 /** 단어 추출 결과 아이템 */
 export type ExtractWordItem = {
   id: string;
+  wordId?: number;
   lemma: string;
   meaningKo: string;
   pos: string;
