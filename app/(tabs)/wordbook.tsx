@@ -1,75 +1,75 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
+import type { Item } from "@/api/generated/pickcaAPI.schemas";
 import { AppHeader } from "@/components/common/AppHeader";
 import {
   WordbookGroupCard,
   type WordbookGroupCardSurface,
 } from "@/components/wordbook/WordbookGroupCard";
+import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
+import { formatRelativeTimeKo } from "@/lib/formatRelativeTimeKo";
 
-const MOCK_TOTAL_PICKED_WORDS = 84;
-
-interface MockWordbookGroup {
-  id: string;
-  title: string;
-  progressPercent: number;
-  wordCount: number;
-  relativeTime: string;
-  surface: WordbookGroupCardSurface;
+function surfaceForWordbookId(id: number): WordbookGroupCardSurface {
+  const mod = Math.abs(id) % 3;
+  if (mod === 0) {
+    return "green";
+  }
+  if (mod === 1) {
+    return "cream";
+  }
+  return "neutral";
 }
 
-const MOCK_WORDBOOK_GROUPS: MockWordbookGroup[] = [
-  {
-    id: "1",
-    title: "아리아나 그란데 노래 가사",
-    progressPercent: 88,
-    wordCount: 12,
-    relativeTime: "3일 전",
-    surface: "green",
-  },
-  {
-    id: "2",
-    title: "미국과 이란 전쟁 기사",
-    progressPercent: 38,
-    wordCount: 12,
-    relativeTime: "3일 전",
-    surface: "cream",
-  },
-  {
-    id: "3",
-    title: "Friends 단어 모음집",
-    progressPercent: 0,
-    wordCount: 12,
-    relativeTime: "3일 전",
-    surface: "neutral",
-  },
-  {
-    id: "4",
-    title: "더위켄드 노래 가사",
-    progressPercent: 0,
-    wordCount: 12,
-    relativeTime: "3일 전",
-    surface: "neutral",
-  },
-];
-
 export default function WordbookScreen() {
+  const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredGroups = useMemo(() => {
+  const memberId = user?.memberId ?? 0;
+
+  const {
+    data: wordbooksData,
+    isPending,
+    isError,
+    refetch,
+  } = useGetWordbooks(
+    { memberId },
+    { query: { enabled: memberId > 0 } },
+  );
+
+  const wordbooks: Item[] = wordbooksData?.data?.wordbooks ?? [];
+  const apiErrorMessage =
+    wordbooksData?.success === false ? wordbooksData.error?.message : undefined;
+
+  const totalPickedWords = useMemo(
+    () => wordbooks.reduce((sum, w) => sum + w.wordCount, 0),
+    [wordbooks],
+  );
+
+  const filteredWordbooks = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) {
-      return MOCK_WORDBOOK_GROUPS;
+      return wordbooks;
     }
-    return MOCK_WORDBOOK_GROUPS.filter((g) => g.title.toLowerCase().includes(q));
-  }, [searchQuery]);
+    return wordbooks.filter((w) => w.name.toLowerCase().includes(q));
+  }, [searchQuery, wordbooks]);
+
+  const showError = isError || Boolean(apiErrorMessage);
 
   return (
     <View style={styles.container}>
@@ -87,7 +87,7 @@ export default function WordbookScreen() {
         <View style={styles.titleBlock}>
           <Text style={styles.screenTitle}>내 단어장</Text>
           <Text style={styles.screenSubtitle}>
-            총 {MOCK_TOTAL_PICKED_WORDS}개의 단어를 Pick했어요
+            총 {totalPickedWords}개의 단어를 Pick했어요
           </Text>
         </View>
 
@@ -109,18 +109,49 @@ export default function WordbookScreen() {
           />
         </View>
 
-        <View style={styles.cardList}>
-          {filteredGroups.map((group) => (
-            <WordbookGroupCard
-              key={group.id}
-              title={group.title}
-              progressPercent={group.progressPercent}
-              wordCount={group.wordCount}
-              relativeTime={group.relativeTime}
-              surface={group.surface}
-            />
-          ))}
-        </View>
+        {isPending ? (
+          <View style={styles.centerBlock}>
+            <ActivityIndicator size="large" color={Colors.brand.green} />
+          </View>
+        ) : showError ? (
+          <View style={styles.centerBlock}>
+            <Text style={styles.errorText}>
+              {apiErrorMessage ?? "단어장 목록을 불러오지 못했어요."}
+            </Text>
+            <Pressable
+              style={({ pressed }) => [
+                styles.retryButton,
+                pressed && styles.retryButtonPressed,
+              ]}
+              onPress={() => refetch()}
+              accessibilityRole="button"
+              accessibilityLabel="다시 시도"
+            >
+              <Text style={styles.retryLabel}>다시 시도</Text>
+            </Pressable>
+          </View>
+        ) : filteredWordbooks.length === 0 ? (
+          <View style={styles.centerBlock}>
+            <Text style={styles.emptyText}>
+              {wordbooks.length === 0
+                ? "아직 단어장이 없어요."
+                : "검색 결과가 없어요."}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.cardList}>
+            {filteredWordbooks.map((item) => (
+              <WordbookGroupCard
+                key={String(item.id)}
+                title={item.name}
+                progressPercent={Math.round(item.progressRate)}
+                wordCount={item.wordCount}
+                relativeTime={formatRelativeTimeKo(item.createdAt)}
+                surface={surfaceForWordbookId(item.id)}
+              />
+            ))}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -170,5 +201,35 @@ const styles = StyleSheet.create({
   },
   cardList: {
     flexDirection: "column",
+  },
+  centerBlock: {
+    paddingVertical: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  errorText: {
+    fontSize: 14,
+    color: Colors.text.secondary,
+    textAlign: "center",
+  },
+  emptyText: {
+    fontSize: 14,
+    color: Colors.text.secondary,
+    textAlign: "center",
+  },
+  retryButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: Colors.brand.green,
+  },
+  retryButtonPressed: {
+    opacity: 0.85,
+  },
+  retryLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.text.white,
   },
 });

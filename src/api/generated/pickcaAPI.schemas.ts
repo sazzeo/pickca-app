@@ -217,6 +217,10 @@ export interface Item {
   name: string;
   /** 저장된 단어 수 */
   wordCount: number;
+  /** 단어장 생성일시 */
+  createdAt: string;
+  /** 학습 진도율 (0~100). 현재 0 고정 */
+  progressRate: number;
 }
 
 export interface WordbookAddWordsRequest {

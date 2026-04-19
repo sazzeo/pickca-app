@@ -70,7 +70,7 @@ app/
     ├── _layout.tsx          # 인증 Guard + 탭바 (미인증이면 로그인으로 리다이렉트)
     ├── index.tsx            # 홈 탭 (단어장·학습 카운트는 API 미연동, 하드코딩 상태)
     ├── extract.tsx          # 단어 추출 탭 ✅ API 연동 완료
-    ├── wordbook.tsx         # 단어장 탭 — 그룹 목록 UI 목업 (API 미연동)
+    ├── wordbook.tsx         # 단어장 탭 — `GET /api/wordbooks` 목록 (`useGetWordbooks`)
     ├── study.tsx            # 학습 탭 🚧 준비 중
     ├── quiz.tsx             # 퀴즈 화면 (탭바 미노출 — href: null) 🚧 준비 중
     └── profile.tsx          # 프로필·로그아웃 화면 (탭바 미노출 — href: null)
@@ -84,13 +84,13 @@ app/
 - 탭바: `BottomTabBar.tsx` 커스텀 구현 (React Navigation 내장 탭바는 웹 미리보기에서 렌더링 깨짐)
 - 인증 가드: `(tabs)/_layout.tsx`, `(auth)/_layout.tsx`
 - PENDING 단어 재조회: `extract-result.tsx` — 첫 PENDING 카드 직전에 `GET /api/words`로 미수집 단어 일괄 재조회, words/history 부분 업데이트
-- 단어장 탭 UI: `wordbook.tsx` — 그룹 검색·카드 목록 목업 (`WordbookGroupCard`), 하단 탭 활성 시 아이콘 pill 스타일은 `BottomTabBar`
+- 단어장 탭 UI: `wordbook.tsx` — 단어장 목록 API·검색·카드 (`WordbookGroupCard`), 하단 탭 활성 시 아이콘 pill 스타일은 `BottomTabBar`
 
 ### API 연동 필요 (백엔드 선행 작업 포함)
 - **단어장에 추가하기**: `POST /api/wordbooks/{id}/words`에 `wordIds: number[]` 필요 → 현재 `WordResponse`에 `id` 없음. 백엔드 수정 + `pnpm generate` 후 연동 가능 (`api/TODOS.md` 참고)
 - **홈 화면 카운트**: `index.tsx`의 `count={84}`, `count={18}` 하드코딩 → 단어장 API 연동 시 교체
 - **CEFR 멤버 레벨 설정**: 프로필 화면에 미구현 (`PATCH /api/members/me/cefr-level`)
-- **단어장 탭**: 그룹 카드 목록·검색은 목업 데이터 (`WordbookGroupCard` 등). 실제 단어장 API·저장 연동은 미구현
+- **단어장 탭**: 목록 조회 `GET /api/wordbooks` 연동됨. 그룹 상세 화면·카드 메뉴 등은 미구현
 - **학습·퀴즈 탭·화면**: 미구현 (준비 중)
 
 ---
