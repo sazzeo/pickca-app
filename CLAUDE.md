@@ -31,7 +31,7 @@
 #### orval 사용 컨벤션
 
 - **생성 명령**: `pnpm generate` (Spring API가 `localhost:8200`에서 실행 중이어야 함)
-- **생성 위치**: `src/api/generated/` — 직접 수정 금지, 재생성 시 덮어씌워짐
+- **생성 위치**: `src/api/generated/` — Git에 포함, 직접 수정 금지, 재생성 시 덮어씌워짐
 - **API 호출은 반드시 orval 생성 훅을 사용한다.** `axiosInstance`를 직접 호출하지 않는다.
 - **예외**: `src/lib/axios.ts` 내부의 토큰 갱신 로직은 인터셉터 무한루프 방지를 위해 raw `axios`를 직접 사용 (웹과 동일 정책)
 

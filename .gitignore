@@ -9,9 +9,6 @@ ios/
 .env
 .env.local
 
-# orval 생성 파일 (재생성 가능)
-src/api/generated/
-
 # IDE
 .idea/
 .vscode/

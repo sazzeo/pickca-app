@@ -60,6 +60,8 @@ export const Colors = {
   semantic: {
     /** 파괴 액션 버튼 (삭제·되돌리기 불가) */
     danger: "#BF3F2F",
+    /** 단어장 그룹 카드 등 중간 진행률 막대 */
+    progressOrange: "#E8954A",
   },
 
   /** 비활성화 상태 */

@@ -70,11 +70,21 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               accessibilityRole="tab"
               accessibilityState={{ selected: isFocused }}
             >
-              <MaterialCommunityIcons
-                name={(isFocused ? config.activeIcon : config.icon) as never}
-                size={24}
-                color={color}
-              />
+              {isFocused ? (
+                <View style={styles.iconPill}>
+                  <MaterialCommunityIcons
+                    name={(isFocused ? config.activeIcon : config.icon) as never}
+                    size={24}
+                    color={color}
+                  />
+                </View>
+              ) : (
+                <MaterialCommunityIcons
+                  name={(isFocused ? config.activeIcon : config.icon) as never}
+                  size={24}
+                  color={color}
+                />
+              )}
               <Text style={[styles.label, { color }]}>{config.label}</Text>
             </Pressable>
           );
@@ -101,6 +111,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 2,
+  },
+  iconPill: {
+    backgroundColor: Colors.brand.greenLight,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
   },
   label: {
     fontSize: 11,

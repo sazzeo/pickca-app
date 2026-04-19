@@ -88,7 +88,7 @@ const res = await googleLogin({ data: { idToken } });
 ```
 
 - **생성 명령**: `pnpm generate` (Spring API가 `localhost:8200`에서 실행 중이어야 함)
-- **생성 위치**: `src/api/generated/` — Git ignore됨, 재생성 시 덮어씌워짐
+- **생성 위치**: `src/api/generated/` — 저장소에 포함, `pnpm generate` 시 덮어씌워짐
 - **예외**: `src/lib/axios.ts`의 토큰 갱신 로직은 인터셉터 무한루프 방지 목적으로 raw `axios` 직접 사용 — orval 훅으로 교체하지 않는다
 
 ### axios 인터셉터 동작 (`src/lib/axios.ts`)
