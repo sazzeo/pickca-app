@@ -1,7 +1,11 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
+import {
+  EllipsisDropdownMenu,
+  type EllipsisDropdownItem,
+} from "@/components/common/EllipsisDropdownMenu";
 import { Colors } from "@/lib/colors";
 
 export type WordbookGroupCardSurface = "green" | "cream" | "neutral";
@@ -12,6 +16,7 @@ interface WordbookGroupCardProps {
   wordCount: number;
   relativeTime: string;
   surface: WordbookGroupCardSurface;
+  menuItems: EllipsisDropdownItem[];
 }
 
 function resolveSurfaceBackground(surface: WordbookGroupCardSurface) {
@@ -42,14 +47,11 @@ export function WordbookGroupCard({
   wordCount,
   relativeTime,
   surface,
+  menuItems,
 }: WordbookGroupCardProps) {
   const backgroundColor = resolveSurfaceBackground(surface);
   const progressFillColor = resolveProgressFillColor(surface, progressPercent);
   const clampedPercent = Math.min(100, Math.max(0, progressPercent));
-
-  const handleMenuPress = () => {
-    Alert.alert("알림", "준비 중이에요.");
-  };
 
   return (
     <View style={[styles.card, { backgroundColor }]}>
@@ -57,19 +59,10 @@ export function WordbookGroupCard({
         <Text style={styles.cardTitle} numberOfLines={2}>
           {title}
         </Text>
-        <Pressable
-          style={({ pressed }) => [styles.menuButton, pressed && styles.menuButtonPressed]}
-          onPress={handleMenuPress}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel="그룹 메뉴"
-        >
-          <MaterialCommunityIcons
-            name="dots-horizontal"
-            size={22}
-            color={Colors.text.primary}
-          />
-        </Pressable>
+        <EllipsisDropdownMenu
+          triggerAccessibilityLabel={`${title} 메뉴 열기`}
+          items={menuItems}
+        />
       </View>
 
       <View style={styles.progressRow}>
@@ -106,6 +99,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardHeader: {
+    position: "relative",
+    zIndex: 100,
+    elevation: 100,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
@@ -118,14 +114,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.text.primary,
     lineHeight: 20,
-  },
-  menuButton: {
-    marginTop: -4,
-    marginRight: -4,
-    padding: 4,
-  },
-  menuButtonPressed: {
-    opacity: 0.75,
   },
   progressRow: {
     flexDirection: "row",

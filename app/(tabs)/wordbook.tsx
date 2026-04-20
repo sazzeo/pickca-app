@@ -15,6 +15,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
 import type { Item } from "@/api/generated/pickcaAPI.schemas";
 import { AppHeader } from "@/components/common/AppHeader";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import {
   WordbookGroupCard,
   type WordbookGroupCardSurface,
@@ -39,6 +41,11 @@ export default function WordbookScreen() {
   const insets = useSafeAreaInsets();
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const [searchQuery, setSearchQuery] = useState("");
+  const [renamedWordbooks, setRenamedWordbooks] = useState<Record<number, string>>({});
+  const [deletedWordbookIds, setDeletedWordbookIds] = useState<number[]>([]);
+  const [editingWordbookId, setEditingWordbookId] = useState<number | null>(null);
+  const [deletingWordbookId, setDeletingWordbookId] = useState<number | null>(null);
+  const [editInput, setEditInput] = useState("");
 
   const memberId = user?.memberId ?? 0;
 
@@ -56,18 +63,84 @@ export default function WordbookScreen() {
   const apiErrorMessage =
     wordbooksData?.success === false ? wordbooksData.error?.message : undefined;
 
+  const visibleWordbooks = useMemo(
+    () =>
+      wordbooks
+        .filter((wordbook) => !deletedWordbookIds.includes(wordbook.id))
+        .map((wordbook) => ({
+          ...wordbook,
+          name: renamedWordbooks[wordbook.id] ?? wordbook.name,
+        })),
+    [wordbooks, deletedWordbookIds, renamedWordbooks],
+  );
+
   const totalPickedWords = useMemo(
-    () => wordbooks.reduce((sum, w) => sum + w.wordCount, 0),
-    [wordbooks],
+    () => visibleWordbooks.reduce((sum, w) => sum + w.wordCount, 0),
+    [visibleWordbooks],
   );
 
   const filteredWordbooks = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) {
-      return wordbooks;
+      return visibleWordbooks;
     }
-    return wordbooks.filter((w) => w.name.toLowerCase().includes(q));
-  }, [searchQuery, wordbooks]);
+    return visibleWordbooks.filter((w) => w.name.toLowerCase().includes(q));
+  }, [searchQuery, visibleWordbooks]);
+
+  const editingWordbook = useMemo(
+    () => visibleWordbooks.find((wordbook) => wordbook.id === editingWordbookId),
+    [visibleWordbooks, editingWordbookId],
+  );
+
+  const handleEditMenuPress = (id: number) => {
+    const wordbook = visibleWordbooks.find((item) => item.id === id);
+    if (!wordbook) {
+      return;
+    }
+    setEditingWordbookId(id);
+    setEditInput(wordbook.name);
+  };
+
+  const handleDeleteMenuPress = (id: number) => {
+    setDeletingWordbookId(id);
+  };
+
+  const createWordbookMenuItems = (id: number): EllipsisDropdownItem[] => [
+    {
+      key: "edit",
+      label: "수정하기",
+      icon: "pencil-outline",
+      onPress: () => handleEditMenuPress(id),
+    },
+    {
+      key: "delete",
+      label: "삭제하기",
+      icon: "trash-can-outline",
+      tone: "danger",
+      onPress: () => handleDeleteMenuPress(id),
+    },
+  ];
+
+  const handleConfirmEdit = () => {
+    if (!editingWordbookId) {
+      return;
+    }
+    const trimmedName = editInput.trim();
+    if (!trimmedName) {
+      return;
+    }
+    setRenamedWordbooks((prev) => ({ ...prev, [editingWordbookId]: trimmedName }));
+    setEditingWordbookId(null);
+    setEditInput("");
+  };
+
+  const handleConfirmDelete = () => {
+    if (!deletingWordbookId) {
+      return;
+    }
+    setDeletedWordbookIds((prev) => [...prev, deletingWordbookId]);
+    setDeletingWordbookId(null);
+  };
 
   const showError = isError || Boolean(apiErrorMessage);
 
@@ -148,11 +221,42 @@ export default function WordbookScreen() {
                 wordCount={item.wordCount}
                 relativeTime={formatRelativeTimeKo(item.createdAt)}
                 surface={surfaceForWordbookId(item.id)}
+                menuItems={createWordbookMenuItems(item.id)}
               />
             ))}
           </View>
         )}
       </ScrollView>
+
+      <ConfirmDialog
+        visible={editingWordbookId !== null}
+        title="수정하기"
+        cancelLabel="취소"
+        confirmLabel="수정하기"
+        confirmDisabled={!editInput.trim()}
+        input={{
+          value: editInput,
+          onChangeText: setEditInput,
+          autoFocus: true,
+          maxLength: 50,
+        }}
+        onCancel={() => {
+          setEditingWordbookId(null);
+          setEditInput("");
+        }}
+        onConfirm={handleConfirmEdit}
+      />
+
+      <ConfirmDialog
+        visible={deletingWordbookId !== null}
+        title="정말 삭제하실건가요?"
+        description="삭제된 단어장은 복구할 수 없어요"
+        cancelLabel="취소"
+        confirmLabel="삭제하기"
+        tone="danger"
+        onCancel={() => setDeletingWordbookId(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </View>
   );
 }
