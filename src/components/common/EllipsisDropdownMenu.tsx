@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { useRef, useState } from "react";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
@@ -20,31 +20,47 @@ interface EllipsisDropdownMenuProps {
   items: EllipsisDropdownItem[];
 }
 
+interface TriggerLayout {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+const DROPDOWN_MIN_WIDTH = 120;
+const DROPDOWN_ITEM_HEIGHT = 42;
+
 export function EllipsisDropdownMenu({
   triggerAccessibilityLabel,
   items,
 }: EllipsisDropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [triggerLayout, setTriggerLayout] = useState<TriggerLayout | null>(null);
+  const triggerRef = useRef<View>(null);
+
+  const handleOpen = () => {
+    triggerRef.current?.measure((_x, _y, width, height, pageX, pageY) => {
+      setTriggerLayout({ x: pageX, y: pageY, width, height });
+      setIsOpen(true);
+    });
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   const handleItemPress = (onPress: () => void) => {
-    setIsOpen(false);
+    handleClose();
     onPress();
   };
 
-  return (
-    <View style={styles.menuAnchor}>
-      {isOpen ? (
-        <Pressable
-          style={styles.menuBackdrop}
-          onPress={() => setIsOpen(false)}
-          accessibilityRole="button"
-          accessibilityLabel="메뉴 닫기"
-        />
-      ) : null}
+  const dropdownTop = triggerLayout ? triggerLayout.y + triggerLayout.height + 4 : 0;
 
+  return (
+    <View ref={triggerRef} style={styles.menuAnchor}>
       <Pressable
         style={({ pressed }) => [styles.menuButton, pressed && styles.menuButtonPressed]}
-        onPress={() => setIsOpen((prev) => !prev)}
+        onPress={handleOpen}
         hitSlop={12}
         accessibilityRole="button"
         accessibilityLabel={triggerAccessibilityLabel}
@@ -56,51 +72,68 @@ export function EllipsisDropdownMenu({
         />
       </Pressable>
 
-      {isOpen ? (
-        <View style={styles.dropdownMenu}>
-          {items.map((item, index) => {
-            const isDanger = item.tone === "danger";
-            const iconColor = isDanger ? Colors.semantic.danger : Colors.brand.greenDark;
-            const textStyle = isDanger ? styles.dangerItemText : styles.dropdownItemText;
+      <Modal
+        visible={isOpen}
+        transparent
+        animationType="none"
+        onRequestClose={handleClose}
+        statusBarTranslucent
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={handleClose}
+          accessibilityRole="button"
+          accessibilityLabel="메뉴 닫기"
+        >
+          {triggerLayout ? (
+            <View
+              style={[
+                styles.dropdownMenu,
+                {
+                  top: dropdownTop,
+                  left: triggerLayout.x + triggerLayout.width - DROPDOWN_MIN_WIDTH,
+                },
+              ]}
+            >
+              {items.map((item, index) => {
+                const isDanger = item.tone === "danger";
+                const iconColor = isDanger ? Colors.semantic.danger : Colors.brand.greenDark;
+                const textStyle = isDanger ? styles.dangerItemText : styles.dropdownItemText;
 
-            return (
-              <View key={item.key}>
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.dropdownItem,
-                    pressed && styles.dropdownItemPressed,
-                  ]}
-                  onPress={() => handleItemPress(item.onPress)}
-                  accessibilityRole="button"
-                  accessibilityLabel={item.label}
-                >
-                  <MaterialCommunityIcons
-                    name={item.icon}
-                    size={18}
-                    color={iconColor}
-                  />
-                  <Text style={textStyle}>{item.label}</Text>
-                </Pressable>
+                return (
+                  <View key={item.key}>
+                    <Pressable
+                      style={({ pressed }) => [
+                        styles.dropdownItem,
+                        pressed && styles.dropdownItemPressed,
+                      ]}
+                      onPress={() => handleItemPress(item.onPress)}
+                      accessibilityRole="button"
+                      accessibilityLabel={item.label}
+                    >
+                      <MaterialCommunityIcons
+                        name={item.icon}
+                        size={18}
+                        color={iconColor}
+                      />
+                      <Text style={textStyle}>{item.label}</Text>
+                    </Pressable>
 
-                {index < items.length - 1 ? <View style={styles.dropdownDivider} /> : null}
-              </View>
-            );
-          })}
-        </View>
-      ) : null}
+                    {index < items.length - 1 ? <View style={styles.dropdownDivider} /> : null}
+                  </View>
+                );
+              })}
+            </View>
+          ) : null}
+        </Pressable>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   menuAnchor: {
-    position: "relative",
-    zIndex: 1000,
-    elevation: 1000,
-  },
-  menuBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 9,
+    alignSelf: "flex-start",
   },
   menuButton: {
     marginTop: -4,
@@ -110,12 +143,12 @@ const styles = StyleSheet.create({
   menuButtonPressed: {
     opacity: 0.75,
   },
+  modalBackdrop: {
+    flex: 1,
+  },
   dropdownMenu: {
     position: "absolute",
-    top: 30,
-    right: -2,
-    zIndex: 2000,
-    minWidth: 108,
+    minWidth: DROPDOWN_MIN_WIDTH,
     backgroundColor: Colors.bg.white,
     borderRadius: 10,
     borderWidth: 1,
@@ -132,7 +165,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8,
     paddingHorizontal: 12,
-    height: 42,
+    height: DROPDOWN_ITEM_HEIGHT,
   },
   dropdownItemPressed: {
     backgroundColor: Colors.bg.muted,

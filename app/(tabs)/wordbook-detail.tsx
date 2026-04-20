@@ -14,6 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWords } from "@/api/generated/wordbooks/wordbooks";
 import type { WordMeaningResponsePartOfSpeech, WordResponse } from "@/api/generated/pickcaAPI.schemas";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
+import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 
@@ -65,6 +68,7 @@ export default function WordbookDetailScreen() {
 
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const [selectedFilter, setSelectedFilter] = useState<FilterTabKey>("all");
+  const [deletingWordId, setDeletingWordId] = useState<number | string | null>(null);
 
   const wordbookId = Number(wordbookIdParam ?? "0");
   const memberId = user?.memberId ?? 0;
@@ -92,7 +96,7 @@ export default function WordbookDetailScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable
           style={({ pressed }) => [styles.backButton, pressed && styles.backButtonPressed]}
-          onPress={() => router.back()}
+          onPress={() => router.navigate("/(tabs)/wordbook")}
           accessibilityRole="button"
           accessibilityLabel="뒤로"
         >
@@ -175,18 +179,18 @@ export default function WordbookDetailScreen() {
                   <View style={styles.statusChip}>
                     <Text style={styles.statusChipText}>학습 전</Text>
                   </View>
-                  <Pressable
-                    style={({ pressed }) => [styles.moreButton, pressed && styles.moreButtonPressed]}
-                    onPress={() => {}}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${word.word} 메뉴`}
-                  >
-                    <MaterialCommunityIcons
-                      name="dots-horizontal"
-                      size={18}
-                      color={Colors.text.secondary}
-                    />
-                  </Pressable>
+                  <EllipsisDropdownMenu
+                    items={[
+                      {
+                        key: "delete",
+                        label: "삭제하기",
+                        icon: "trash-can-outline",
+                        tone: "danger",
+                        onPress: () => setDeletingWordId(word.id ?? word.word),
+                      } satisfies EllipsisDropdownItem,
+                    ]}
+                    triggerAccessibilityLabel={`${word.word} 메뉴`}
+                  />
                 </View>
 
                 <Text style={styles.wordTitle}>{word.word}</Text>
@@ -198,6 +202,17 @@ export default function WordbookDetailScreen() {
           </View>
         )}
       </ScrollView>
+
+      <ConfirmDialog
+        visible={deletingWordId !== null}
+        title="정말 삭제하실건가요?"
+        description="삭제된 단어는 복구할 수 없어요"
+        cancelLabel="취소"
+        confirmLabel="삭제하기"
+        tone="danger"
+        onCancel={() => setDeletingWordId(null)}
+        onConfirm={() => setDeletingWordId(null)}
+      />
     </View>
   );
 }
