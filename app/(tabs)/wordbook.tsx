@@ -254,7 +254,6 @@ export default function WordbookScreen() {
                     pathname: "/(tabs)/wordbook-detail",
                     params: {
                       wordbookId: String(item.id),
-                      wordbookName: item.name,
                     },
                   })
                 }

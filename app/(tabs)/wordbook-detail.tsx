@@ -59,9 +59,8 @@ function resolvePartOfSpeech(word: WordResponse) {
 export default function WordbookDetailScreen() {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
-  const { wordbookId: wordbookIdParam, wordbookName } = useLocalSearchParams<{
+  const { wordbookId: wordbookIdParam } = useLocalSearchParams<{
     wordbookId?: string;
-    wordbookName?: string;
   }>();
 
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
@@ -145,8 +144,6 @@ export default function WordbookDetailScreen() {
             );
           })}
         </ScrollView>
-
-        {wordbookName ? <Text style={styles.wordbookName}>{wordbookName}</Text> : null}
 
         {isPending ? (
           <View style={styles.centerBlock}>
@@ -233,10 +230,9 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   headerTitle: {
-    fontSize: 30,
+    fontSize: 17,
     fontWeight: "700",
     color: Colors.text.primary,
-    lineHeight: 32,
   },
   sourceButton: {
     minWidth: 72,
@@ -286,19 +282,12 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   filterText: {
-    fontSize: 18,
-    lineHeight: 22,
+    fontSize: 13,
     fontWeight: "500",
     color: Colors.text.secondary,
   },
   filterTextSelected: {
     color: Colors.text.white,
-  },
-  wordbookName: {
-    paddingHorizontal: 18,
-    marginBottom: 8,
-    fontSize: 14,
-    color: Colors.text.secondary,
   },
   centerBlock: {
     alignItems: "center",
@@ -352,8 +341,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   statusChipText: {
-    fontSize: 18,
-    lineHeight: 22,
+    fontSize: 12,
     fontWeight: "500",
     color: Colors.brand.greenDark,
   },
@@ -365,15 +353,13 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   wordTitle: {
-    fontSize: 40,
-    lineHeight: 44,
+    fontSize: 20,
     fontWeight: "700",
     color: Colors.text.primary,
     marginBottom: 2,
   },
   wordDescription: {
-    fontSize: 32,
-    lineHeight: 38,
+    fontSize: 13,
     color: Colors.text.secondary,
   },
 });
