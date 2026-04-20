@@ -17,6 +17,7 @@ interface WordbookGroupCardProps {
   relativeTime: string;
   surface: WordbookGroupCardSurface;
   menuItems: EllipsisDropdownItem[];
+  onPress?: () => void;
 }
 
 function resolveSurfaceBackground(surface: WordbookGroupCardSurface) {
@@ -48,13 +49,24 @@ export function WordbookGroupCard({
   relativeTime,
   surface,
   menuItems,
+  onPress,
 }: WordbookGroupCardProps) {
   const backgroundColor = resolveSurfaceBackground(surface);
   const progressFillColor = resolveProgressFillColor(surface, progressPercent);
   const clampedPercent = Math.min(100, Math.max(0, progressPercent));
 
   return (
-    <View style={[styles.card, { backgroundColor }]}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.card,
+        { backgroundColor },
+        pressed && styles.cardPressed,
+      ]}
+      onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${title} 단어장 열기`}
+    >
       <View style={styles.cardHeader}>
         <Text style={styles.cardTitle} numberOfLines={2}>
           {title}
@@ -86,7 +98,7 @@ export function WordbookGroupCard({
         </View>
         <Text style={styles.relativeTime}>{relativeTime}</Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -97,6 +109,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     marginBottom: 12,
+  },
+  cardPressed: {
+    opacity: 0.85,
   },
   cardHeader: {
     position: "relative",

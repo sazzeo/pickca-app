@@ -249,6 +249,15 @@ export default function WordbookScreen() {
                 relativeTime={formatRelativeTimeKo(item.createdAt)}
                 surface={surfaceForWordbookId(item.id)}
                 menuItems={createWordbookMenuItems(item.id)}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/wordbook-detail",
+                    params: {
+                      wordbookId: String(item.id),
+                      wordbookName: item.name,
+                    },
+                  })
+                }
               />
             ))}
           </View>
