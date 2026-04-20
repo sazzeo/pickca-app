@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,7 +13,11 @@ import {
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
+import {
+  useDeleteWordbook,
+  useGetWordbooks,
+  useUpdateWordbookName,
+} from "@/api/generated/wordbooks/wordbooks";
 import type { Item } from "@/api/generated/pickcaAPI.schemas";
 import { AppHeader } from "@/components/common/AppHeader";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
@@ -41,11 +46,11 @@ export default function WordbookScreen() {
   const insets = useSafeAreaInsets();
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [renamedWordbooks, setRenamedWordbooks] = useState<Record<number, string>>({});
-  const [deletedWordbookIds, setDeletedWordbookIds] = useState<number[]>([]);
   const [editingWordbookId, setEditingWordbookId] = useState<number | null>(null);
   const [deletingWordbookId, setDeletingWordbookId] = useState<number | null>(null);
   const [editInput, setEditInput] = useState("");
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
+  const [isDeletingWordbook, setIsDeletingWordbook] = useState(false);
 
   const memberId = user?.memberId ?? 0;
 
@@ -58,42 +63,33 @@ export default function WordbookScreen() {
     { memberId },
     { query: { enabled: memberId > 0 } },
   );
+  const { mutateAsync: updateWordbookName } = useUpdateWordbookName();
+  const { mutateAsync: deleteWordbook } = useDeleteWordbook();
 
   const wordbooks: Item[] = wordbooksData?.data?.wordbooks ?? [];
   const apiErrorMessage =
     wordbooksData?.success === false ? wordbooksData.error?.message : undefined;
 
-  const visibleWordbooks = useMemo(
-    () =>
-      wordbooks
-        .filter((wordbook) => !deletedWordbookIds.includes(wordbook.id))
-        .map((wordbook) => ({
-          ...wordbook,
-          name: renamedWordbooks[wordbook.id] ?? wordbook.name,
-        })),
-    [wordbooks, deletedWordbookIds, renamedWordbooks],
-  );
-
   const totalPickedWords = useMemo(
-    () => visibleWordbooks.reduce((sum, w) => sum + w.wordCount, 0),
-    [visibleWordbooks],
+    () => wordbooks.reduce((sum, w) => sum + w.wordCount, 0),
+    [wordbooks],
   );
 
   const filteredWordbooks = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) {
-      return visibleWordbooks;
+      return wordbooks;
     }
-    return visibleWordbooks.filter((w) => w.name.toLowerCase().includes(q));
-  }, [searchQuery, visibleWordbooks]);
+    return wordbooks.filter((w) => w.name.toLowerCase().includes(q));
+  }, [searchQuery, wordbooks]);
 
   const editingWordbook = useMemo(
-    () => visibleWordbooks.find((wordbook) => wordbook.id === editingWordbookId),
-    [visibleWordbooks, editingWordbookId],
+    () => wordbooks.find((wordbook) => wordbook.id === editingWordbookId),
+    [wordbooks, editingWordbookId],
   );
 
   const handleEditMenuPress = (id: number) => {
-    const wordbook = visibleWordbooks.find((item) => item.id === id);
+    const wordbook = wordbooks.find((item) => item.id === id);
     if (!wordbook) {
       return;
     }
@@ -121,7 +117,7 @@ export default function WordbookScreen() {
     },
   ];
 
-  const handleConfirmEdit = () => {
+  const handleConfirmEdit = async () => {
     if (!editingWordbookId) {
       return;
     }
@@ -129,17 +125,48 @@ export default function WordbookScreen() {
     if (!trimmedName) {
       return;
     }
-    setRenamedWordbooks((prev) => ({ ...prev, [editingWordbookId]: trimmedName }));
-    setEditingWordbookId(null);
-    setEditInput("");
+    if (isUpdatingName) {
+      return;
+    }
+
+    setIsUpdatingName(true);
+    try {
+      await updateWordbookName({
+        wordbookId: editingWordbookId,
+        data: { name: trimmedName },
+        params: { memberId },
+      });
+      setEditingWordbookId(null);
+      setEditInput("");
+      await refetch();
+    } catch {
+      Alert.alert("오류", "단어장 이름 수정에 실패했어요.");
+    } finally {
+      setIsUpdatingName(false);
+    }
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!deletingWordbookId) {
       return;
     }
-    setDeletedWordbookIds((prev) => [...prev, deletingWordbookId]);
-    setDeletingWordbookId(null);
+    if (isDeletingWordbook) {
+      return;
+    }
+
+    setIsDeletingWordbook(true);
+    try {
+      await deleteWordbook({
+        wordbookId: deletingWordbookId,
+        params: { memberId },
+      });
+      setDeletingWordbookId(null);
+      await refetch();
+    } catch {
+      Alert.alert("오류", "단어장 삭제에 실패했어요.");
+    } finally {
+      setIsDeletingWordbook(false);
+    }
   };
 
   const showError = isError || Boolean(apiErrorMessage);
@@ -233,7 +260,7 @@ export default function WordbookScreen() {
         title="수정하기"
         cancelLabel="취소"
         confirmLabel="수정하기"
-        confirmDisabled={!editInput.trim()}
+        confirmDisabled={!editInput.trim() || isUpdatingName}
         input={{
           value: editInput,
           onChangeText: setEditInput,
@@ -244,7 +271,7 @@ export default function WordbookScreen() {
           setEditingWordbookId(null);
           setEditInput("");
         }}
-        onConfirm={handleConfirmEdit}
+        onConfirm={() => void handleConfirmEdit()}
       />
 
       <ConfirmDialog
@@ -254,8 +281,9 @@ export default function WordbookScreen() {
         cancelLabel="취소"
         confirmLabel="삭제하기"
         tone="danger"
+        confirmDisabled={isDeletingWordbook}
         onCancel={() => setDeletingWordbookId(null)}
-        onConfirm={handleConfirmDelete}
+        onConfirm={() => void handleConfirmDelete()}
       />
     </View>
   );
