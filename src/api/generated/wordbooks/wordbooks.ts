@@ -32,10 +32,13 @@ import type {
   ApiResponseWordbookWordListResponse,
   CreateWordbookParams,
   CreateWordbookRequest,
+  DeleteWordbookParams,
   GetSourcesParams,
   GetWordbooksParams,
   GetWordsParams,
   RemoveWordParams,
+  UpdateWordbookNameParams,
+  UpdateWordbookNameRequest,
   WordbookAddWordsRequest
 } from '../pickcaAPI.schemas';
 
@@ -367,6 +370,135 @@ export const useAddWords = <TError = unknown,
       > => {
 
       const mutationOptions = getAddWordsMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * @summary 단어장 삭제
+ */
+export const deleteWordbook = (
+    wordbookId: number,
+    params: DeleteWordbookParams,
+ ) => {
+      
+      
+      return fetcher<ApiResponse>(
+      {url: `/api/wordbooks/${wordbookId}`, method: 'DELETE',
+        params
+    },
+      );
+    }
+  
+
+
+export const getDeleteWordbookMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWordbook>>, TError,{wordbookId: number;params: DeleteWordbookParams}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof deleteWordbook>>, TError,{wordbookId: number;params: DeleteWordbookParams}, TContext> => {
+
+const mutationKey = ['deleteWordbook'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteWordbook>>, {wordbookId: number;params: DeleteWordbookParams}> = (props) => {
+          const {wordbookId,params} = props ?? {};
+
+          return  deleteWordbook(wordbookId,params,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteWordbookMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWordbook>>>
+    
+    export type DeleteWordbookMutationError = unknown
+
+    /**
+ * @summary 단어장 삭제
+ */
+export const useDeleteWordbook = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWordbook>>, TError,{wordbookId: number;params: DeleteWordbookParams}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteWordbook>>,
+        TError,
+        {wordbookId: number;params: DeleteWordbookParams},
+        TContext
+      > => {
+
+      const mutationOptions = getDeleteWordbookMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
+ * @summary 단어장 이름 수정
+ */
+export const updateWordbookName = (
+    wordbookId: number,
+    updateWordbookNameRequest: UpdateWordbookNameRequest,
+    params: UpdateWordbookNameParams,
+ ) => {
+      
+      
+      return fetcher<ApiResponse>(
+      {url: `/api/wordbooks/${wordbookId}`, method: 'PATCH',
+      headers: {'Content-Type': 'application/json', },
+      data: updateWordbookNameRequest,
+        params
+    },
+      );
+    }
+  
+
+
+export const getUpdateWordbookNameMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWordbookName>>, TError,{wordbookId: number;data: UpdateWordbookNameRequest;params: UpdateWordbookNameParams}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof updateWordbookName>>, TError,{wordbookId: number;data: UpdateWordbookNameRequest;params: UpdateWordbookNameParams}, TContext> => {
+
+const mutationKey = ['updateWordbookName'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateWordbookName>>, {wordbookId: number;data: UpdateWordbookNameRequest;params: UpdateWordbookNameParams}> = (props) => {
+          const {wordbookId,data,params} = props ?? {};
+
+          return  updateWordbookName(wordbookId,data,params,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateWordbookNameMutationResult = NonNullable<Awaited<ReturnType<typeof updateWordbookName>>>
+    export type UpdateWordbookNameMutationBody = UpdateWordbookNameRequest
+    export type UpdateWordbookNameMutationError = unknown
+
+    /**
+ * @summary 단어장 이름 수정
+ */
+export const useUpdateWordbookName = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWordbookName>>, TError,{wordbookId: number;data: UpdateWordbookNameRequest;params: UpdateWordbookNameParams}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateWordbookName>>,
+        TError,
+        {wordbookId: number;data: UpdateWordbookNameRequest;params: UpdateWordbookNameParams},
+        TContext
+      > => {
+
+      const mutationOptions = getUpdateWordbookNameMutationOptions(options);
 
       return useMutation(mutationOptions, queryClient);
     }

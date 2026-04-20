@@ -372,6 +372,15 @@ export interface ApiResponseMapStringInteger {
   error?: ApiError;
 }
 
+export interface UpdateWordbookNameRequest {
+  /**
+   * 변경할 단어장 이름
+   * @minLength 0
+   * @maxLength 50
+   */
+  name: string;
+}
+
 export interface UpdateNicknameRequest {
   /** 변경할 닉네임 */
   nickname: string;
@@ -616,6 +625,14 @@ request: AdminWordListRequest;
 
 export type CefrImportBody = {
   file: Blob;
+};
+
+export type DeleteWordbookParams = {
+memberId: number;
+};
+
+export type UpdateWordbookNameParams = {
+memberId: number;
 };
 
 export type UpdateNicknameParams = {
