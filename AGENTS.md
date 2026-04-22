@@ -39,6 +39,7 @@ pickca-app/
 │   ├── _layout.tsx             # 루트 레이아웃 (QueryClient, PaperProvider, AuthProvider)
 │   ├── index.tsx               # 진입점 → 인증 여부에 따라 리다이렉트
 │   ├── extract-result.tsx      # 단어 추출 결과 화면 (탭 외부 화면)
+│   ├── word-card.tsx           # 단어 카드 스와이프 화면 (탭 외부)
 │   ├── (auth)/
 │   │   ├── _layout.tsx         # 비인증 Guard
 │   │   └── sign-in.tsx         # 소셜 로그인 화면
@@ -47,6 +48,7 @@ pickca-app/
 │       ├── index.tsx           # 홈 탭
 │       ├── extract.tsx         # 단어 추출 탭
 │       ├── wordbook.tsx        # 단어장 탭
+│       ├── wordbook-detail.tsx # 단어장 상세 화면
 │       ├── study.tsx           # 학습 탭
 │       ├── quiz.tsx            # 퀴즈 화면 (탭바 미노출)
 │       └── profile.tsx         # 프로필·로그아웃 화면 (탭바 미노출)
@@ -57,6 +59,7 @@ pickca-app/
 │   │   ├── auth/               # 인증 관련 컴포넌트 (GoogleSignInPanel 등)
 │   │   ├── common/             # 공통 컴포넌트 (AppHeader, BottomTabBar 등)
 │   │   ├── home/               # 홈 화면 컴포넌트 (ExtractionCard, GreetingSection 등)
+│   │   ├── study/              # 학습 화면 컴포넌트 (WordCard 등)
 │   │   └── wordbook/           # 단어장 화면 컴포넌트 (WordbookGroupCard 등)
 │   ├── contexts/
 │   │   └── AuthContext.tsx     # 전역 인증 상태
@@ -65,7 +68,8 @@ pickca-app/
 │       ├── colors.ts           # 색상 상수
 │       ├── storage.ts          # SecureStore 토큰 관리
 │       ├── theme.ts            # React Native Paper 테마
-│       └── wordExtraction.ts   # 단어 추출 API 호출 유틸
+│       ├── wordExtraction.ts   # 단어 추출 API 호출 유틸
+│       └── wordHelpers.ts     # 단어 표시 헬퍼 (뜻·품사 변환)
 ├── assets/                     # 이미지·폰트
 ├── app.config.ts               # Expo 설정
 ├── orval.config.ts             # API 코드 생성 설정

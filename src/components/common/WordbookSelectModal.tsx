@@ -25,7 +25,7 @@ interface WordbookSelectModalProps {
   wordIds: number[];
   sourceText: string;
   memberId: number;
-  onSuccess: (count: number) => void;
+  onSuccess: (count: number, wordbookId: number) => void;
   onError: (message: string) => void;
 }
 
@@ -67,7 +67,7 @@ export function WordbookSelectModal({
         params: { memberId },
       });
       handleDismiss();
-      onSuccess(wordIds.length);
+      onSuccess(wordIds.length, wordbookId);
     } catch {
       onError("단어장 저장 중 오류가 발생했어요.");
     } finally {
@@ -96,7 +96,7 @@ export function WordbookSelectModal({
         params: { memberId },
       });
       handleDismiss();
-      onSuccess(wordIds.length);
+      onSuccess(wordIds.length, newWordbookId);
     } catch {
       onError("단어장 생성 중 오류가 발생했어요.");
     } finally {
