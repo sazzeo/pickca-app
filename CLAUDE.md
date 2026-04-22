@@ -17,6 +17,7 @@
 - `axios` + `@tanstack/react-query` v5 + `orval` (OpenAPI → React Query 훅 자동 생성)
 - **expo-secure-store** — 토큰 저장 (`src/lib/storage.ts`)
 - **`@react-native-google-signin/google-signin`** — Google 로그인, `AuthContext` (`src/contexts/AuthContext.tsx`)
+- **`react-native-gesture-handler`** + **`react-native-reanimated`** — 단어 카드 스와이프 등 제스처 처리
 
 ### axiosInstance (`src/lib/axios.ts`)
 - `X-Client-Type: APP` / `Authorization: Bearer {accessToken}` 자동 첨부
@@ -32,6 +33,8 @@
 - **API 호출은 반드시 orval 생성 훅을 사용한다.** `axiosInstance` 직접 호출 금지.
 - **⚠️ API 연동 시 훅이 없으면 `pnpm generate`를 먼저 실행해 생성한 뒤 사용한다.**  
   백엔드 엔드포인트가 없는 경우 백엔드 작업 완료 후 생성한다. 임의로 훅을 수동 작성하지 않는다.
+- **API 응답 구조 확인 순서**: `src/api/generated/pickcaAPI.schemas.ts` → `../docs/domains/{도메인}.md` → 백엔드 소스 탐색.  
+  백엔드 코드를 먼저 열지 않는다.
 
 ---
 
@@ -42,6 +45,7 @@ app/
 ├── _layout.tsx          # 루트 (QueryClient, PaperProvider, AuthProvider)
 ├── index.tsx            # 진입점 → 인증 여부 리다이렉트
 ├── extract-result.tsx   # 단어 추출 결과 (탭 외부)
+├── word-card.tsx        # 단어 카드 스와이프 화면 (탭 외부)
 ├── (auth)/
 │   ├── _layout.tsx      # 비인증 Guard
 │   └── sign-in.tsx
@@ -49,7 +53,8 @@ app/
     ├── _layout.tsx      # 인증 Guard + 탭바
     ├── index.tsx        # 홈 (카운트 하드코딩 중)
     ├── extract.tsx      # 단어 추출 ✅
-    ├── wordbook.tsx     # 단어장 목록 ✅ (상세·메뉴 미구현)
+    ├── wordbook.tsx     # 단어장 목록 ✅
+    ├── wordbook-detail.tsx # 단어장 상세 ✅ (단어 목록·삭제·카드 진입)
     ├── study.tsx        # 🚧 준비 중
     ├── quiz.tsx         # 🚧 준비 중 (탭바 미노출)
     └── profile.tsx      # 프로필·로그아웃 (탭바 미노출)
@@ -62,12 +67,14 @@ app/
 - 단어 추출: `extract.tsx` → `useExtract` → `extract-result.tsx` (JSON params)
 - PENDING 단어 재조회: 첫 PENDING 카드 직전 `GET /api/words`로 일괄 재조회
 - 단어장 탭: 목록 API·검색·카드(`WordbookGroupCard`)
+- 단어장 상세: 단어 목록·삭제·수정 드롭다운·카드 화면 진입 (`wordbook-detail.tsx`)
+- 단어 카드: Pan Gesture 기반 스와이프 스냅 스크롤 (`word-card.tsx`, `WordCard.tsx`)
 
 ### 미연동 (백엔드 선행 필요)
 - **단어장에 추가**: `POST /api/wordbooks/{id}/words` — `WordResponse`에 `id` 없음 (`api/TODOS.md`)
 - **홈 카운트**: `count={84}`, `count={18}` 하드코딩
 - **CEFR 레벨**: `PATCH /api/members/me/cefr-level` 미구현
-- **학습·퀴즈**: 미구현
+- **퀴즈**: 미구현
 
 ---
 
