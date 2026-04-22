@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
@@ -78,16 +78,11 @@ export default function WordCardScreen() {
   const initialIndex = Math.max(0, Math.min(Number(initialIndexParam ?? "0"), total - 1));
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  // 현재 인덱스를 worklet에서 읽기 위한 ref
-  const currentIndexRef = useRef(initialIndex);
+  // UI 스레드 worklet에서 읽어야 하므로 SharedValue로 관리
+  const currentIndexSV = useSharedValue(initialIndex);
 
   // 카드 덱 전체의 translateX — initialIndex 위치에서 시작
   const translateX = useSharedValue(-initialIndex * SNAP_INTERVAL);
-
-  // currentIndex가 바뀌면 ref 동기화
-  useEffect(() => {
-    currentIndexRef.current = currentIndex;
-  }, [currentIndex]);
 
   const headerHeight = insets.top + 52 + 48;
   const footerHeight = Math.max(insets.bottom, 16);
@@ -97,17 +92,16 @@ export default function WordCardScreen() {
 
   // --- Pan Gesture ---
   const panGesture = Gesture.Pan()
-    .activeOffsetX([-8, 8]) // 좌우 8px 이상 움직여야 제스처 시작 (수직 스크롤과 충돌 방지)
+    .activeOffsetX([-8, 8])
     .onUpdate((e) => {
-      const idx = currentIndexRef.current;
-      // 엣지에서 저항감: 양 끝에서는 1/4로 감쇠
+      const idx = currentIndexSV.value;
       const isAtStart = idx === 0 && e.translationX > 0;
       const isAtEnd = idx === total - 1 && e.translationX < 0;
       const resistance = isAtStart || isAtEnd ? 0.25 : 1;
       translateX.value = -idx * SNAP_INTERVAL + e.translationX * resistance;
     })
     .onEnd((e) => {
-      const idx = currentIndexRef.current;
+      const idx = currentIndexSV.value;
       const advance =
         Math.abs(e.translationX) > SWIPE_DISTANCE_THRESHOLD ||
         Math.abs(e.velocityX) > SWIPE_VELOCITY_THRESHOLD;
@@ -121,7 +115,8 @@ export default function WordCardScreen() {
       translateX.value = withSpring(-next * SNAP_INTERVAL, SPRING_CONFIG);
 
       if (next !== idx) {
-        runOnJS(setCurrentIndex)(next);
+        currentIndexSV.value = next; // UI 스레드 즉시 반영
+        runOnJS(setCurrentIndex)(next); // React 상태 동기화 (진행률 바 등)
       }
     });
 
