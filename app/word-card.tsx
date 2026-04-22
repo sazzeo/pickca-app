@@ -1,14 +1,14 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  View,
-  type ListRenderItem,
-} from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -17,15 +17,22 @@ import { WordCard, type WordCardItem } from "@/components/study/WordCard";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
-// 양옆에 살짝 보이는 peek 영역
 const PEEK_SIZE = 20;
 const CARD_GAP = 12;
 const CARD_H_PADDING = PEEK_SIZE + CARD_GAP;
-const SCREEN_WIDTH = Dimensions.get("window").width;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - CARD_H_PADDING * 2;
-
-// 각 카드가 차지하는 스냅 단위 (카드 폭 + 오른쪽 마진)
 const SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
+
+// 이 거리 or 이 속도 이상이면 방향대로 카드 전진
+const SWIPE_DISTANCE_THRESHOLD = CARD_WIDTH * 0.2;
+const SWIPE_VELOCITY_THRESHOLD = 400;
+
+const SPRING_CONFIG = {
+  damping: 22,
+  stiffness: 220,
+  mass: 0.8,
+};
 
 function mapToCardItem(word: WordResponse, index: number): WordCardItem {
   return {
@@ -39,45 +46,13 @@ function mapToCardItem(word: WordResponse, index: number): WordCardItem {
   };
 }
 
-// 개발 전용 목업 — API 연동 전 라우팅 테스트용
+// 개발 전용 목업
 const MOCK_WORDS: WordResponse[] = __DEV__
   ? [
-      {
-        id: 1,
-        word: "Inevitable",
-        phonetic: "'ɪnevɪtəbəl",
-        phoneticKorean: "이네비터블",
-        primaryMeanings: "피할 수 없는",
-        collectStatus: "DONE",
-        meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "피할 수 없는", koreanMeanings: "피할 수 없는" }],
-      },
-      {
-        id: 2,
-        word: "Resilient",
-        phonetic: "rɪˈzɪliənt",
-        phoneticKorean: "리질리언트",
-        primaryMeanings: "회복력 있는",
-        collectStatus: "DONE",
-        meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "회복력 있는", koreanMeanings: "회복력 있는" }],
-      },
-      {
-        id: 3,
-        word: "Ephemeral",
-        phonetic: "ɪˈfemərəl",
-        phoneticKorean: "이페머럴",
-        primaryMeanings: "단명하는, 일시적인",
-        collectStatus: "DONE",
-        meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "단명하는", koreanMeanings: "단명하는, 일시적인" }],
-      },
-      {
-        id: 4,
-        word: "Eloquent",
-        phonetic: "'eləkwənt",
-        phoneticKorean: "엘로퀀트",
-        primaryMeanings: "유창한",
-        collectStatus: "DONE",
-        meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "유창한", koreanMeanings: "유창한, 웅변적인" }],
-      },
+      { id: 1, word: "Inevitable", phonetic: "ɪˈnevɪtəbəl", phoneticKorean: "이네비터블", primaryMeanings: "피할 수 없는", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "피할 수 없는", koreanMeanings: "피할 수 없는" }] },
+      { id: 2, word: "Resilient", phonetic: "rɪˈzɪliənt", phoneticKorean: "리질리언트", primaryMeanings: "회복력 있는", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "회복력 있는", koreanMeanings: "회복력 있는" }] },
+      { id: 3, word: "Ephemeral", phonetic: "ɪˈfemərəl", phoneticKorean: "이페머럴", primaryMeanings: "단명하는, 일시적인", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "단명하는", koreanMeanings: "단명하는, 일시적인" }] },
+      { id: 4, word: "Eloquent", phonetic: "ˈeləkwənt", phoneticKorean: "엘로퀀트", primaryMeanings: "유창한", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "유창한", koreanMeanings: "유창한, 웅변적인" }] },
     ]
   : [];
 
@@ -88,11 +63,8 @@ export default function WordCardScreen() {
 
   const rawWords: WordResponse[] = useMemo(() => {
     if (wordsParam) {
-      try {
-        return JSON.parse(wordsParam) as WordResponse[];
-      } catch {
-        return MOCK_WORDS;
-      }
+      try { return JSON.parse(wordsParam) as WordResponse[]; }
+      catch { return MOCK_WORDS; }
     }
     return MOCK_WORDS;
   }, [wordsParam]);
@@ -102,76 +74,65 @@ export default function WordCardScreen() {
     [rawWords],
   );
 
-  const initialIndex = Math.max(
-    0,
-    Math.min(Number(initialIndexParam ?? "0"), cards.length - 1),
-  );
+  const total = cards.length;
+  const initialIndex = Math.max(0, Math.min(Number(initialIndexParam ?? "0"), total - 1));
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const flatListRef = useRef<FlatList<WordCardItem>>(null);
+  // 현재 인덱스를 worklet에서 읽기 위한 ref
+  const currentIndexRef = useRef(initialIndex);
 
-  // 지정 인덱스로 초기 스크롤
+  // 카드 덱 전체의 translateX — initialIndex 위치에서 시작
+  const translateX = useSharedValue(-initialIndex * SNAP_INTERVAL);
+
+  // currentIndex가 바뀌면 ref 동기화
   useEffect(() => {
-    if (initialIndex > 0) {
-      requestAnimationFrame(() => {
-        flatListRef.current?.scrollToOffset({
-          offset: initialIndex * SNAP_INTERVAL,
-          animated: false,
-        });
-      });
-    }
-  }, [initialIndex]);
+    currentIndexRef.current = currentIndex;
+  }, [currentIndex]);
 
   const headerHeight = insets.top + 52 + 48;
   const footerHeight = Math.max(insets.bottom, 16);
-  const cardHeight =
-    Dimensions.get("window").height - headerHeight - footerHeight - 48;
+  const cardHeight = SCREEN_HEIGHT - headerHeight - footerHeight - 48;
 
-  const total = cards.length;
   const progressRatio = total > 0 ? (currentIndex + 1) / total : 0;
 
-  const handleScrollEnd = useCallback(
-    (e: { nativeEvent: { contentOffset: { x: number } } }) => {
-      const index = Math.round(e.nativeEvent.contentOffset.x / SNAP_INTERVAL);
-      setCurrentIndex(Math.max(0, Math.min(index, total - 1)));
-    },
-    [total],
-  );
+  // --- Pan Gesture ---
+  const panGesture = Gesture.Pan()
+    .activeOffsetX([-8, 8]) // 좌우 8px 이상 움직여야 제스처 시작 (수직 스크롤과 충돌 방지)
+    .onUpdate((e) => {
+      const idx = currentIndexRef.current;
+      // 엣지에서 저항감: 양 끝에서는 1/4로 감쇠
+      const isAtStart = idx === 0 && e.translationX > 0;
+      const isAtEnd = idx === total - 1 && e.translationX < 0;
+      const resistance = isAtStart || isAtEnd ? 0.25 : 1;
+      translateX.value = -idx * SNAP_INTERVAL + e.translationX * resistance;
+    })
+    .onEnd((e) => {
+      const idx = currentIndexRef.current;
+      const advance =
+        Math.abs(e.translationX) > SWIPE_DISTANCE_THRESHOLD ||
+        Math.abs(e.velocityX) > SWIPE_VELOCITY_THRESHOLD;
 
-  const renderCard: ListRenderItem<WordCardItem> = useCallback(
-    ({ item, index }) => (
-      // marginRight로 갭 확보 → getItemLayout 없이도 scrollToOffset 정확
-      <View style={styles.cardWrapper}>
-        <WordCard
-          item={item}
-          index={index}
-          total={total}
-          width={CARD_WIDTH}
-          height={cardHeight}
-          showSwipeHint={total > 1 && index === currentIndex}
-        />
-      </View>
-    ),
-    [total, cardHeight, currentIndex],
-  );
+      let next = idx;
+      if (advance) {
+        if (e.translationX < 0) next = Math.min(idx + 1, total - 1);
+        else next = Math.max(idx - 1, 0);
+      }
 
-  if (cards.length === 0) {
+      translateX.value = withSpring(-next * SNAP_INTERVAL, SPRING_CONFIG);
+
+      if (next !== idx) {
+        runOnJS(setCurrentIndex)(next);
+      }
+    });
+
+  const animatedRowStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  if (total === 0) {
     return (
       <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <View style={styles.header}>
-          <Pressable
-            style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel="뒤로"
-            hitSlop={8}
-          >
-            <MaterialCommunityIcons name="chevron-left" size={22} color={Colors.text.primary} />
-            <Text style={styles.backLabel}>뒤로</Text>
-          </Pressable>
-          <Text style={styles.title}>단어 카드</Text>
-          <View style={styles.settingsBtn} />
-        </View>
+        <Header onBack={() => router.back()} />
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>표시할 단어가 없어요.</Text>
         </View>
@@ -181,38 +142,7 @@ export default function WordCardScreen() {
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
-      {/* 헤더 */}
-      <View style={styles.header}>
-        <Pressable
-          style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel="뒤로"
-          hitSlop={8}
-        >
-          <MaterialCommunityIcons
-            name="chevron-left"
-            size={22}
-            color={Colors.text.primary}
-          />
-          <Text style={styles.backLabel}>뒤로</Text>
-        </Pressable>
-
-        <Text style={styles.title}>단어 카드</Text>
-
-        <Pressable
-          style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
-          onPress={() => {}}
-          accessibilityRole="button"
-          accessibilityLabel="설정"
-        >
-          <MaterialCommunityIcons
-            name="cog-outline"
-            size={22}
-            color={Colors.text.secondary}
-          />
-        </Pressable>
-      </View>
+      <Header onBack={() => router.back()} />
 
       {/* 진행률 바 */}
       <View style={styles.progressRow}>
@@ -225,28 +155,56 @@ export default function WordCardScreen() {
         </Text>
       </View>
 
-      {/* 카드 덱 — peek 스와이프 */}
-      <FlatList
-        ref={flatListRef}
-        data={cards}
-        keyExtractor={(item) => item.id}
-        renderItem={renderCard}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.flatListContent}
-        snapToInterval={SNAP_INTERVAL}
-        snapToAlignment="start"
-        decelerationRate="fast"
-        onMomentumScrollEnd={handleScrollEnd}
-        style={styles.flatList}
-        // 렌더링 최적화
-        initialNumToRender={3}
-        maxToRenderPerBatch={3}
-        windowSize={5}
-        removeClippedSubviews={false}
-      />
+      {/* 카드 덱 */}
+      <View style={[styles.deckViewport, { marginTop: 20 }]}>
+        <GestureDetector gesture={panGesture}>
+          <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
+            {cards.map((card, index) => (
+              <View key={card.id} style={styles.cardWrapper}>
+                <WordCard
+                  item={card}
+                  index={index}
+                  total={total}
+                  width={CARD_WIDTH}
+                  height={cardHeight}
+                  showSwipeHint={total > 1 && index === 0 && currentIndex === 0}
+                />
+              </View>
+            ))}
+          </Animated.View>
+        </GestureDetector>
+      </View>
 
       <View style={{ height: footerHeight }} />
+    </View>
+  );
+}
+
+// 헤더 분리 (불필요한 리렌더 방지)
+function Header({ onBack }: { onBack: () => void }) {
+  return (
+    <View style={styles.header}>
+      <Pressable
+        style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}
+        onPress={onBack}
+        accessibilityRole="button"
+        accessibilityLabel="뒤로"
+        hitSlop={8}
+      >
+        <MaterialCommunityIcons name="chevron-left" size={22} color={Colors.text.primary} />
+        <Text style={styles.backLabel}>뒤로</Text>
+      </Pressable>
+
+      <Text style={styles.title}>단어 카드</Text>
+
+      <Pressable
+        style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
+        onPress={() => {}}
+        accessibilityRole="button"
+        accessibilityLabel="설정"
+      >
+        <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
+      </Pressable>
     </View>
   );
 }
@@ -329,13 +287,14 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
 
-  // 카드 FlatList
-  flatList: {
+  // 카드 덱
+  deckViewport: {
     flex: 1,
-    marginTop: 20,
+    overflow: "hidden",
   },
-  flatListContent: {
-    paddingHorizontal: CARD_H_PADDING,
+  cardsRow: {
+    flexDirection: "row",
+    paddingLeft: CARD_H_PADDING,
   },
   cardWrapper: {
     marginRight: CARD_GAP,

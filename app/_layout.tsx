@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -25,14 +26,16 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <PaperProvider theme={theme}>
-        <SafeAreaProvider>
-          <AuthProvider>
-            <Stack screenOptions={{ headerShown: false }} />
-          </AuthProvider>
-        </SafeAreaProvider>
-      </PaperProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <PaperProvider theme={theme}>
+          <SafeAreaProvider>
+            <AuthProvider>
+              <Stack screenOptions={{ headerShown: false }} />
+            </AuthProvider>
+          </SafeAreaProvider>
+        </PaperProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
