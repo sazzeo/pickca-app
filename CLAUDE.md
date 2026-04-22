@@ -40,7 +40,7 @@
 
 ## 구현 현황
 
-라우팅 구조는 `app/` 디렉터리를 직접 탐색. 특이사항은 `../docs/domains/app-routing.md` 참조.
+라우팅 구조는 `app/` 디렉터리를 직접 탐색. 특이사항은 `./app-routing.md` 참조.
 
 ### 미연동 (백엔드 선행 필요)
 - 단어장에 추가: `POST /api/wordbooks/{id}/words` — `WordResponse`에 `id` 없음 (`api/TODOS.md`)
