@@ -38,43 +38,15 @@
 
 ---
 
-## 라우팅 구조
-
-```
-app/
-├── _layout.tsx          # 루트 (QueryClient, PaperProvider, AuthProvider)
-├── index.tsx            # 진입점 → 인증 여부 리다이렉트
-├── extract-result.tsx   # 단어 추출 결과 (탭 외부)
-├── word-card.tsx        # 단어 카드 스와이프 화면 (탭 외부)
-├── (auth)/
-│   ├── _layout.tsx      # 비인증 Guard
-│   └── sign-in.tsx
-└── (tabs)/
-    ├── _layout.tsx      # 인증 Guard + 탭바
-    ├── index.tsx        # 홈 (카운트 하드코딩 중)
-    ├── extract.tsx      # 단어 추출 ✅
-    ├── wordbook.tsx     # 단어장 목록 ✅
-    ├── wordbook-detail.tsx # 단어장 상세 ✅ (단어 목록·삭제·카드 진입)
-    ├── study.tsx        # 🚧 준비 중
-    ├── quiz.tsx         # 🚧 준비 중 (탭바 미노출)
-    └── profile.tsx      # 프로필·로그아웃 (탭바 미노출)
-```
-
 ## 구현 현황
 
-### 완료
-- Google 로그인 — 이메일은 Google SDK(`data.user.email`)에서 가져옴. Spring `AuthTokenResponse`에 email 없음 (의도적)
-- 단어 추출: `extract.tsx` → `useExtract` → `extract-result.tsx` (JSON params)
-- PENDING 단어 재조회: 첫 PENDING 카드 직전 `GET /api/words`로 일괄 재조회
-- 단어장 탭: 목록 API·검색·카드(`WordbookGroupCard`)
-- 단어장 상세: 단어 목록·삭제·수정 드롭다운·카드 화면 진입 (`wordbook-detail.tsx`)
-- 단어 카드: Pan Gesture 기반 스와이프 스냅 스크롤 (`word-card.tsx`, `WordCard.tsx`)
+라우팅 구조는 `app/` 디렉터리를 직접 탐색. 특이사항은 `../docs/domains/app-routing.md` 참조.
 
 ### 미연동 (백엔드 선행 필요)
-- **단어장에 추가**: `POST /api/wordbooks/{id}/words` — `WordResponse`에 `id` 없음 (`api/TODOS.md`)
-- **홈 카운트**: `count={84}`, `count={18}` 하드코딩
-- **CEFR 레벨**: `PATCH /api/members/me/cefr-level` 미구현
-- **퀴즈**: 미구현
+- 단어장에 추가: `POST /api/wordbooks/{id}/words` — `WordResponse`에 `id` 없음 (`api/TODOS.md`)
+- 홈 카운트: `count={84}`, `count={18}` 하드코딩
+- CEFR 레벨: `PATCH /api/members/me/cefr-level` 미구현
+- 퀴즈: 미구현
 
 ---
 
