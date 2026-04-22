@@ -151,8 +151,8 @@ export default function WordCardScreen() {
       </View>
 
       {/* 카드 덱 */}
-      <View style={[styles.deckViewport, { marginTop: 20 }]}>
-        <GestureDetector gesture={panGesture}>
+      <GestureDetector gesture={panGesture}>
+        <Animated.View style={[styles.deckViewport, { marginTop: 20 }]}>
           <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
             {cards.map((card, index) => (
               <View key={card.id} style={styles.cardWrapper}>
@@ -167,8 +167,8 @@ export default function WordCardScreen() {
               </View>
             ))}
           </Animated.View>
-        </GestureDetector>
-      </View>
+        </Animated.View>
+      </GestureDetector>
 
       <View style={{ height: footerHeight }} />
     </View>
