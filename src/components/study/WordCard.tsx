@@ -4,7 +4,7 @@ import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
 
-export type WordCardStatus = "학습 중" | "암기 완료" | "다시 보기";
+export type WordCardStatus = "학습 전" | "학습 중" | "암기 완료" | "다시 보기";
 
 export interface WordCardItem {
   id: string;

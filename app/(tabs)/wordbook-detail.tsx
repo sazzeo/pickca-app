@@ -13,12 +13,13 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWords, useRemoveWord } from "@/api/generated/wordbooks/wordbooks";
-import type { WordMeaningResponsePartOfSpeech, WordResponse } from "@/api/generated/pickcaAPI.schemas";
+import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
+import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
 const FILTER_TABS = [
   { key: "all", label: "전체" },
@@ -28,36 +29,6 @@ const FILTER_TABS = [
 ] as const;
 
 type FilterTabKey = (typeof FILTER_TABS)[number]["key"];
-
-const POS_LABEL_MAP: Record<WordMeaningResponsePartOfSpeech, string> = {
-  NOUN: "n",
-  VERB: "v",
-  ADJECTIVE: "adj",
-  ADVERB: "adv",
-  PREPOSITION: "prep",
-  CONJUNCTION: "conj",
-  INTERJECTION: "intj",
-  PRONOUN: "pron",
-};
-
-function resolvePrimaryMeaning(word: WordResponse) {
-  if (word.primaryMeanings && word.primaryMeanings.trim()) {
-    return word.primaryMeanings;
-  }
-  const firstMeaning = word.meanings[0];
-  if (!firstMeaning) {
-    return "-";
-  }
-  return firstMeaning.koreanPrimary || firstMeaning.koreanMeanings || "-";
-}
-
-function resolvePartOfSpeech(word: WordResponse) {
-  const firstMeaning = word.meanings[0];
-  if (!firstMeaning) {
-    return "word";
-  }
-  return POS_LABEL_MAP[firstMeaning.partOfSpeech] ?? "word";
-}
 
 export default function WordbookDetailScreen() {
   const insets = useSafeAreaInsets();
@@ -187,7 +158,21 @@ export default function WordbookDetailScreen() {
         ) : (
           <View style={styles.cardList}>
             {shownWords.map((word, index) => (
-              <View key={`${word.id ?? word.word}-${index}`} style={styles.wordCard}>
+              <Pressable
+                key={`${word.id ?? word.word}-${index}`}
+                style={({ pressed }) => [styles.wordCard, pressed && styles.wordCardPressed]}
+                onPress={() =>
+                  router.push({
+                    pathname: "/word-card",
+                    params: {
+                      words: JSON.stringify(shownWords),
+                      initialIndex: String(index),
+                    },
+                  })
+                }
+                accessibilityRole="button"
+                accessibilityLabel={`${word.word} 카드 보기`}
+              >
                 <View style={styles.wordCardHeader}>
                   <View style={styles.statusChip}>
                     <Text style={styles.statusChipText}>학습 전</Text>
@@ -216,7 +201,7 @@ export default function WordbookDetailScreen() {
                 <Text style={styles.wordDescription}>
                   {resolvePartOfSpeech(word)} {resolvePrimaryMeaning(word)}
                 </Text>
-              </View>
+              </Pressable>
             ))}
           </View>
         )}
@@ -363,6 +348,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bg.muted,
     paddingHorizontal: 14,
     paddingVertical: 12,
+  },
+  wordCardPressed: {
+    opacity: 0.75,
   },
   wordCardHeader: {
     flexDirection: "row",
