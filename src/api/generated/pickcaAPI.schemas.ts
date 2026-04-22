@@ -15,7 +15,7 @@ export interface AdminMeaningReplaceRequest {
 export type MeaningInputPartOfSpeech = typeof MeaningInputPartOfSpeech[keyof typeof MeaningInputPartOfSpeech];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const MeaningInputPartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -42,7 +42,7 @@ export interface MeaningInput {
 export type AdminWordResponseCefr = typeof AdminWordResponseCefr[keyof typeof AdminWordResponseCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordResponseCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -58,7 +58,7 @@ export const AdminWordResponseCefr = {
 export type AdminWordResponseCollectStatus = typeof AdminWordResponseCollectStatus[keyof typeof AdminWordResponseCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -72,7 +72,7 @@ export const AdminWordResponseCollectStatus = {
 export type AdminWordResponseSource = typeof AdminWordResponseSource[keyof typeof AdminWordResponseSource];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordResponseSource = {
   AI: 'AI',
   CSV: 'CSV',
@@ -141,7 +141,7 @@ export interface WordExtractResponse {
 export type WordMeaningResponsePartOfSpeech = typeof WordMeaningResponsePartOfSpeech[keyof typeof WordMeaningResponsePartOfSpeech];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordMeaningResponsePartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -170,7 +170,7 @@ export interface WordMeaningResponse {
 export type WordResponseCollectStatus = typeof WordResponseCollectStatus[keyof typeof WordResponseCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -311,7 +311,7 @@ export interface DevLoginRequest {
 export type AdminWordCreateRequestCefr = typeof AdminWordCreateRequestCefr[keyof typeof AdminWordCreateRequestCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordCreateRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -392,7 +392,7 @@ export interface UpdateNicknameRequest {
 export type UpdateCefrLevelRequestCefrLevel = typeof UpdateCefrLevelRequestCefrLevel[keyof typeof UpdateCefrLevelRequestCefrLevel];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const UpdateCefrLevelRequestCefrLevel = {
   A1: 'A1',
   A2: 'A2',
@@ -413,7 +413,7 @@ export interface UpdateCefrLevelRequest {
 export type AdminWordUpdateRequestCefr = typeof AdminWordUpdateRequestCefr[keyof typeof AdminWordUpdateRequestCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordUpdateRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -429,7 +429,7 @@ export const AdminWordUpdateRequestCefr = {
 export type AdminWordUpdateRequestCollectStatus = typeof AdminWordUpdateRequestCollectStatus[keyof typeof AdminWordUpdateRequestCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordUpdateRequestCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -512,7 +512,7 @@ export interface WordbookSourceListResponse {
 export type AdminWordListRequestCollectStatus = typeof AdminWordListRequestCollectStatus[keyof typeof AdminWordListRequestCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordListRequestCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -526,7 +526,7 @@ export const AdminWordListRequestCollectStatus = {
 export type AdminWordListRequestSource = typeof AdminWordListRequestSource[keyof typeof AdminWordListRequestSource];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordListRequestSource = {
   AI: 'AI',
   CSV: 'CSV',
@@ -539,7 +539,7 @@ export const AdminWordListRequestSource = {
 export type AdminWordListRequestCefr = typeof AdminWordListRequestCefr[keyof typeof AdminWordListRequestCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordListRequestCefr = {
   A1: 'A1',
   A2: 'A2',
