@@ -12,7 +12,7 @@ import {
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { useGetWords } from "@/api/generated/wordbooks/wordbooks";
+import { useGetWords, useRemoveWord } from "@/api/generated/wordbooks/wordbooks";
 import type { WordMeaningResponsePartOfSpeech, WordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
@@ -68,7 +68,7 @@ export default function WordbookDetailScreen() {
 
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const [selectedFilter, setSelectedFilter] = useState<FilterTabKey>("all");
-  const [deletingWordId, setDeletingWordId] = useState<number | string | null>(null);
+  const [deletingWordId, setDeletingWordId] = useState<number | null>(null);
 
   const wordbookId = Number(wordbookIdParam ?? "0");
   const memberId = user?.memberId ?? 0;
@@ -78,6 +78,19 @@ export default function WordbookDetailScreen() {
     { memberId },
     { query: { enabled: memberId > 0 && wordbookId > 0 } },
   );
+
+  const { mutate: removeWord, isPending: isRemoving } = useRemoveWord({
+    mutation: {
+      onSuccess: () => {
+        setDeletingWordId(null);
+        refetch();
+      },
+      onError: () => {
+        Alert.alert("오류", "단어 삭제에 실패했어요. 다시 시도해 주세요.");
+        setDeletingWordId(null);
+      },
+    },
+  });
 
   const words = data?.data?.words ?? [];
   const apiErrorMessage = data?.success === false ? data.error?.message : undefined;
@@ -186,7 +199,13 @@ export default function WordbookDetailScreen() {
                         label: "삭제하기",
                         icon: "trash-can-outline",
                         tone: "danger",
-                        onPress: () => setDeletingWordId(word.id ?? word.word),
+                        onPress: () => {
+                          if (word.id == null) {
+                            Alert.alert("안내", "아직 수집되지 않은 단어는 삭제할 수 없어요.");
+                            return;
+                          }
+                          setDeletingWordId(word.id);
+                        },
                       } satisfies EllipsisDropdownItem,
                     ]}
                     triggerAccessibilityLabel={`${word.word} 메뉴`}
@@ -211,7 +230,11 @@ export default function WordbookDetailScreen() {
         confirmLabel="삭제하기"
         tone="danger"
         onCancel={() => setDeletingWordId(null)}
-        onConfirm={() => setDeletingWordId(null)}
+        confirmDisabled={isRemoving}
+        onConfirm={() => {
+          if (deletingWordId == null) return;
+          removeWord({ wordbookId, wordId: deletingWordId, params: { memberId } });
+        }}
       />
     </View>
   );

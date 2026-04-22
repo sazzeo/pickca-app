@@ -486,12 +486,11 @@ export default function ExtractResultScreen() {
         wordIds={pickedWordIds}
         sourceText={sourceText}
         memberId={user?.memberId ?? 0}
-        onSuccess={(count) => {
+        onSuccess={(_count, wordbookId) => {
           void clearExtractDraft();
-          showAlertDialog({
-            title: "단어장에 저장했어요",
-            description: `${count}개 단어가 저장되었어요.`,
-            actionLabel: "확인",
+          router.replace({
+            pathname: "/(tabs)/wordbook-detail",
+            params: { wordbookId: String(wordbookId) },
           });
         }}
         onError={(message) => {
