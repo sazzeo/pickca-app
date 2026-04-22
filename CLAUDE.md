@@ -1,8 +1,11 @@
 # Pickca App (React Native)
 
-## 통합 문서
+## 전체 문서
 
-전체 시스템 아키텍처·인증 플로우·도메인 모델·로컬 개발 가이드·상세 정책: `../docs/CLAUDE.md`
+- 서비스 개요·아키텍처·크로스커팅 정책: `../docs/CLAUDE.md`
+- 도메인별 정책·API 스펙: `../docs/domains/{도메인}.md`
+- 인증 플로우 상세: `../docs/auth-flow.md`
+- 도메인 모델: `../docs/domain-model.md`
 
 ## 서비스 개요
 
