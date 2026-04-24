@@ -24,100 +24,6 @@ import {
 } from "@/lib/extractDraftStorage";
 import type { ExtractWordItem } from "@/types/word";
 
-// 개발 전용 목업 — 앞 2개는 DONE(뜻 있음), 나머지는 PENDING(뜻 없음)으로 재조회 트리거 흐름 확인 가능
-const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
-  {
-    id: "1",
-    wordId: 1,
-    lemma: "mesmerizing",
-    meaningKo: "매혹적인",
-    pos: "adj",
-    pronunciation: "[ məˈsmərʌɪzɪŋ ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "2",
-    wordId: 2,
-    lemma: "understand",
-    meaningKo: "이해하다, 알다",
-    pos: "v",
-    pronunciation: "[ ˌʌndərˈstænd ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "3",
-    wordId: 3,
-    lemma: "genuine",
-    meaningKo: "—",
-    pos: "?",
-    pronunciation: "",
-    collectStatus: "PENDING",
-  },
-  {
-    id: "4",
-    wordId: 4,
-    lemma: "learning",
-    meaningKo: "—",
-    pos: "?",
-    pronunciation: "",
-    collectStatus: "PENDING",
-  },
-  {
-    id: "5",
-    wordId: 5,
-    lemma: "challenging",
-    meaningKo: "도전적인",
-    pos: "adj",
-    pronunciation: "[ ˈtʃælɪndʒɪŋ ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "6",
-    wordId: 6,
-    lemma: "vocabulary",
-    meaningKo: "어휘",
-    pos: "n",
-    pronunciation: "[ voʊˈkæbjəleri ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "7",
-    wordId: 7,
-    lemma: "consistent",
-    meaningKo: "일관된, 꾸준한",
-    pos: "adj",
-    pronunciation: "[ kənˈsɪstənt ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "8",
-    wordId: 8,
-    lemma: "confidence",
-    meaningKo: "자신감",
-    pos: "n",
-    pronunciation: "[ ˈkɑːnfɪdəns ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "9",
-    wordId: 9,
-    lemma: "communication",
-    meaningKo: "의사소통",
-    pos: "n",
-    pronunciation: "[ kəˌmjuːnɪˈkeɪʃn ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "10",
-    wordId: 10,
-    lemma: "gradually",
-    meaningKo: "점차, 서서히",
-    pos: "adv",
-    pronunciation: "[ ˈɡrædʒuəli ]",
-    collectStatus: "DONE",
-  },
-];
-
 type HistoryEntry = ExtractWordItem & { picked: boolean };
 
 /** 진행·덱 블록: 카드 유무와 관계없이 높이 고정 (완료 문구도 이 안에 표시) */
@@ -151,8 +57,6 @@ export default function ExtractResultScreen() {
       if (draft) {
         setSourceText(draft.sourceText);
         setWords(draft.words);
-      } else if (__DEV__) {
-        setWords(MOCK_EXTRACT_WORDS);
       } else {
         setWords([]);
       }

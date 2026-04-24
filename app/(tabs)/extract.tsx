@@ -121,19 +121,6 @@ export default function ExtractScreen() {
           </Text>
           <Text style={styles.description}>텍스트를 붙여넣거나 이미지를 올려보세요</Text>
 
-          {__DEV__ && (
-            <Pressable
-              onPress={() => router.push("/extract-result")}
-              style={styles.devPreviewLink}
-              accessibilityRole="button"
-              accessibilityLabel="추출 결과 화면 미리보기"
-            >
-              <Text style={styles.devPreviewText}>
-                추출 결과 화면 미리보기 (개발 전용)
-              </Text>
-            </Pressable>
-          )}
-
           <View style={styles.inputCard}>
             <View style={styles.inputHeader}>
               <Text style={styles.inputLabel}>텍스트 입력</Text>
@@ -241,17 +228,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.secondary,
     letterSpacing: -0.2,
-  },
-  devPreviewLink: {
-    alignSelf: "flex-start",
-    marginBottom: 20,
-    paddingVertical: 4,
-  },
-  devPreviewText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.brand.green,
-    textDecorationLine: "underline",
   },
   inputCard: {
     borderWidth: 1,
