@@ -273,8 +273,10 @@ export default function WordbookDetailScreen() {
                   accessibilityLabel={`${word.word} 카드 보기`}
                 />
                 <View style={styles.wordCardContent} pointerEvents="box-none">
-                  <View style={styles.wordCardHeader}>
-                    <LearningStatusChip status={word.learningStatus} />
+                  <View style={styles.wordCardHeader} pointerEvents="box-none">
+                    <View pointerEvents="none">
+                      <LearningStatusChip status={word.learningStatus} />
+                    </View>
                     <EllipsisDropdownMenu
                       items={[
                         {
@@ -295,10 +297,12 @@ export default function WordbookDetailScreen() {
                     />
                   </View>
 
-                  <Text style={styles.wordTitle}>{word.word}</Text>
-                  <Text style={styles.wordDescription}>
-                    {resolvePartOfSpeech(word)} {resolvePrimaryMeaning(word)}
-                  </Text>
+                  <View pointerEvents="none">
+                    <Text style={styles.wordTitle}>{word.word}</Text>
+                    <Text style={styles.wordDescription}>
+                      {resolvePartOfSpeech(word)} {resolvePrimaryMeaning(word)}
+                    </Text>
+                  </View>
                 </View>
               </View>
             ))}

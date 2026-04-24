@@ -68,17 +68,19 @@ export function WordbookGroupCard({
         accessibilityLabel={`${title} 단어장 열기`}
       />
       <View style={styles.cardContent} pointerEvents="box-none">
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle} numberOfLines={2}>
-            {title}
-          </Text>
+        <View style={styles.cardHeader} pointerEvents="box-none">
+          <View pointerEvents="none" style={styles.cardTitleWrap}>
+            <Text style={styles.cardTitle} numberOfLines={2}>
+              {title}
+            </Text>
+          </View>
           <EllipsisDropdownMenu
             triggerAccessibilityLabel={`${title} 메뉴 열기`}
             items={menuItems}
           />
         </View>
 
-        <View style={styles.progressRow}>
+        <View style={styles.progressRow} pointerEvents="none">
           <Text style={styles.progressLabel}>{clampedPercent}%</Text>
           <View style={styles.progressTrack}>
             <View
@@ -93,7 +95,7 @@ export function WordbookGroupCard({
           </View>
         </View>
 
-        <View style={styles.cardFooter}>
+        <View style={styles.cardFooter} pointerEvents="none">
           <View style={styles.wordChip}>
             <Text style={styles.wordChipText}>{wordCount}단어</Text>
           </View>
@@ -130,8 +132,10 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 10,
   },
-  cardTitle: {
+  cardTitleWrap: {
     flex: 1,
+  },
+  cardTitle: {
     fontSize: 15,
     fontWeight: "700",
     color: Colors.text.primary,

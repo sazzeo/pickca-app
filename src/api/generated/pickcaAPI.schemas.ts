@@ -478,7 +478,7 @@ export interface ApiResponseWordbookWordListResponse {
 
 export type WordbookWordResponseLearningStatus = typeof WordbookWordResponseLearningStatus[keyof typeof WordbookWordResponseLearningStatus];
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordbookWordResponseLearningStatus = {
   NOT_STARTED: 'NOT_STARTED',
   LEARNING: 'LEARNING',

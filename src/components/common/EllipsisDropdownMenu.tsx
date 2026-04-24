@@ -82,7 +82,6 @@ export function EllipsisDropdownMenu({
         <Pressable
           style={styles.modalBackdrop}
           onPress={handleClose}
-          accessibilityRole="button"
           accessibilityLabel="메뉴 닫기"
         >
           {triggerLayout ? (
