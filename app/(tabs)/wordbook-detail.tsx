@@ -219,7 +219,7 @@ export default function WordbookDetailScreen() {
                     router.push({
                       pathname: "/word-card",
                       params: {
-                        words: JSON.stringify(shownWords),
+                        wordbookId: String(wordbookId),
                         initialIndex: String(index),
                       },
                     })

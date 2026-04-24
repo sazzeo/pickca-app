@@ -196,17 +196,32 @@ const handleSubmit = async () => {
 
 ## 화면 간 데이터 전달
 
+**원칙: params에는 ID·인덱스 등 식별자만 넘긴다. 객체·배열을 통째로 직렬화해 넘기는 것은 금지.**
+
+이유:
+- URL 길이 제한 위험 (단어 수 많아질수록 URI 초과 가능)
+- 데이터 신선도 보장 안 됨 (화면 이동 후 API 변경 반영 불가)
+- React Query 캐시를 우회해 이중 관리 발생
+
+수신 화면에서 이미 해당 쿼리가 캐시되어 있으면 추가 네트워크 요청 없이 즉시 렌더링된다.
+
 ```tsx
-// 단순 값
+// ✅ 올바른 방식 — ID/인덱스만 전달, 수신 측에서 API 호출
+router.push({ pathname: "/word-card", params: { wordbookId: "123", initialIndex: "0" } });
+
+// ✅ 단순 값
 router.push({ pathname: "/detail", params: { id: "123" } });
 
-// 객체·배열 — JSON 직렬화
-router.push({ pathname: "/extract-result", params: { words: JSON.stringify(mappedWords) } });
-
-// 수신
-const { words: wordsParam } = useLocalSearchParams<{ words?: string }>();
-const words = wordsParam ? (JSON.parse(wordsParam) as ExtractWordItem[]) : [];
+// ❌ 금지 — 객체·배열 JSON 직렬화해서 넘기기
+// router.push({ pathname: "/word-card", params: { words: JSON.stringify(allWords) } });
 ```
+
+**예외**: 다음 조건을 모두 충족할 때만 JSON 직렬화 허용:
+1. 해당 데이터를 가져올 API 엔드포인트가 없다
+2. 전달 크기가 소량(단일 객체 수준)이다
+3. 코드에 `// NOTE: API 없어서 직렬화 전달` 주석을 명시한다
+
+현재 이 패턴을 쓰는 곳: `app/(tabs)/wordbook.tsx` → `app/(tabs)/wordbook-detail.tsx` (wordbookId만 전달하므로 적합)
 
 ---
 

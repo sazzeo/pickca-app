@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
-import { Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -13,10 +13,12 @@ import Animated, {
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
+import { useGetWords } from "@/api/generated/wordbooks/wordbooks";
 import { WordCard, type WordCardItem } from "@/components/study/WordCard";
+import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
+import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 
 const PEEK_SIZE = 20;
 const CARD_GAP = 12;
@@ -47,32 +49,24 @@ function mapToCardItem(word: WordResponse, index: number): WordCardItem {
   };
 }
 
-// 개발 전용 목업
-const MOCK_WORDS: WordResponse[] = __DEV__
-  ? [
-      { id: 1, word: "Inevitable", phonetic: "ɪˈnevɪtəbəl", phoneticKorean: "이네비터블", primaryMeanings: "피할 수 없는", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "피할 수 없는", koreanMeanings: "피할 수 없는" }] },
-      { id: 2, word: "Resilient", phonetic: "rɪˈzɪliənt", phoneticKorean: "리질리언트", primaryMeanings: "회복력 있는", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "회복력 있는", koreanMeanings: "회복력 있는" }] },
-      { id: 3, word: "Ephemeral", phonetic: "ɪˈfemərəl", phoneticKorean: "이페머럴", primaryMeanings: "단명하는, 일시적인", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "단명하는", koreanMeanings: "단명하는, 일시적인" }] },
-      { id: 4, word: "Eloquent", phonetic: "ˈeləkwənt", phoneticKorean: "엘로퀀트", primaryMeanings: "유창한", collectStatus: "DONE", meanings: [{ partOfSpeech: "ADJECTIVE", orderIndex: 0, koreanPrimary: "유창한", koreanMeanings: "유창한, 웅변적인" }] },
-    ]
-  : [];
-
 export default function WordCardScreen() {
   const insets = useSafeAreaInsets();
-  const { words: wordsParam, initialIndex: initialIndexParam } =
-    useLocalSearchParams<{ words?: string; initialIndex?: string }>();
+  const { wordbookId: wordbookIdParam, initialIndex: initialIndexParam } =
+    useLocalSearchParams<{ wordbookId?: string; initialIndex?: string }>();
 
-  const rawWords: WordResponse[] = useMemo(() => {
-    if (wordsParam) {
-      try { return JSON.parse(wordsParam) as WordResponse[]; }
-      catch { return MOCK_WORDS; }
-    }
-    return MOCK_WORDS;
-  }, [wordsParam]);
+  const { user } = useAuth();
+  const wordbookId = Number(wordbookIdParam ?? "0");
+  const memberId = user?.memberId ?? 0;
+
+  const { data, isPending, isError, refetch } = useGetWords(
+    wordbookId,
+    { memberId },
+    { query: { enabled: memberId > 0 && wordbookId > 0 } },
+  );
 
   const cards: WordCardItem[] = useMemo(
-    () => rawWords.map(mapToCardItem),
-    [rawWords],
+    () => (data?.data?.words ?? []).map(mapToCardItem),
+    [data],
   );
 
   const total = cards.length;
@@ -92,6 +86,36 @@ export default function WordCardScreen() {
   const progressRatio = total > 0 ? (currentIndex + 1) / total : 0;
 
   const deckRef = useAnimatedRef<Animated.View>();
+
+  if (isPending) {
+    return (
+      <View style={[styles.screen, { paddingTop: insets.top }]}>
+        <Header onBack={() => router.back()} />
+        <View style={styles.emptyState}>
+          <ActivityIndicator size="large" color={Colors.brand.green} />
+        </View>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={[styles.screen, { paddingTop: insets.top }]}>
+        <Header onBack={() => router.back()} />
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyText}>단어를 불러오지 못했어요.</Text>
+          <Pressable
+            style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
+            onPress={() => refetch()}
+            accessibilityRole="button"
+            accessibilityLabel="다시 시도"
+          >
+            <Text style={styles.retryLabel}>다시 시도</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
 
   // --- Pan Gesture ---
   const panGesture = Gesture.Pan()
@@ -298,14 +322,29 @@ const styles = StyleSheet.create({
     marginRight: CARD_GAP,
   },
 
-  // 빈 상태
+  // 빈 상태 / 에러
   emptyState: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    gap: 16,
   },
   emptyText: {
     fontSize: 15,
     color: Colors.text.secondary,
+  },
+  retryButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: Colors.brand.green,
+  },
+  retryButtonPressed: {
+    opacity: 0.85,
+  },
+  retryLabel: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.text.white,
   },
 });
