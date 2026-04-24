@@ -11,7 +11,7 @@ import { useGoogleLogin } from "@/api/generated/auth/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { createMemberIdFromEmail } from "@/lib/member";
 
-export default function GoogleSignInPanel() {
+export function GoogleSignInPanel() {
   const { signIn } = useAuth();
   const inFlight = useRef(false);
   const { mutateAsync: googleLogin } = useGoogleLogin();

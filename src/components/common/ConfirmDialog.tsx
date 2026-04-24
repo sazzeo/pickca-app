@@ -62,7 +62,7 @@ export function ConfirmDialog({
               maxLength={input.maxLength}
               autoFocus={input.autoFocus}
               style={styles.input}
-              outlineColor="#A9B0A6"
+              outlineColor={Colors.border.inputOutline}
               activeOutlineColor={Colors.brand.green}
               textColor={Colors.text.primary}
               selectionColor={Colors.brand.green}
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cancelButton: {
-    backgroundColor: "#E7E5E1",
+    backgroundColor: Colors.bg.cancelButton,
   },
   cancelButtonText: {
     fontSize: 16,

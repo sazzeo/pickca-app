@@ -23,9 +23,9 @@ const GoogleSignInPanel = lazy(() =>
   Promise.resolve(
     // eslint-disable-next-line @typescript-eslint/no-require-imports -- lazy 경로만 development build에서 평가
     require("../../src/components/auth/GoogleSignInPanel") as {
-      default: ComponentType;
+      GoogleSignInPanel: ComponentType;
     }
-  )
+  ).then((m) => ({ default: m.GoogleSignInPanel }))
 );
 
 const isExpoGo =
@@ -60,7 +60,7 @@ function ExpoGoDevLoginForm() {
         nickname,
       });
     } catch (e) {
-      console.error("[DevLogin] error:", e);
+      if (__DEV__) console.error("[DevLogin] error:", e);
       const axiosError = e as { response?: { status?: number; data?: { error?: { message?: string } } } };
       const status = axiosError.response?.status;
       const message =

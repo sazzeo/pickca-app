@@ -35,6 +35,8 @@ export const Colors = {
     card: "#FFFFFF",
     /** 덱 뒷장 등 무채색 서브 서페이스 */
     muted: "#E8E8E8",
+    /** 취소 버튼 배경 */
+    cancelButton: "#E7E5E1",
   },
 
   /** 탭바 */
@@ -48,12 +50,17 @@ export const Colors = {
   /** 구분선 */
   divider: "#EEEEEE",
 
+  /** 그림자 */
+  shadow: "#000000",
+
   /** 테두리 */
   border: {
     /** 입력 카드 테두리 */
     input: "#D7D3CB",
     /** 아웃라인 버튼 테두리 */
     button: "#D0D0D0",
+    /** TextInput 비활성 아웃라인 */
+    inputOutline: "#A9B0A6",
   },
 
   /** 시맨틱 — 성공·오류·경고 (추후 확장) */

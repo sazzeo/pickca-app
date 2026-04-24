@@ -83,11 +83,6 @@ export default function WordbookScreen() {
     return wordbooks.filter((w) => w.name.toLowerCase().includes(q));
   }, [searchQuery, wordbooks]);
 
-  const editingWordbook = useMemo(
-    () => wordbooks.find((wordbook) => wordbook.id === editingWordbookId),
-    [wordbooks, editingWordbookId],
-  );
-
   const handleEditMenuPress = (id: number) => {
     const wordbook = wordbooks.find((item) => item.id === id);
     if (!wordbook) {
