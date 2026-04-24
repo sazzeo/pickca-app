@@ -208,50 +208,56 @@ export default function WordbookDetailScreen() {
         ) : (
           <View style={styles.cardList}>
             {shownWords.map((word, index) => (
-              <Pressable
-                key={`${word.id ?? word.word}-${index}`}
-                style={({ pressed }) => [styles.wordCard, pressed && styles.wordCardPressed]}
-                onPress={() =>
-                  router.push({
-                    pathname: "/word-card",
-                    params: {
-                      words: JSON.stringify(shownWords),
-                      initialIndex: String(index),
-                    },
-                  })
-                }
-                accessibilityRole="button"
-                accessibilityLabel={`${word.word} 카드 보기`}
-              >
-                <View style={styles.wordCardHeader}>
-                  <View style={styles.statusChip}>
-                    <Text style={styles.statusChipText}>학습 전</Text>
+              <View key={`${word.id ?? word.word}-${index}`} style={styles.wordCard}>
+                <Pressable
+                  style={({ pressed }) => [
+                    StyleSheet.absoluteFillObject,
+                    styles.wordCardPressable,
+                    pressed && styles.wordCardPressed,
+                  ]}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/word-card",
+                      params: {
+                        words: JSON.stringify(shownWords),
+                        initialIndex: String(index),
+                      },
+                    })
+                  }
+                  accessibilityRole="button"
+                  accessibilityLabel={`${word.word} 카드 보기`}
+                />
+                <View style={styles.wordCardContent} pointerEvents="box-none">
+                  <View style={styles.wordCardHeader}>
+                    <View style={styles.statusChip}>
+                      <Text style={styles.statusChipText}>학습 전</Text>
+                    </View>
+                    <EllipsisDropdownMenu
+                      items={[
+                        {
+                          key: "delete",
+                          label: "삭제하기",
+                          icon: "trash-can-outline",
+                          tone: "danger",
+                          onPress: () => {
+                            if (word.id == null) {
+                              Alert.alert("안내", "아직 수집되지 않은 단어는 삭제할 수 없어요.");
+                              return;
+                            }
+                            setDeletingWordId(word.id);
+                          },
+                        } satisfies EllipsisDropdownItem,
+                      ]}
+                      triggerAccessibilityLabel={`${word.word} 메뉴`}
+                    />
                   </View>
-                  <EllipsisDropdownMenu
-                    items={[
-                      {
-                        key: "delete",
-                        label: "삭제하기",
-                        icon: "trash-can-outline",
-                        tone: "danger",
-                        onPress: () => {
-                          if (word.id == null) {
-                            Alert.alert("안내", "아직 수집되지 않은 단어는 삭제할 수 없어요.");
-                            return;
-                          }
-                          setDeletingWordId(word.id);
-                        },
-                      } satisfies EllipsisDropdownItem,
-                    ]}
-                    triggerAccessibilityLabel={`${word.word} 메뉴`}
-                  />
-                </View>
 
-                <Text style={styles.wordTitle}>{word.word}</Text>
-                <Text style={styles.wordDescription}>
-                  {resolvePartOfSpeech(word)} {resolvePrimaryMeaning(word)}
-                </Text>
-              </Pressable>
+                  <Text style={styles.wordTitle}>{word.word}</Text>
+                  <Text style={styles.wordDescription}>
+                    {resolvePartOfSpeech(word)} {resolvePrimaryMeaning(word)}
+                  </Text>
+                </View>
+              </View>
             ))}
           </View>
         )}
@@ -480,11 +486,16 @@ const styles = StyleSheet.create({
   wordCard: {
     borderRadius: 12,
     backgroundColor: Colors.bg.muted,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+  },
+  wordCardPressable: {
+    borderRadius: 12,
   },
   wordCardPressed: {
     opacity: 0.75,
+  },
+  wordCardContent: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   wordCardHeader: {
     flexDirection: "row",
