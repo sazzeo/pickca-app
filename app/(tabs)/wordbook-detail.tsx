@@ -13,6 +13,8 @@ import { Modal, Portal, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWords, useGetSources, useRemoveWord } from "@/api/generated/wordbooks/wordbooks";
+import type { WordbookWordResponse } from "@/api/generated/pickcaAPI.schemas";
+import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
@@ -22,12 +24,19 @@ import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
 const FILTER_TABS = [
   { key: "all", label: "전체" },
-  { key: "before", label: "학습 전" },
-  { key: "progress", label: "학습 중" },
-  { key: "done", label: "외움" },
+  { key: "NOT_STARTED", label: "학습 전" },
+  { key: "LEARNING", label: "학습 중" },
+  { key: "MEMORIZED", label: "외움" },
 ] as const;
 
 type FilterTabKey = (typeof FILTER_TABS)[number]["key"];
+
+const LEARNING_STATUS_LABEL: Record<WordbookWordResponseLearningStatus, string> = {
+  NOT_STARTED: "학습 전",
+  LEARNING: "학습 중",
+  MEMORIZED: "외웠음",
+  RELEARNING: "재학습 중",
+};
 
 function formatSourceDate(createdAt: string): string {
   const d = new Date(createdAt);
@@ -36,6 +45,29 @@ function formatSourceDate(createdAt: string): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}.${m}.${day}`;
+}
+
+function LearningStatusChip({ status }: { status: WordbookWordResponseLearningStatus }) {
+  const chipStyle = (() => {
+    switch (status) {
+      case WordbookWordResponseLearningStatus.MEMORIZED:
+        return { bg: Colors.brand.green, text: Colors.text.white };
+      case WordbookWordResponseLearningStatus.LEARNING:
+        return { bg: Colors.action.yellowLight, text: Colors.action.yellowDeep };
+      case WordbookWordResponseLearningStatus.RELEARNING:
+        return { bg: Colors.action.yellowLight, text: Colors.action.yellowDeep };
+      default:
+        return { bg: Colors.brand.greenLight, text: Colors.brand.greenDark };
+    }
+  })();
+
+  return (
+    <View style={[styles.statusChip, { backgroundColor: chipStyle.bg }]}>
+      <Text style={[styles.statusChipText, { color: chipStyle.text }]}>
+        {LEARNING_STATUS_LABEL[status]}
+      </Text>
+    </View>
+  );
 }
 
 function HighlightedText({ text, highlightWords }: { text: string; highlightWords: Set<string> }) {
@@ -98,16 +130,29 @@ export default function WordbookDetailScreen() {
     },
   });
 
-  const words = data?.data?.words ?? [];
+  const words = (data?.data?.words ?? []) as WordbookWordResponse[];
   const apiErrorMessage = data?.success === false ? data.error?.message : undefined;
-  const mockFilterCount = words.length;
+
+  const filterCounts = useMemo(() => ({
+    all: words.length,
+    NOT_STARTED: words.filter((w) => w.learningStatus === WordbookWordResponseLearningStatus.NOT_STARTED).length,
+    LEARNING: words.filter((w) =>
+      w.learningStatus === WordbookWordResponseLearningStatus.LEARNING ||
+      w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING
+    ).length,
+    MEMORIZED: words.filter((w) => w.learningStatus === WordbookWordResponseLearningStatus.MEMORIZED).length,
+  }), [words]);
 
   const shownWords = useMemo(() => {
-    // API 개발 전까지 모든 단어를 "학습 전" 카드로 동일하게 노출한다.
-    if (selectedFilter === "all" || selectedFilter === "before") {
-      return words;
+    if (selectedFilter === "all") return words;
+    if (selectedFilter === "LEARNING") {
+      return words.filter(
+        (w) =>
+          w.learningStatus === WordbookWordResponseLearningStatus.LEARNING ||
+          w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING,
+      );
     }
-    return words;
+    return words.filter((w) => w.learningStatus === selectedFilter);
   }, [selectedFilter, words]);
 
   const sources = sourcesData?.data?.sources ?? [];
@@ -176,7 +221,7 @@ export default function WordbookDetailScreen() {
                 accessibilityLabel={`${tab.label} 필터`}
               >
                 <Text style={[styles.filterText, isSelected && styles.filterTextSelected]}>
-                  {tab.label} {mockFilterCount}
+                  {tab.label} {filterCounts[tab.key]}
                 </Text>
               </Pressable>
             );
@@ -229,9 +274,7 @@ export default function WordbookDetailScreen() {
                 />
                 <View style={styles.wordCardContent} pointerEvents="box-none">
                   <View style={styles.wordCardHeader}>
-                    <View style={styles.statusChip}>
-                      <Text style={styles.statusChipText}>학습 전</Text>
-                    </View>
+                    <LearningStatusChip status={word.learningStatus} />
                     <EllipsisDropdownMenu
                       items={[
                         {
@@ -506,7 +549,6 @@ const styles = StyleSheet.create({
   statusChip: {
     height: 28,
     borderRadius: 6,
-    backgroundColor: Colors.brand.greenLight,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 10,
@@ -514,7 +556,6 @@ const styles = StyleSheet.create({
   statusChipText: {
     fontSize: 12,
     fontWeight: "500",
-    color: Colors.brand.greenDark,
   },
   moreButton: {
     padding: 4,

@@ -476,9 +476,42 @@ export interface ApiResponseWordbookWordListResponse {
   error?: ApiError;
 }
 
+export type WordbookWordResponseLearningStatus = typeof WordbookWordResponseLearningStatus[keyof typeof WordbookWordResponseLearningStatus];
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const WordbookWordResponseLearningStatus = {
+  NOT_STARTED: 'NOT_STARTED',
+  LEARNING: 'LEARNING',
+  MEMORIZED: 'MEMORIZED',
+  RELEARNING: 'RELEARNING',
+} as const;
+
+export interface WordbookWordResponse {
+  /** 단어 ID */
+  id: number;
+  /** 영단어 */
+  word: string;
+  /** 수집 상태 (DONE/PENDING/PARTIAL/FAILED) */
+  collectStatus: WordResponseCollectStatus;
+  /** IPA 발음기호 */
+  phonetic?: string;
+  /** 한국어 독음 */
+  phoneticKorean?: string;
+  /** 대표 뜻 (쉼표 구분, 최대 2개, 사전식 포맷) */
+  primaryMeanings?: string;
+  /** 품사별 의미 목록 */
+  meanings: WordMeaningResponse[];
+  /** 학습 상태 */
+  learningStatus: WordbookWordResponseLearningStatus;
+  /** 누적 오답 횟수 */
+  wrongCount: number;
+}
+
 export interface WordbookWordListResponse {
+  /** 단어장 이름 */
+  title: string;
   /** 단어장에 저장된 단어 목록 */
-  words: WordResponse[];
+  words: WordbookWordResponse[];
 }
 
 export interface Pageable {
