@@ -5,6 +5,7 @@ import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
+  useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -90,6 +91,8 @@ export default function WordCardScreen() {
 
   const progressRatio = total > 0 ? (currentIndex + 1) / total : 0;
 
+  const deckRef = useAnimatedRef<Animated.View>();
+
   // --- Pan Gesture ---
   const panGesture = Gesture.Pan()
     .activeOffsetX([-8, 8])
@@ -152,7 +155,7 @@ export default function WordCardScreen() {
 
       {/* 카드 덱 */}
       <GestureDetector gesture={panGesture}>
-        <Animated.View style={[styles.deckViewport, { marginTop: 20 }]}>
+        <Animated.View ref={deckRef} style={[styles.deckViewport, { marginTop: 20 }]}>
           <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
             {cards.map((card, index) => (
               <View key={card.id} style={styles.cardWrapper}>
