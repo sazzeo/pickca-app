@@ -12,19 +12,18 @@ export interface AdminMeaningReplaceRequest {
 /**
  * 품사
  */
-export type MeaningInputPartOfSpeech = typeof MeaningInputPartOfSpeech[keyof typeof MeaningInputPartOfSpeech];
+export type MeaningInputPartOfSpeech =
+  (typeof MeaningInputPartOfSpeech)[keyof typeof MeaningInputPartOfSpeech];
 
-
- 
 export const MeaningInputPartOfSpeech = {
-  NOUN: 'NOUN',
-  VERB: 'VERB',
-  ADJECTIVE: 'ADJECTIVE',
-  ADVERB: 'ADVERB',
-  PREPOSITION: 'PREPOSITION',
-  CONJUNCTION: 'CONJUNCTION',
-  INTERJECTION: 'INTERJECTION',
-  PRONOUN: 'PRONOUN',
+  NOUN: "NOUN",
+  VERB: "VERB",
+  ADJECTIVE: "ADJECTIVE",
+  ADVERB: "ADVERB",
+  PREPOSITION: "PREPOSITION",
+  CONJUNCTION: "CONJUNCTION",
+  INTERJECTION: "INTERJECTION",
+  PRONOUN: "PRONOUN",
 } as const;
 
 export interface MeaningInput {
@@ -39,44 +38,41 @@ export interface MeaningInput {
 /**
  * CEFR 난이도
  */
-export type AdminWordResponseCefr = typeof AdminWordResponseCefr[keyof typeof AdminWordResponseCefr];
+export type AdminWordResponseCefr =
+  (typeof AdminWordResponseCefr)[keyof typeof AdminWordResponseCefr];
 
-
- 
 export const AdminWordResponseCefr = {
-  A1: 'A1',
-  A2: 'A2',
-  B1: 'B1',
-  B2: 'B2',
-  C1: 'C1',
-  C2: 'C2',
+  A1: "A1",
+  A2: "A2",
+  B1: "B1",
+  B2: "B2",
+  C1: "C1",
+  C2: "C2",
 } as const;
 
 /**
  * 수집 상태
  */
-export type AdminWordResponseCollectStatus = typeof AdminWordResponseCollectStatus[keyof typeof AdminWordResponseCollectStatus];
+export type AdminWordResponseCollectStatus =
+  (typeof AdminWordResponseCollectStatus)[keyof typeof AdminWordResponseCollectStatus];
 
-
- 
 export const AdminWordResponseCollectStatus = {
-  PENDING: 'PENDING',
-  PARTIAL: 'PARTIAL',
-  DONE: 'DONE',
-  FAILED: 'FAILED',
+  PENDING: "PENDING",
+  PARTIAL: "PARTIAL",
+  DONE: "DONE",
+  FAILED: "FAILED",
 } as const;
 
 /**
  * 데이터 출처
  */
-export type AdminWordResponseSource = typeof AdminWordResponseSource[keyof typeof AdminWordResponseSource];
+export type AdminWordResponseSource =
+  (typeof AdminWordResponseSource)[keyof typeof AdminWordResponseSource];
 
-
- 
 export const AdminWordResponseSource = {
-  AI: 'AI',
-  CSV: 'CSV',
-  MANUAL: 'MANUAL',
+  AI: "AI",
+  CSV: "CSV",
+  MANUAL: "MANUAL",
 } as const;
 
 export interface AdminWordResponse {
@@ -138,19 +134,18 @@ export interface WordExtractResponse {
 /**
  * 품사
  */
-export type WordMeaningResponsePartOfSpeech = typeof WordMeaningResponsePartOfSpeech[keyof typeof WordMeaningResponsePartOfSpeech];
+export type WordMeaningResponsePartOfSpeech =
+  (typeof WordMeaningResponsePartOfSpeech)[keyof typeof WordMeaningResponsePartOfSpeech];
 
-
- 
 export const WordMeaningResponsePartOfSpeech = {
-  NOUN: 'NOUN',
-  VERB: 'VERB',
-  ADJECTIVE: 'ADJECTIVE',
-  ADVERB: 'ADVERB',
-  PREPOSITION: 'PREPOSITION',
-  CONJUNCTION: 'CONJUNCTION',
-  INTERJECTION: 'INTERJECTION',
-  PRONOUN: 'PRONOUN',
+  NOUN: "NOUN",
+  VERB: "VERB",
+  ADJECTIVE: "ADJECTIVE",
+  ADVERB: "ADVERB",
+  PREPOSITION: "PREPOSITION",
+  CONJUNCTION: "CONJUNCTION",
+  INTERJECTION: "INTERJECTION",
+  PRONOUN: "PRONOUN",
 } as const;
 
 export interface WordMeaningResponse {
@@ -167,15 +162,14 @@ export interface WordMeaningResponse {
 /**
  * 수집 상태 (DONE/PENDING/FAILED)
  */
-export type WordResponseCollectStatus = typeof WordResponseCollectStatus[keyof typeof WordResponseCollectStatus];
+export type WordResponseCollectStatus =
+  (typeof WordResponseCollectStatus)[keyof typeof WordResponseCollectStatus];
 
-
- 
 export const WordResponseCollectStatus = {
-  PENDING: 'PENDING',
-  PARTIAL: 'PARTIAL',
-  DONE: 'DONE',
-  FAILED: 'FAILED',
+  PENDING: "PENDING",
+  PARTIAL: "PARTIAL",
+  DONE: "DONE",
+  FAILED: "FAILED",
 } as const;
 
 export interface WordResponse {
@@ -308,17 +302,16 @@ export interface DevLoginRequest {
 /**
  * CEFR 난이도
  */
-export type AdminWordCreateRequestCefr = typeof AdminWordCreateRequestCefr[keyof typeof AdminWordCreateRequestCefr];
+export type AdminWordCreateRequestCefr =
+  (typeof AdminWordCreateRequestCefr)[keyof typeof AdminWordCreateRequestCefr];
 
-
- 
 export const AdminWordCreateRequestCefr = {
-  A1: 'A1',
-  A2: 'A2',
-  B1: 'B1',
-  B2: 'B2',
-  C1: 'C1',
-  C2: 'C2',
+  A1: "A1",
+  A2: "A2",
+  B1: "B1",
+  B2: "B2",
+  C1: "C1",
+  C2: "C2",
 } as const;
 
 export interface AdminWordCreateRequest {
@@ -364,7 +357,7 @@ export interface BatchVerifyRequest {
   ids: number[];
 }
 
-export type ApiResponseMapStringIntegerData = {[key: string]: number};
+export type ApiResponseMapStringIntegerData = { [key: string]: number };
 
 export interface ApiResponseMapStringInteger {
   success: boolean;
@@ -389,17 +382,16 @@ export interface UpdateNicknameRequest {
 /**
  * 최소 CEFR 레벨 (이 레벨 미만 단어 추출 제외)
  */
-export type UpdateCefrLevelRequestCefrLevel = typeof UpdateCefrLevelRequestCefrLevel[keyof typeof UpdateCefrLevelRequestCefrLevel];
+export type UpdateCefrLevelRequestCefrLevel =
+  (typeof UpdateCefrLevelRequestCefrLevel)[keyof typeof UpdateCefrLevelRequestCefrLevel];
 
-
- 
 export const UpdateCefrLevelRequestCefrLevel = {
-  A1: 'A1',
-  A2: 'A2',
-  B1: 'B1',
-  B2: 'B2',
-  C1: 'C1',
-  C2: 'C2',
+  A1: "A1",
+  A2: "A2",
+  B1: "B1",
+  B2: "B2",
+  C1: "C1",
+  C2: "C2",
 } as const;
 
 export interface UpdateCefrLevelRequest {
@@ -410,31 +402,29 @@ export interface UpdateCefrLevelRequest {
 /**
  * CEFR 난이도
  */
-export type AdminWordUpdateRequestCefr = typeof AdminWordUpdateRequestCefr[keyof typeof AdminWordUpdateRequestCefr];
+export type AdminWordUpdateRequestCefr =
+  (typeof AdminWordUpdateRequestCefr)[keyof typeof AdminWordUpdateRequestCefr];
 
-
- 
 export const AdminWordUpdateRequestCefr = {
-  A1: 'A1',
-  A2: 'A2',
-  B1: 'B1',
-  B2: 'B2',
-  C1: 'C1',
-  C2: 'C2',
+  A1: "A1",
+  A2: "A2",
+  B1: "B1",
+  B2: "B2",
+  C1: "C1",
+  C2: "C2",
 } as const;
 
 /**
  * 수집 상태
  */
-export type AdminWordUpdateRequestCollectStatus = typeof AdminWordUpdateRequestCollectStatus[keyof typeof AdminWordUpdateRequestCollectStatus];
+export type AdminWordUpdateRequestCollectStatus =
+  (typeof AdminWordUpdateRequestCollectStatus)[keyof typeof AdminWordUpdateRequestCollectStatus];
 
-
- 
 export const AdminWordUpdateRequestCollectStatus = {
-  PENDING: 'PENDING',
-  PARTIAL: 'PARTIAL',
-  DONE: 'DONE',
-  FAILED: 'FAILED',
+  PENDING: "PENDING",
+  PARTIAL: "PARTIAL",
+  DONE: "DONE",
+  FAILED: "FAILED",
 } as const;
 
 export interface AdminWordUpdateRequest {
@@ -476,14 +466,14 @@ export interface ApiResponseWordbookWordListResponse {
   error?: ApiError;
 }
 
-export type WordbookWordResponseLearningStatus = typeof WordbookWordResponseLearningStatus[keyof typeof WordbookWordResponseLearningStatus];
+export type WordbookWordResponseLearningStatus =
+  (typeof WordbookWordResponseLearningStatus)[keyof typeof WordbookWordResponseLearningStatus];
 
- 
 export const WordbookWordResponseLearningStatus = {
-  NOT_STARTED: 'NOT_STARTED',
-  LEARNING: 'LEARNING',
-  MEMORIZED: 'MEMORIZED',
-  RELEARNING: 'RELEARNING',
+  NOT_STARTED: "NOT_STARTED",
+  LEARNING: "LEARNING",
+  MEMORIZED: "MEMORIZED",
+  RELEARNING: "RELEARNING",
 } as const;
 
 export interface WordbookWordResponse {
@@ -542,44 +532,41 @@ export interface WordbookSourceListResponse {
 /**
  * 수집 상태 필터
  */
-export type AdminWordListRequestCollectStatus = typeof AdminWordListRequestCollectStatus[keyof typeof AdminWordListRequestCollectStatus];
+export type AdminWordListRequestCollectStatus =
+  (typeof AdminWordListRequestCollectStatus)[keyof typeof AdminWordListRequestCollectStatus];
 
-
- 
 export const AdminWordListRequestCollectStatus = {
-  PENDING: 'PENDING',
-  PARTIAL: 'PARTIAL',
-  DONE: 'DONE',
-  FAILED: 'FAILED',
+  PENDING: "PENDING",
+  PARTIAL: "PARTIAL",
+  DONE: "DONE",
+  FAILED: "FAILED",
 } as const;
 
 /**
  * 출처 필터 (AI / CSV / MANUAL)
  */
-export type AdminWordListRequestSource = typeof AdminWordListRequestSource[keyof typeof AdminWordListRequestSource];
+export type AdminWordListRequestSource =
+  (typeof AdminWordListRequestSource)[keyof typeof AdminWordListRequestSource];
 
-
- 
 export const AdminWordListRequestSource = {
-  AI: 'AI',
-  CSV: 'CSV',
-  MANUAL: 'MANUAL',
+  AI: "AI",
+  CSV: "CSV",
+  MANUAL: "MANUAL",
 } as const;
 
 /**
  * CEFR 난이도 필터
  */
-export type AdminWordListRequestCefr = typeof AdminWordListRequestCefr[keyof typeof AdminWordListRequestCefr];
+export type AdminWordListRequestCefr =
+  (typeof AdminWordListRequestCefr)[keyof typeof AdminWordListRequestCefr];
 
-
- 
 export const AdminWordListRequestCefr = {
-  A1: 'A1',
-  A2: 'A2',
-  B1: 'B1',
-  B2: 'B2',
-  C1: 'C1',
-  C2: 'C2',
+  A1: "A1",
+  A2: "A2",
+  B1: "B1",
+  B2: "B2",
+  C1: "C1",
+  C2: "C2",
 } as const;
 
 export interface AdminWordListRequest {
@@ -633,27 +620,27 @@ export interface PageResponseAdminWordResponse {
 }
 
 export type ExtractParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type GetWordbooksParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type CreateWordbookParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type GetWordsParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type AddWordsParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type ListParams = {
-request: AdminWordListRequest;
+  request: AdminWordListRequest;
 };
 
 export type CefrImportBody = {
@@ -661,32 +648,31 @@ export type CefrImportBody = {
 };
 
 export type DeleteWordbookParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type UpdateWordbookNameParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type UpdateNicknameParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type UpdateCefrLevelParams = {
-memberId: number;
+  memberId: number;
 };
 
 export type GetWords1Params = {
-memberId: number;
-words: string[];
+  memberId: number;
+  words: string[];
 };
 
 export type GetSourcesParams = {
-memberId: number;
-pageable: Pageable;
+  memberId: number;
+  pageable: Pageable;
 };
 
 export type RemoveWordParams = {
-memberId: number;
+  memberId: number;
 };
-

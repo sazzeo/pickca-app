@@ -82,10 +82,7 @@ export async function getRefreshToken(): Promise<string | null> {
   return getItem(REFRESH_TOKEN_KEY);
 }
 
-export async function setTokens(
-  accessToken: string,
-  refreshToken: string
-): Promise<void> {
+export async function setTokens(accessToken: string, refreshToken: string): Promise<void> {
   await setItem(ACCESS_TOKEN_KEY, accessToken);
   await setItem(REFRESH_TOKEN_KEY, refreshToken);
 }

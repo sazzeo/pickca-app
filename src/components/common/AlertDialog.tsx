@@ -35,10 +35,7 @@ export function AlertDialog({
 
           <Pressable
             onPress={onAction}
-            style={({ pressed }) => [
-              styles.actionButton,
-              pressed && styles.pressedButton,
-            ]}
+            style={({ pressed }) => [styles.actionButton, pressed && styles.pressedButton]}
           >
             <Text style={styles.actionButtonText}>{actionLabel}</Text>
           </Pressable>

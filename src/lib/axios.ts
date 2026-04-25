@@ -81,10 +81,7 @@ axiosInstance.interceptors.response.use(
           `${process.env.EXPO_PUBLIC_API_URL}/api/auth/token/refresh`,
           { refreshToken }
         );
-        const {
-          accessToken,
-          refreshToken: newRefreshToken,
-        } = response.data.data;
+        const { accessToken, refreshToken: newRefreshToken } = response.data.data;
 
         await setTokens(accessToken, newRefreshToken);
         refreshQueue.forEach(({ resolve }) => resolve(accessToken));

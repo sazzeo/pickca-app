@@ -65,11 +65,7 @@ export function EllipsisDropdownMenu({
         accessibilityRole="button"
         accessibilityLabel={triggerAccessibilityLabel}
       >
-        <MaterialCommunityIcons
-          name="dots-horizontal"
-          size={22}
-          color={Colors.text.primary}
-        />
+        <MaterialCommunityIcons name="dots-horizontal" size={22} color={Colors.text.primary} />
       </Pressable>
 
       <Modal
@@ -110,11 +106,7 @@ export function EllipsisDropdownMenu({
                       accessibilityRole="button"
                       accessibilityLabel={item.label}
                     >
-                      <MaterialCommunityIcons
-                        name={item.icon}
-                        size={18}
-                        color={iconColor}
-                      />
+                      <MaterialCommunityIcons name={item.icon} size={18} color={iconColor} />
                       <Text style={textStyle}>{item.label}</Text>
                     </Pressable>
 

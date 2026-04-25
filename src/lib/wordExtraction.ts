@@ -4,8 +4,14 @@ import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 import type { ExtractWordItem } from "@/types/word";
 
 const POS_SHORT: Record<string, string> = {
-  NOUN: "n", VERB: "v", ADJECTIVE: "adj", ADVERB: "adv",
-  PREPOSITION: "prep", CONJUNCTION: "conj", INTERJECTION: "interj", PRONOUN: "pron",
+  NOUN: "n",
+  VERB: "v",
+  ADJECTIVE: "adj",
+  ADVERB: "adv",
+  PREPOSITION: "prep",
+  CONJUNCTION: "conj",
+  INTERJECTION: "interj",
+  PRONOUN: "pron",
 };
 
 /** WordResponse → ExtractWordItem 변환 */

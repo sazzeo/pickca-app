@@ -32,20 +32,13 @@ export function ExtractionCard({ onPress }: ExtractionCardProps) {
 
         {/* CTA 버튼 */}
         <Pressable
-          style={({ pressed }) => [
-            styles.ctaButton,
-            pressed && styles.ctaButtonPressed,
-          ]}
+          style={({ pressed }) => [styles.ctaButton, pressed && styles.ctaButtonPressed]}
           onPress={onPress}
           accessibilityRole="button"
           accessibilityLabel="단어 추출하러 가기"
         >
           <Text style={styles.ctaText}>지금 추출하러 가기</Text>
-          <MaterialCommunityIcons
-            name="chevron-right"
-            size={18}
-            color={Colors.text.primary}
-          />
+          <MaterialCommunityIcons name="chevron-right" size={18} color={Colors.text.primary} />
         </Pressable>
       </View>
     </View>

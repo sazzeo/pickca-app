@@ -8,11 +8,10 @@ interface GreetingSectionProps {
   userName?: string;
 }
 
-export function GreetingSection({
-  isReturningUser = true,
-  userName,
-}: GreetingSectionProps) {
-  const greeting = isReturningUser ? "또 오셨군요!" : `안녕하세요${userName ? `, ${userName}님` : ""}!`;
+export function GreetingSection({ isReturningUser = true, userName }: GreetingSectionProps) {
+  const greeting = isReturningUser
+    ? "또 오셨군요!"
+    : `안녕하세요${userName ? `, ${userName}님` : ""}!`;
 
   return (
     <View style={styles.container}>

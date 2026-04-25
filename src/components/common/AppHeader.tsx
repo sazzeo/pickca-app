@@ -20,11 +20,7 @@ export function AppHeader({ onSettingsPress }: AppHeaderProps) {
         {/* 로고 영역 */}
         <View style={styles.logoRow}>
           <View style={styles.logoIconBox}>
-            <MaterialCommunityIcons
-              name="content-copy"
-              size={18}
-              color={Colors.text.white}
-            />
+            <MaterialCommunityIcons name="content-copy" size={18} color={Colors.text.white} />
           </View>
           <Text style={styles.logoText}>
             <Text style={styles.logoTextPick}>Pick</Text>
@@ -34,19 +30,12 @@ export function AppHeader({ onSettingsPress }: AppHeaderProps) {
 
         {/* 설정 버튼 — 항상 표시, 기본값은 프로필 화면 이동 */}
         <Pressable
-          style={({ pressed }) => [
-            styles.settingsButton,
-            pressed && styles.settingsButtonPressed,
-          ]}
+          style={({ pressed }) => [styles.settingsButton, pressed && styles.settingsButtonPressed]}
           onPress={handleSettingsPress}
           accessibilityRole="button"
           accessibilityLabel="설정"
         >
-          <MaterialCommunityIcons
-            name="cog-outline"
-            size={22}
-            color={Colors.text.secondary}
-          />
+          <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
         </Pressable>
       </View>
     </View>

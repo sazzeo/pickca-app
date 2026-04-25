@@ -47,11 +47,7 @@ export function QuickActionCard({ variant, count, onPress }: QuickActionCardProp
       {/* 상단: 아이콘 + 라벨 */}
       <View style={styles.topRow}>
         <View style={[styles.iconBox, { backgroundColor: config.iconBg }]}>
-          <MaterialCommunityIcons
-            name={config.icon}
-            size={22}
-            color={config.iconColor}
-          />
+          <MaterialCommunityIcons name={config.icon} size={22} color={config.iconColor} />
         </View>
       </View>
 

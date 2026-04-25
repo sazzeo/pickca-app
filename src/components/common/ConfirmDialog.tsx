@@ -38,16 +38,11 @@ export function ConfirmDialog({
   onCancel,
   onConfirm,
 }: ConfirmDialogProps) {
-  const confirmBackgroundColor =
-    tone === "danger" ? Colors.semantic.danger : Colors.brand.green;
+  const confirmBackgroundColor = tone === "danger" ? Colors.semantic.danger : Colors.brand.green;
 
   return (
     <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onCancel}
-        contentContainerStyle={styles.modalContainer}
-      >
+      <Modal visible={visible} onDismiss={onCancel} contentContainerStyle={styles.modalContainer}>
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
 
