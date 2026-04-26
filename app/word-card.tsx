@@ -5,7 +5,6 @@ import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from "reac
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
-  useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -51,8 +50,10 @@ function mapToCardItem(word: WordResponse, index: number): WordCardItem {
 
 export default function WordCardScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId: wordbookIdParam, initialIndex: initialIndexParam } =
-    useLocalSearchParams<{ wordbookId?: string; initialIndex?: string }>();
+  const { wordbookId: wordbookIdParam, initialIndex: initialIndexParam } = useLocalSearchParams<{
+    wordbookId?: string;
+    initialIndex?: string;
+  }>();
 
   const { user } = useAuth();
   const wordbookId = Number(wordbookIdParam ?? "0");
@@ -61,13 +62,10 @@ export default function WordCardScreen() {
   const { data, isPending, isError, refetch } = useGetWords(
     wordbookId,
     { memberId },
-    { query: { enabled: memberId > 0 && wordbookId > 0 } },
+    { query: { enabled: memberId > 0 && wordbookId > 0 } }
   );
 
-  const cards: WordCardItem[] = useMemo(
-    () => (data?.data?.words ?? []).map(mapToCardItem),
-    [data],
-  );
+  const cards: WordCardItem[] = useMemo(() => (data?.data?.words ?? []).map(mapToCardItem), [data]);
 
   const total = cards.length;
   const initialIndex = Math.max(0, Math.min(Number(initialIndexParam ?? "0"), total - 1));
@@ -84,8 +82,6 @@ export default function WordCardScreen() {
   const cardHeight = SCREEN_HEIGHT - headerHeight - footerHeight - 48;
 
   const progressRatio = total > 0 ? (currentIndex + 1) / total : 0;
-
-  const deckRef = useAnimatedRef<Animated.View>();
 
   if (isPending) {
     return (
@@ -179,7 +175,7 @@ export default function WordCardScreen() {
 
       {/* 카드 덱 */}
       <GestureDetector gesture={panGesture}>
-        <Animated.View ref={deckRef} style={[styles.deckViewport, { marginTop: 20 }]}>
+        <View style={[styles.deckViewport, { marginTop: 20 }]}>
           <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
             {cards.map((card, index) => (
               <View key={card.id} style={styles.cardWrapper}>
@@ -194,7 +190,7 @@ export default function WordCardScreen() {
               </View>
             ))}
           </Animated.View>
-        </Animated.View>
+        </View>
       </GestureDetector>
 
       <View style={{ height: footerHeight }} />
