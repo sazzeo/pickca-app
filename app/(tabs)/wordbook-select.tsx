@@ -40,11 +40,10 @@ export default function WordbookSelectScreen() {
 
   const showError = isError || Boolean(apiErrorMessage);
 
-  const handleSelectWordbook = (wordbookId: number) => {
-    // TODO: 퀴즈 화면으로 이동
+  const handleSelectWordbook = (wordbook: Item) => {
     router.push({
-      pathname: "/(tabs)/quiz",
-      params: { wordbookId: String(wordbookId) },
+      pathname: "/(tabs)/quiz-settings",
+      params: { wordbookId: String(wordbook.id), wordbookName: wordbook.name },
     });
   };
 
@@ -129,7 +128,7 @@ export default function WordbookSelectScreen() {
                   memorizedRate={memorizedRate}
                   learningRate={Math.round(remainingRate * 0.5)}
                   notStartedRate={remainingRate - Math.round(remainingRate * 0.5)}
-                  onPress={() => handleSelectWordbook(item.id)}
+                  onPress={() => handleSelectWordbook(item)}
                 />
               );
             })}

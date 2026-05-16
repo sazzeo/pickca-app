@@ -31,9 +31,7 @@ export function EmptyWordbookGuide({ onExtractPress }: EmptyWordbookGuideProps) 
 
       {/* 안내 플레이스홀더 */}
       <View style={styles.placeholderCard}>
-        <Text style={styles.placeholderText}>
-          {"단어를 추출하면\n여기에 단어장이 생겨요"}
-        </Text>
+        <Text style={styles.placeholderText}>{"단어를 추출하면\n여기에 단어장이 생겨요"}</Text>
       </View>
     </View>
   );

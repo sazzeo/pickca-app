@@ -36,6 +36,7 @@ export default function TabsLayout() {
       {/* 탭바 미노출 화면 */}
       <Tabs.Screen name="wordbook-detail" options={{ href: null }} />
       <Tabs.Screen name="wordbook-select" options={{ href: null }} />
+      <Tabs.Screen name="quiz-settings" options={{ href: null }} />
       <Tabs.Screen name="quiz" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>

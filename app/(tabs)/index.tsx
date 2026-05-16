@@ -102,10 +102,7 @@ export default function HomeScreen() {
             {/* 최근 본 단어장 */}
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>최근 본 단어장</Text>
-              <Text
-                style={styles.sectionLink}
-                onPress={() => router.push("/(tabs)/wordbook")}
-              >
+              <Text style={styles.sectionLink} onPress={() => router.push("/(tabs)/wordbook")}>
                 전체보기
               </Text>
             </View>

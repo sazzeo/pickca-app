@@ -41,10 +41,7 @@ export function WordbookCard({
         <Text style={styles.title} numberOfLines={2}>
           {title}
         </Text>
-        <EllipsisDropdownMenu
-          triggerAccessibilityLabel={`${title} 메뉴 열기`}
-          items={menuItems}
-        />
+        <EllipsisDropdownMenu triggerAccessibilityLabel={`${title} 메뉴 열기`} items={menuItems} />
       </View>
 
       {/* 세그먼트 프로그레스 바 */}
