@@ -4,10 +4,7 @@
  * Pickca API
  * OpenAPI spec version: v1
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,174 +17,186 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   ApiResponseWordExtractResponse,
   GetWords1Params,
-  WordExtractRequest
-} from '../pickcaAPI.schemas';
+  WordExtractRequest,
+} from "../pickcaAPI.schemas";
 
-import { fetcher } from '../../../lib/axios';
-
-
-
+import { fetcher } from "../../../lib/axios";
 
 /**
  * @summary 텍스트에서 단어 추출 및 조회
  */
-export const extract = (
-    wordExtractRequest: WordExtractRequest,
- signal?: AbortSignal
-) => {
-      
-      
-      return fetcher<ApiResponseWordExtractResponse>(
-      {url: `/api/words/extract`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: wordExtractRequest, signal
-    },
-      );
-    }
-  
+export const extract = (wordExtractRequest: WordExtractRequest, signal?: AbortSignal) => {
+  return fetcher<ApiResponseWordExtractResponse>({
+    url: `/api/words/extract`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: wordExtractRequest,
+    signal,
+  });
+};
 
+export const getExtractMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof extract>>,
+    TError,
+    { data: WordExtractRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof extract>>,
+  TError,
+  { data: WordExtractRequest },
+  TContext
+> => {
+  const mutationKey = ["extract"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getExtractMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof extract>>, TError,{data: WordExtractRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof extract>>, TError,{data: WordExtractRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof extract>>,
+    { data: WordExtractRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['extract'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return extract(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type ExtractMutationResult = NonNullable<Awaited<ReturnType<typeof extract>>>;
+export type ExtractMutationBody = WordExtractRequest;
+export type ExtractMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof extract>>, {data: WordExtractRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  extract(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type ExtractMutationResult = NonNullable<Awaited<ReturnType<typeof extract>>>
-    export type ExtractMutationBody = WordExtractRequest
-    export type ExtractMutationError = unknown
-
-    /**
+/**
  * @summary 텍스트에서 단어 추출 및 조회
  */
-export const useExtract = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof extract>>, TError,{data: WordExtractRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof extract>>,
-        TError,
-        {data: WordExtractRequest},
-        TContext
-      > => {
+export const useExtract = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof extract>>,
+      TError,
+      { data: WordExtractRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof extract>>,
+  TError,
+  { data: WordExtractRequest },
+  TContext
+> => {
+  const mutationOptions = getExtractMutationOptions(options);
 
-      const mutationOptions = getExtractMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 레마 목록으로 단어 현재 상태 조회 (AI 수집 재트리거 없음)
  */
-export const getWords1 = (
-    params: GetWords1Params,
- signal?: AbortSignal
+export const getWords1 = (params: GetWords1Params, signal?: AbortSignal) => {
+  return fetcher<ApiResponseWordExtractResponse>({
+    url: `/api/words`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetWords1QueryKey = (params?: GetWords1Params) => {
+  return [`/api/words`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetWords1QueryOptions = <
+  TData = Awaited<ReturnType<typeof getWords1>>,
+  TError = unknown,
+>(
+  params: GetWords1Params,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>>;
+  }
 ) => {
-      
-      
-      return fetcher<ApiResponseWordExtractResponse>(
-      {url: `/api/words`, method: 'GET',
-        params, signal
-    },
-      );
-    }
-  
+  const { query: queryOptions } = options ?? {};
 
+  const queryKey = queryOptions?.queryKey ?? getGetWords1QueryKey(params);
 
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWords1>>> = ({ signal }) =>
+    getWords1(params, signal);
 
-export const getGetWords1QueryKey = (params?: GetWords1Params,) => {
-    return [
-    `/api/words`, ...(params ? [params]: [])
-    ] as const;
-    }
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWords1>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    
-export const getGetWords1QueryOptions = <TData = Awaited<ReturnType<typeof getWords1>>, TError = unknown>(params: GetWords1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetWords1QueryKey(params);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWords1>>> = ({ signal }) => getWords1(params, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetWords1QueryResult = NonNullable<Awaited<ReturnType<typeof getWords1>>>
-export type GetWords1QueryError = unknown
-
+export type GetWords1QueryResult = NonNullable<Awaited<ReturnType<typeof getWords1>>>;
+export type GetWords1QueryError = unknown;
 
 export function useGetWords1<TData = Awaited<ReturnType<typeof getWords1>>, TError = unknown>(
- params: GetWords1Params, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>> & Pick<
+  params: GetWords1Params,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWords1>>,
           TError,
           Awaited<ReturnType<typeof getWords1>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetWords1<TData = Awaited<ReturnType<typeof getWords1>>, TError = unknown>(
- params: GetWords1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>> & Pick<
+  params: GetWords1Params,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWords1>>,
           TError,
           Awaited<ReturnType<typeof getWords1>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetWords1<TData = Awaited<ReturnType<typeof getWords1>>, TError = unknown>(
- params: GetWords1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  params: GetWords1Params,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary 레마 목록으로 단어 현재 상태 조회 (AI 수집 재트리거 없음)
  */
 
 export function useGetWords1<TData = Awaited<ReturnType<typeof getWords1>>, TError = unknown>(
- params: GetWords1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  params: GetWords1Params,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords1>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetWords1QueryOptions(params, options);
 
-  const queryOptions = getGetWords1QueryOptions(params,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
-
-
-
-

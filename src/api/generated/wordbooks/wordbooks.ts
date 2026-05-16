@@ -4,10 +4,7 @@
  * Pickca API
  * OpenAPI spec version: v1
  */
-import {
-  useMutation,
-  useQuery
-} from '@tanstack/react-query';
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   DataTag,
   DefinedInitialDataOptions,
@@ -20,8 +17,8 @@ import type {
   UseMutationOptions,
   UseMutationResult,
   UseQueryOptions,
-  UseQueryResult
-} from '@tanstack/react-query';
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 import type {
   ApiResponse,
@@ -34,743 +31,823 @@ import type {
   GetWordsParams,
   QuizResultRequest,
   UpdateWordbookNameRequest,
-  WordbookAddWordsRequest
-} from '../pickcaAPI.schemas';
+  WordbookAddWordsRequest,
+} from "../pickcaAPI.schemas";
 
-import { fetcher } from '../../../lib/axios';
-
-
-
+import { fetcher } from "../../../lib/axios";
 
 /**
  * @summary 내 단어장 목록 조회
  */
-export const getWordbooks = (
-    
- signal?: AbortSignal
-) => {
-      
-      
-      return fetcher<ApiResponseWordbookListResponse>(
-      {url: `/api/wordbooks`, method: 'GET', signal
-    },
-      );
-    }
-  
-
-
+export const getWordbooks = (signal?: AbortSignal) => {
+  return fetcher<ApiResponseWordbookListResponse>({ url: `/api/wordbooks`, method: "GET", signal });
+};
 
 export const getGetWordbooksQueryKey = () => {
-    return [
-    `/api/wordbooks`
-    ] as const;
-    }
+  return [`/api/wordbooks`] as const;
+};
 
-    
-export const getGetWordbooksQueryOptions = <TData = Awaited<ReturnType<typeof getWordbooks>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>>, }
-) => {
+export const getGetWordbooksQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWordbooks>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>>;
+}) => {
+  const { query: queryOptions } = options ?? {};
 
-const {query: queryOptions} = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetWordbooksQueryKey();
 
-  const queryKey =  queryOptions?.queryKey ?? getGetWordbooksQueryKey();
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWordbooks>>> = ({ signal }) =>
+    getWordbooks(signal);
 
-  
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWordbooks>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWordbooks>>> = ({ signal }) => getWordbooks(signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetWordbooksQueryResult = NonNullable<Awaited<ReturnType<typeof getWordbooks>>>
-export type GetWordbooksQueryError = unknown
-
+export type GetWordbooksQueryResult = NonNullable<Awaited<ReturnType<typeof getWordbooks>>>;
+export type GetWordbooksQueryError = unknown;
 
 export function useGetWordbooks<TData = Awaited<ReturnType<typeof getWordbooks>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>> & Pick<
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWordbooks>>,
           TError,
           Awaited<ReturnType<typeof getWordbooks>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetWordbooks<TData = Awaited<ReturnType<typeof getWordbooks>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>> & Pick<
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWordbooks>>,
           TError,
           Awaited<ReturnType<typeof getWordbooks>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetWordbooks<TData = Awaited<ReturnType<typeof getWordbooks>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary 내 단어장 목록 조회
  */
 
 export function useGetWordbooks<TData = Awaited<ReturnType<typeof getWordbooks>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWordbooks>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetWordbooksQueryOptions(options);
 
-  const queryOptions = getGetWordbooksQueryOptions(options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
-
-
-
 
 /**
  * @summary 단어장 생성
  */
 export const createWordbook = (
-    createWordbookRequest: CreateWordbookRequest,
- signal?: AbortSignal
+  createWordbookRequest: CreateWordbookRequest,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return fetcher<ApiResponseItem>(
-      {url: `/api/wordbooks`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: createWordbookRequest, signal
-    },
-      );
-    }
-  
+  return fetcher<ApiResponseItem>({
+    url: `/api/wordbooks`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: createWordbookRequest,
+    signal,
+  });
+};
 
+export const getCreateWordbookMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createWordbook>>,
+    TError,
+    { data: CreateWordbookRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createWordbook>>,
+  TError,
+  { data: CreateWordbookRequest },
+  TContext
+> => {
+  const mutationKey = ["createWordbook"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getCreateWordbookMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWordbook>>, TError,{data: CreateWordbookRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof createWordbook>>, TError,{data: CreateWordbookRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createWordbook>>,
+    { data: CreateWordbookRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['createWordbook'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return createWordbook(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type CreateWordbookMutationResult = NonNullable<Awaited<ReturnType<typeof createWordbook>>>;
+export type CreateWordbookMutationBody = CreateWordbookRequest;
+export type CreateWordbookMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createWordbook>>, {data: CreateWordbookRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  createWordbook(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateWordbookMutationResult = NonNullable<Awaited<ReturnType<typeof createWordbook>>>
-    export type CreateWordbookMutationBody = CreateWordbookRequest
-    export type CreateWordbookMutationError = unknown
-
-    /**
+/**
  * @summary 단어장 생성
  */
-export const useCreateWordbook = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createWordbook>>, TError,{data: CreateWordbookRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createWordbook>>,
-        TError,
-        {data: CreateWordbookRequest},
-        TContext
-      > => {
+export const useCreateWordbook = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof createWordbook>>,
+      TError,
+      { data: CreateWordbookRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof createWordbook>>,
+  TError,
+  { data: CreateWordbookRequest },
+  TContext
+> => {
+  const mutationOptions = getCreateWordbookMutationOptions(options);
 
-      const mutationOptions = getCreateWordbookMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 단어장 단어 목록 조회
  */
-export const getWords = (
-    wordbookId: number,
-    params?: GetWordsParams,
- signal?: AbortSignal
+export const getWords = (wordbookId: number, params?: GetWordsParams, signal?: AbortSignal) => {
+  return fetcher<ApiResponseWordbookWordListResponse>({
+    url: `/api/wordbooks/${wordbookId}/words`,
+    method: "GET",
+    params,
+    signal,
+  });
+};
+
+export const getGetWordsQueryKey = (wordbookId?: number, params?: GetWordsParams) => {
+  return [`/api/wordbooks/${wordbookId}/words`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetWordsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getWords>>,
+  TError = unknown,
+>(
+  wordbookId: number,
+  params?: GetWordsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>>;
+  }
 ) => {
-      
-      
-      return fetcher<ApiResponseWordbookWordListResponse>(
-      {url: `/api/wordbooks/${wordbookId}/words`, method: 'GET',
-        params, signal
-    },
-      );
-    }
-  
+  const { query: queryOptions } = options ?? {};
 
+  const queryKey = queryOptions?.queryKey ?? getGetWordsQueryKey(wordbookId, params);
 
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getWords>>> = ({ signal }) =>
+    getWords(wordbookId, params, signal);
 
-export const getGetWordsQueryKey = (wordbookId?: number,
-    params?: GetWordsParams,) => {
-    return [
-    `/api/wordbooks/${wordbookId}/words`, ...(params ? [params]: [])
-    ] as const;
-    }
+  return { queryKey, queryFn, enabled: !!wordbookId, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getWords>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    
-export const getGetWordsQueryOptions = <TData = Awaited<ReturnType<typeof getWords>>, TError = unknown>(wordbookId: number,
-    params?: GetWordsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetWordsQueryKey(wordbookId,params);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getWords>>> = ({ signal }) => getWords(wordbookId,params, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(wordbookId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetWordsQueryResult = NonNullable<Awaited<ReturnType<typeof getWords>>>
-export type GetWordsQueryError = unknown
-
+export type GetWordsQueryResult = NonNullable<Awaited<ReturnType<typeof getWords>>>;
+export type GetWordsQueryError = unknown;
 
 export function useGetWords<TData = Awaited<ReturnType<typeof getWords>>, TError = unknown>(
- wordbookId: number,
-    params: undefined |  GetWordsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>> & Pick<
+  wordbookId: number,
+  params: undefined | GetWordsParams,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWords>>,
           TError,
           Awaited<ReturnType<typeof getWords>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetWords<TData = Awaited<ReturnType<typeof getWords>>, TError = unknown>(
- wordbookId: number,
-    params?: GetWordsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>> & Pick<
+  wordbookId: number,
+  params?: GetWordsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getWords>>,
           TError,
           Awaited<ReturnType<typeof getWords>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetWords<TData = Awaited<ReturnType<typeof getWords>>, TError = unknown>(
- wordbookId: number,
-    params?: GetWordsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  wordbookId: number,
+  params?: GetWordsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary 단어장 단어 목록 조회
  */
 
 export function useGetWords<TData = Awaited<ReturnType<typeof getWords>>, TError = unknown>(
- wordbookId: number,
-    params?: GetWordsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  wordbookId: number,
+  params?: GetWordsParams,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getWords>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetWordsQueryOptions(wordbookId, params, options);
 
-  const queryOptions = getGetWordsQueryOptions(wordbookId,params,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
-
-
-
 
 /**
  * @summary 단어장에 단어 추가
  */
 export const addWords = (
-    wordbookId: number,
-    wordbookAddWordsRequest: WordbookAddWordsRequest,
- signal?: AbortSignal
+  wordbookId: number,
+  wordbookAddWordsRequest: WordbookAddWordsRequest,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/wordbooks/${wordbookId}/words`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: wordbookAddWordsRequest, signal
-    },
-      );
-    }
-  
+  return fetcher<ApiResponse>({
+    url: `/api/wordbooks/${wordbookId}/words`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: wordbookAddWordsRequest,
+    signal,
+  });
+};
 
+export const getAddWordsMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addWords>>,
+    TError,
+    { wordbookId: number; data: WordbookAddWordsRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addWords>>,
+  TError,
+  { wordbookId: number; data: WordbookAddWordsRequest },
+  TContext
+> => {
+  const mutationKey = ["addWords"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getAddWordsMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addWords>>, TError,{wordbookId: number;data: WordbookAddWordsRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof addWords>>, TError,{wordbookId: number;data: WordbookAddWordsRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addWords>>,
+    { wordbookId: number; data: WordbookAddWordsRequest }
+  > = (props) => {
+    const { wordbookId, data } = props ?? {};
 
-const mutationKey = ['addWords'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return addWords(wordbookId, data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type AddWordsMutationResult = NonNullable<Awaited<ReturnType<typeof addWords>>>;
+export type AddWordsMutationBody = WordbookAddWordsRequest;
+export type AddWordsMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof addWords>>, {wordbookId: number;data: WordbookAddWordsRequest}> = (props) => {
-          const {wordbookId,data} = props ?? {};
-
-          return  addWords(wordbookId,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type AddWordsMutationResult = NonNullable<Awaited<ReturnType<typeof addWords>>>
-    export type AddWordsMutationBody = WordbookAddWordsRequest
-    export type AddWordsMutationError = unknown
-
-    /**
+/**
  * @summary 단어장에 단어 추가
  */
-export const useAddWords = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof addWords>>, TError,{wordbookId: number;data: WordbookAddWordsRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof addWords>>,
-        TError,
-        {wordbookId: number;data: WordbookAddWordsRequest},
-        TContext
-      > => {
+export const useAddWords = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof addWords>>,
+      TError,
+      { wordbookId: number; data: WordbookAddWordsRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof addWords>>,
+  TError,
+  { wordbookId: number; data: WordbookAddWordsRequest },
+  TContext
+> => {
+  const mutationOptions = getAddWordsMutationOptions(options);
 
-      const mutationOptions = getAddWordsMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 퀴즈 결과 기록 (정답/오답에 따라 상태 전이)
  */
 export const recordQuizResult = (
-    wordbookId: number,
-    wordId: number,
-    quizResultRequest: QuizResultRequest,
- signal?: AbortSignal
+  wordbookId: number,
+  wordId: number,
+  quizResultRequest: QuizResultRequest,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/wordbooks/${wordbookId}/words/${wordId}/quiz-result`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: quizResultRequest, signal
-    },
-      );
-    }
-  
+  return fetcher<ApiResponse>({
+    url: `/api/wordbooks/${wordbookId}/words/${wordId}/quiz-result`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: quizResultRequest,
+    signal,
+  });
+};
 
+export const getRecordQuizResultMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof recordQuizResult>>,
+    TError,
+    { wordbookId: number; wordId: number; data: QuizResultRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof recordQuizResult>>,
+  TError,
+  { wordbookId: number; wordId: number; data: QuizResultRequest },
+  TContext
+> => {
+  const mutationKey = ["recordQuizResult"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getRecordQuizResultMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof recordQuizResult>>, TError,{wordbookId: number;wordId: number;data: QuizResultRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof recordQuizResult>>, TError,{wordbookId: number;wordId: number;data: QuizResultRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof recordQuizResult>>,
+    { wordbookId: number; wordId: number; data: QuizResultRequest }
+  > = (props) => {
+    const { wordbookId, wordId, data } = props ?? {};
 
-const mutationKey = ['recordQuizResult'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return recordQuizResult(wordbookId, wordId, data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type RecordQuizResultMutationResult = NonNullable<
+  Awaited<ReturnType<typeof recordQuizResult>>
+>;
+export type RecordQuizResultMutationBody = QuizResultRequest;
+export type RecordQuizResultMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof recordQuizResult>>, {wordbookId: number;wordId: number;data: QuizResultRequest}> = (props) => {
-          const {wordbookId,wordId,data} = props ?? {};
-
-          return  recordQuizResult(wordbookId,wordId,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type RecordQuizResultMutationResult = NonNullable<Awaited<ReturnType<typeof recordQuizResult>>>
-    export type RecordQuizResultMutationBody = QuizResultRequest
-    export type RecordQuizResultMutationError = unknown
-
-    /**
+/**
  * @summary 퀴즈 결과 기록 (정답/오답에 따라 상태 전이)
  */
-export const useRecordQuizResult = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof recordQuizResult>>, TError,{wordbookId: number;wordId: number;data: QuizResultRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof recordQuizResult>>,
-        TError,
-        {wordbookId: number;wordId: number;data: QuizResultRequest},
-        TContext
-      > => {
+export const useRecordQuizResult = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof recordQuizResult>>,
+      TError,
+      { wordbookId: number; wordId: number; data: QuizResultRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof recordQuizResult>>,
+  TError,
+  { wordbookId: number; wordId: number; data: QuizResultRequest },
+  TContext
+> => {
+  const mutationOptions = getRecordQuizResultMutationOptions(options);
 
-      const mutationOptions = getRecordQuizResultMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 학습 시작 — 조회한 단어들을 LEARNING 상태로 일괄 전환
  */
 export const markAsStudied = (
-    wordbookId: number,
-    batchStudyRequest: BatchStudyRequest,
- signal?: AbortSignal
+  wordbookId: number,
+  batchStudyRequest: BatchStudyRequest,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/wordbooks/${wordbookId}/words/study`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: batchStudyRequest, signal
-    },
-      );
-    }
-  
+  return fetcher<ApiResponse>({
+    url: `/api/wordbooks/${wordbookId}/words/study`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: batchStudyRequest,
+    signal,
+  });
+};
 
+export const getMarkAsStudiedMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markAsStudied>>,
+    TError,
+    { wordbookId: number; data: BatchStudyRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof markAsStudied>>,
+  TError,
+  { wordbookId: number; data: BatchStudyRequest },
+  TContext
+> => {
+  const mutationKey = ["markAsStudied"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getMarkAsStudiedMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsStudied>>, TError,{wordbookId: number;data: BatchStudyRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof markAsStudied>>, TError,{wordbookId: number;data: BatchStudyRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof markAsStudied>>,
+    { wordbookId: number; data: BatchStudyRequest }
+  > = (props) => {
+    const { wordbookId, data } = props ?? {};
 
-const mutationKey = ['markAsStudied'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return markAsStudied(wordbookId, data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type MarkAsStudiedMutationResult = NonNullable<Awaited<ReturnType<typeof markAsStudied>>>;
+export type MarkAsStudiedMutationBody = BatchStudyRequest;
+export type MarkAsStudiedMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof markAsStudied>>, {wordbookId: number;data: BatchStudyRequest}> = (props) => {
-          const {wordbookId,data} = props ?? {};
-
-          return  markAsStudied(wordbookId,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type MarkAsStudiedMutationResult = NonNullable<Awaited<ReturnType<typeof markAsStudied>>>
-    export type MarkAsStudiedMutationBody = BatchStudyRequest
-    export type MarkAsStudiedMutationError = unknown
-
-    /**
+/**
  * @summary 학습 시작 — 조회한 단어들을 LEARNING 상태로 일괄 전환
  */
-export const useMarkAsStudied = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof markAsStudied>>, TError,{wordbookId: number;data: BatchStudyRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof markAsStudied>>,
-        TError,
-        {wordbookId: number;data: BatchStudyRequest},
-        TContext
-      > => {
+export const useMarkAsStudied = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof markAsStudied>>,
+      TError,
+      { wordbookId: number; data: BatchStudyRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof markAsStudied>>,
+  TError,
+  { wordbookId: number; data: BatchStudyRequest },
+  TContext
+> => {
+  const mutationOptions = getMarkAsStudiedMutationOptions(options);
 
-      const mutationOptions = getMarkAsStudiedMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 단어장 삭제
  */
-export const deleteWordbook = (
-    wordbookId: number,
- ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/wordbooks/${wordbookId}`, method: 'DELETE'
-    },
-      );
-    }
-  
+export const deleteWordbook = (wordbookId: number) => {
+  return fetcher<ApiResponse>({ url: `/api/wordbooks/${wordbookId}`, method: "DELETE" });
+};
 
+export const getDeleteWordbookMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteWordbook>>,
+    TError,
+    { wordbookId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteWordbook>>,
+  TError,
+  { wordbookId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteWordbook"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getDeleteWordbookMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWordbook>>, TError,{wordbookId: number}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof deleteWordbook>>, TError,{wordbookId: number}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteWordbook>>,
+    { wordbookId: number }
+  > = (props) => {
+    const { wordbookId } = props ?? {};
 
-const mutationKey = ['deleteWordbook'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return deleteWordbook(wordbookId);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type DeleteWordbookMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWordbook>>>;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteWordbook>>, {wordbookId: number}> = (props) => {
-          const {wordbookId} = props ?? {};
+export type DeleteWordbookMutationError = unknown;
 
-          return  deleteWordbook(wordbookId,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteWordbookMutationResult = NonNullable<Awaited<ReturnType<typeof deleteWordbook>>>
-    
-    export type DeleteWordbookMutationError = unknown
-
-    /**
+/**
  * @summary 단어장 삭제
  */
-export const useDeleteWordbook = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteWordbook>>, TError,{wordbookId: number}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteWordbook>>,
-        TError,
-        {wordbookId: number},
-        TContext
-      > => {
+export const useDeleteWordbook = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteWordbook>>,
+      TError,
+      { wordbookId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof deleteWordbook>>,
+  TError,
+  { wordbookId: number },
+  TContext
+> => {
+  const mutationOptions = getDeleteWordbookMutationOptions(options);
 
-      const mutationOptions = getDeleteWordbookMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 단어장 이름 수정
  */
 export const updateWordbookName = (
-    wordbookId: number,
-    updateWordbookNameRequest: UpdateWordbookNameRequest,
- ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/wordbooks/${wordbookId}`, method: 'PATCH',
-      headers: {'Content-Type': 'application/json', },
-      data: updateWordbookNameRequest
-    },
-      );
-    }
-  
+  wordbookId: number,
+  updateWordbookNameRequest: UpdateWordbookNameRequest
+) => {
+  return fetcher<ApiResponse>({
+    url: `/api/wordbooks/${wordbookId}`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: updateWordbookNameRequest,
+  });
+};
 
+export const getUpdateWordbookNameMutationOptions = <
+  TError = unknown,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateWordbookName>>,
+    TError,
+    { wordbookId: number; data: UpdateWordbookNameRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateWordbookName>>,
+  TError,
+  { wordbookId: number; data: UpdateWordbookNameRequest },
+  TContext
+> => {
+  const mutationKey = ["updateWordbookName"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getUpdateWordbookNameMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWordbookName>>, TError,{wordbookId: number;data: UpdateWordbookNameRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof updateWordbookName>>, TError,{wordbookId: number;data: UpdateWordbookNameRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateWordbookName>>,
+    { wordbookId: number; data: UpdateWordbookNameRequest }
+  > = (props) => {
+    const { wordbookId, data } = props ?? {};
 
-const mutationKey = ['updateWordbookName'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return updateWordbookName(wordbookId, data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type UpdateWordbookNameMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateWordbookName>>
+>;
+export type UpdateWordbookNameMutationBody = UpdateWordbookNameRequest;
+export type UpdateWordbookNameMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateWordbookName>>, {wordbookId: number;data: UpdateWordbookNameRequest}> = (props) => {
-          const {wordbookId,data} = props ?? {};
-
-          return  updateWordbookName(wordbookId,data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateWordbookNameMutationResult = NonNullable<Awaited<ReturnType<typeof updateWordbookName>>>
-    export type UpdateWordbookNameMutationBody = UpdateWordbookNameRequest
-    export type UpdateWordbookNameMutationError = unknown
-
-    /**
+/**
  * @summary 단어장 이름 수정
  */
-export const useUpdateWordbookName = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateWordbookName>>, TError,{wordbookId: number;data: UpdateWordbookNameRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateWordbookName>>,
-        TError,
-        {wordbookId: number;data: UpdateWordbookNameRequest},
-        TContext
-      > => {
+export const useUpdateWordbookName = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateWordbookName>>,
+      TError,
+      { wordbookId: number; data: UpdateWordbookNameRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateWordbookName>>,
+  TError,
+  { wordbookId: number; data: UpdateWordbookNameRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateWordbookNameMutationOptions(options);
 
-      const mutationOptions = getUpdateWordbookNameMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 단어장 원본 문장 목록 조회
  */
-export const getSources = (
-    wordbookId: number,
- signal?: AbortSignal
+export const getSources = (wordbookId: number, signal?: AbortSignal) => {
+  return fetcher<ApiResponseWordbookSourceListResponse>({
+    url: `/api/wordbooks/${wordbookId}/sources`,
+    method: "GET",
+    signal,
+  });
+};
+
+export const getGetSourcesQueryKey = (wordbookId?: number) => {
+  return [`/api/wordbooks/${wordbookId}/sources`] as const;
+};
+
+export const getGetSourcesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSources>>,
+  TError = unknown,
+>(
+  wordbookId: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>>;
+  }
 ) => {
-      
-      
-      return fetcher<ApiResponseWordbookSourceListResponse>(
-      {url: `/api/wordbooks/${wordbookId}/sources`, method: 'GET', signal
-    },
-      );
-    }
-  
+  const { query: queryOptions } = options ?? {};
 
+  const queryKey = queryOptions?.queryKey ?? getGetSourcesQueryKey(wordbookId);
 
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSources>>> = ({ signal }) =>
+    getSources(wordbookId, signal);
 
-export const getGetSourcesQueryKey = (wordbookId?: number,) => {
-    return [
-    `/api/wordbooks/${wordbookId}/sources`
-    ] as const;
-    }
+  return { queryKey, queryFn, enabled: !!wordbookId, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSources>>,
+    TError,
+    TData
+  > & { queryKey: DataTag<QueryKey, TData, TError> };
+};
 
-    
-export const getGetSourcesQueryOptions = <TData = Awaited<ReturnType<typeof getSources>>, TError = unknown>(wordbookId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>>, }
-) => {
-
-const {query: queryOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetSourcesQueryKey(wordbookId);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSources>>> = ({ signal }) => getSources(wordbookId, signal);
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(wordbookId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetSourcesQueryResult = NonNullable<Awaited<ReturnType<typeof getSources>>>
-export type GetSourcesQueryError = unknown
-
+export type GetSourcesQueryResult = NonNullable<Awaited<ReturnType<typeof getSources>>>;
+export type GetSourcesQueryError = unknown;
 
 export function useGetSources<TData = Awaited<ReturnType<typeof getSources>>, TError = unknown>(
- wordbookId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>> & Pick<
+  wordbookId: number,
+  options: {
+    query: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>> &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getSources>>,
           TError,
           Awaited<ReturnType<typeof getSources>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetSources<TData = Awaited<ReturnType<typeof getSources>>, TError = unknown>(
- wordbookId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>> & Pick<
+  wordbookId: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>> &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getSources>>,
           TError,
           Awaited<ReturnType<typeof getSources>>
-        > , 'initialData'
-      >, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+        >,
+        "initialData"
+      >;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 export function useGetSources<TData = Awaited<ReturnType<typeof getSources>>, TError = unknown>(
- wordbookId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>>, }
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+  wordbookId: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 /**
  * @summary 단어장 원본 문장 목록 조회
  */
 
 export function useGetSources<TData = Awaited<ReturnType<typeof getSources>>, TError = unknown>(
- wordbookId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>>, }
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  wordbookId: number,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getSources>>, TError, TData>>;
+  },
+  queryClient?: QueryClient
+): UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetSourcesQueryOptions(wordbookId, options);
 
-  const queryOptions = getGetSourcesQueryOptions(wordbookId,options)
+  const query = useQuery(queryOptions, queryClient) as UseQueryResult<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
 
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
 
+/**
+ * @summary 단어장에서 단어 제거
+ */
+export const removeWord = (wordbookId: number, wordId: number) => {
+  return fetcher<ApiResponse>({
+    url: `/api/wordbooks/${wordbookId}/words/${wordId}`,
+    method: "DELETE",
+  });
+};
 
+export const getRemoveWordMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof removeWord>>,
+    TError,
+    { wordbookId: number; wordId: number },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof removeWord>>,
+  TError,
+  { wordbookId: number; wordId: number },
+  TContext
+> => {
+  const mutationKey = ["removeWord"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof removeWord>>,
+    { wordbookId: number; wordId: number }
+  > = (props) => {
+    const { wordbookId, wordId } = props ?? {};
+
+    return removeWord(wordbookId, wordId);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RemoveWordMutationResult = NonNullable<Awaited<ReturnType<typeof removeWord>>>;
+
+export type RemoveWordMutationError = unknown;
 
 /**
  * @summary 단어장에서 단어 제거
  */
-export const removeWord = (
-    wordbookId: number,
-    wordId: number,
- ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/wordbooks/${wordbookId}/words/${wordId}`, method: 'DELETE'
-    },
-      );
-    }
-  
+export const useRemoveWord = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof removeWord>>,
+      TError,
+      { wordbookId: number; wordId: number },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof removeWord>>,
+  TError,
+  { wordbookId: number; wordId: number },
+  TContext
+> => {
+  const mutationOptions = getRemoveWordMutationOptions(options);
 
-
-export const getRemoveWordMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeWord>>, TError,{wordbookId: number;wordId: number}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof removeWord>>, TError,{wordbookId: number;wordId: number}, TContext> => {
-
-const mutationKey = ['removeWord'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof removeWord>>, {wordbookId: number;wordId: number}> = (props) => {
-          const {wordbookId,wordId} = props ?? {};
-
-          return  removeWord(wordbookId,wordId,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type RemoveWordMutationResult = NonNullable<Awaited<ReturnType<typeof removeWord>>>
-    
-    export type RemoveWordMutationError = unknown
-
-    /**
- * @summary 단어장에서 단어 제거
- */
-export const useRemoveWord = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof removeWord>>, TError,{wordbookId: number;wordId: number}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof removeWord>>,
-        TError,
-        {wordbookId: number;wordId: number},
-        TContext
-      > => {
-
-      const mutationOptions = getRemoveWordMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
+  return useMutation(mutationOptions, queryClient);
+};

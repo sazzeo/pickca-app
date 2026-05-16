@@ -4,151 +4,163 @@
  * Pickca API
  * OpenAPI spec version: v1
  */
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import type {
   MutationFunction,
   QueryClient,
   UseMutationOptions,
-  UseMutationResult
-} from '@tanstack/react-query';
+  UseMutationResult,
+} from "@tanstack/react-query";
 
 import type {
   ApiResponse,
   UpdateCefrLevelRequest,
-  UpdateNicknameRequest
-} from '../pickcaAPI.schemas';
+  UpdateNicknameRequest,
+} from "../pickcaAPI.schemas";
 
-import { fetcher } from '../../../lib/axios';
-
-
-
+import { fetcher } from "../../../lib/axios";
 
 /**
  * @summary 닉네임 변경
  */
-export const updateNickname = (
-    updateNicknameRequest: UpdateNicknameRequest,
- ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/members/me/nickname`, method: 'PATCH',
-      headers: {'Content-Type': 'application/json', },
-      data: updateNicknameRequest
-    },
-      );
-    }
-  
+export const updateNickname = (updateNicknameRequest: UpdateNicknameRequest) => {
+  return fetcher<ApiResponse>({
+    url: `/api/members/me/nickname`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: updateNicknameRequest,
+  });
+};
 
+export const getUpdateNicknameMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateNickname>>,
+    TError,
+    { data: UpdateNicknameRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateNickname>>,
+  TError,
+  { data: UpdateNicknameRequest },
+  TContext
+> => {
+  const mutationKey = ["updateNickname"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getUpdateNicknameMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateNickname>>, TError,{data: UpdateNicknameRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof updateNickname>>, TError,{data: UpdateNicknameRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateNickname>>,
+    { data: UpdateNicknameRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['updateNickname'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return updateNickname(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type UpdateNicknameMutationResult = NonNullable<Awaited<ReturnType<typeof updateNickname>>>;
+export type UpdateNicknameMutationBody = UpdateNicknameRequest;
+export type UpdateNicknameMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateNickname>>, {data: UpdateNicknameRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  updateNickname(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateNicknameMutationResult = NonNullable<Awaited<ReturnType<typeof updateNickname>>>
-    export type UpdateNicknameMutationBody = UpdateNicknameRequest
-    export type UpdateNicknameMutationError = unknown
-
-    /**
+/**
  * @summary 닉네임 변경
  */
-export const useUpdateNickname = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateNickname>>, TError,{data: UpdateNicknameRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateNickname>>,
-        TError,
-        {data: UpdateNicknameRequest},
-        TContext
-      > => {
+export const useUpdateNickname = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateNickname>>,
+      TError,
+      { data: UpdateNicknameRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateNickname>>,
+  TError,
+  { data: UpdateNicknameRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateNicknameMutationOptions(options);
 
-      const mutationOptions = getUpdateNicknameMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 단어 추출 최소 CEFR 레벨 변경
  */
-export const updateCefrLevel = (
-    updateCefrLevelRequest: UpdateCefrLevelRequest,
- ) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/members/me/cefr-level`, method: 'PATCH',
-      headers: {'Content-Type': 'application/json', },
-      data: updateCefrLevelRequest
-    },
-      );
-    }
-  
+export const updateCefrLevel = (updateCefrLevelRequest: UpdateCefrLevelRequest) => {
+  return fetcher<ApiResponse>({
+    url: `/api/members/me/cefr-level`,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    data: updateCefrLevelRequest,
+  });
+};
 
+export const getUpdateCefrLevelMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateCefrLevel>>,
+    TError,
+    { data: UpdateCefrLevelRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateCefrLevel>>,
+  TError,
+  { data: UpdateCefrLevelRequest },
+  TContext
+> => {
+  const mutationKey = ["updateCefrLevel"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getUpdateCefrLevelMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCefrLevel>>, TError,{data: UpdateCefrLevelRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof updateCefrLevel>>, TError,{data: UpdateCefrLevelRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateCefrLevel>>,
+    { data: UpdateCefrLevelRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['updateCefrLevel'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return updateCefrLevel(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type UpdateCefrLevelMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateCefrLevel>>
+>;
+export type UpdateCefrLevelMutationBody = UpdateCefrLevelRequest;
+export type UpdateCefrLevelMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCefrLevel>>, {data: UpdateCefrLevelRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  updateCefrLevel(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateCefrLevelMutationResult = NonNullable<Awaited<ReturnType<typeof updateCefrLevel>>>
-    export type UpdateCefrLevelMutationBody = UpdateCefrLevelRequest
-    export type UpdateCefrLevelMutationError = unknown
-
-    /**
+/**
  * @summary 단어 추출 최소 CEFR 레벨 변경
  */
-export const useUpdateCefrLevel = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCefrLevel>>, TError,{data: UpdateCefrLevelRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateCefrLevel>>,
-        TError,
-        {data: UpdateCefrLevelRequest},
-        TContext
-      > => {
+export const useUpdateCefrLevel = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof updateCefrLevel>>,
+      TError,
+      { data: UpdateCefrLevelRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof updateCefrLevel>>,
+  TError,
+  { data: UpdateCefrLevelRequest },
+  TContext
+> => {
+  const mutationOptions = getUpdateCefrLevelMutationOptions(options);
 
-      const mutationOptions = getUpdateCefrLevelMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
+  return useMutation(mutationOptions, queryClient);
+};

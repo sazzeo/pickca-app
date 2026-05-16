@@ -11,16 +11,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useQuery } from "@tanstack/react-query";
-import { useMarkAsStudied } from "@/api/generated/wordbooks/wordbooks";
+import { useGetWords, useMarkAsStudied } from "@/api/generated/wordbooks/wordbooks";
 import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
 import type {
-  ApiResponseWordbookWordListResponse,
+  GetWordsLearningStatus,
   WordbookWordResponse,
 } from "@/api/generated/pickcaAPI.schemas";
 import { WordCard, type WordCardItem } from "@/components/study/WordCard";
 import { Colors } from "@/lib/colors";
-import { fetcher } from "@/lib/axios";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
 const PEEK_SIZE = 20;
@@ -65,18 +63,13 @@ export default function WordCardScreen() {
   }>();
 
   const wordbookId = Number(wordbookIdParam ?? "0");
+  const learningStatus = (learningStatusParam as GetWordsLearningStatus) || undefined;
 
-  // NOTE: learningStatus 필터가 orval에 반영되면 useGetWords로 교체
-  const { data, isPending, isError, refetch } = useQuery({
-    queryKey: [`/api/wordbooks/${wordbookId}/words`, learningStatusParam],
-    queryFn: () =>
-      fetcher<ApiResponseWordbookWordListResponse>({
-        url: `/api/wordbooks/${wordbookId}/words`,
-        method: "GET",
-        params: learningStatusParam ? { learningStatus: learningStatusParam } : undefined,
-      }),
-    enabled: wordbookId > 0,
-  });
+  const { data, isPending, isError, refetch } = useGetWords(
+    wordbookId,
+    learningStatus ? { learningStatus } : undefined,
+    { query: { enabled: wordbookId > 0 } }
+  );
 
   const words = (data?.data?.words ?? []) as WordbookWordResponse[];
 
