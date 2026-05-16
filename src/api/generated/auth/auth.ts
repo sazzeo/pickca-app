@@ -4,15 +4,13 @@
  * Pickca API
  * OpenAPI spec version: v1
  */
-import {
-  useMutation
-} from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import type {
   MutationFunction,
   QueryClient,
   UseMutationOptions,
-  UseMutationResult
-} from '@tanstack/react-query';
+  UseMutationResult,
+} from "@tanstack/react-query";
 
 import type {
   ApiResponse,
@@ -21,268 +19,296 @@ import type {
   GoogleLoginRequest,
   KakaoLoginRequest,
   LogoutRequest,
-  TokenRefreshRequest
-} from '../pickcaAPI.schemas';
+  TokenRefreshRequest,
+} from "../pickcaAPI.schemas";
 
-import { fetcher } from '../../../lib/axios';
-
-
-
+import { fetcher } from "../../../lib/axios";
 
 /**
  * @summary 토큰 갱신
  */
-export const refreshToken = (
-    tokenRefreshRequest: TokenRefreshRequest,
- signal?: AbortSignal
-) => {
-      
-      
-      return fetcher<ApiResponseTokenRefreshResponse>(
-      {url: `/api/auth/token/refresh`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: tokenRefreshRequest, signal
-    },
-      );
-    }
-  
+export const refreshToken = (tokenRefreshRequest: TokenRefreshRequest, signal?: AbortSignal) => {
+  return fetcher<ApiResponseTokenRefreshResponse>({
+    url: `/api/auth/token/refresh`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: tokenRefreshRequest,
+    signal,
+  });
+};
 
+export const getRefreshTokenMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof refreshToken>>,
+    TError,
+    { data: TokenRefreshRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof refreshToken>>,
+  TError,
+  { data: TokenRefreshRequest },
+  TContext
+> => {
+  const mutationKey = ["refreshToken"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getRefreshTokenMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refreshToken>>, TError,{data: TokenRefreshRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof refreshToken>>, TError,{data: TokenRefreshRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof refreshToken>>,
+    { data: TokenRefreshRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['refreshToken'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return refreshToken(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type RefreshTokenMutationResult = NonNullable<Awaited<ReturnType<typeof refreshToken>>>;
+export type RefreshTokenMutationBody = TokenRefreshRequest;
+export type RefreshTokenMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof refreshToken>>, {data: TokenRefreshRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  refreshToken(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type RefreshTokenMutationResult = NonNullable<Awaited<ReturnType<typeof refreshToken>>>
-    export type RefreshTokenMutationBody = TokenRefreshRequest
-    export type RefreshTokenMutationError = unknown
-
-    /**
+/**
  * @summary 토큰 갱신
  */
-export const useRefreshToken = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refreshToken>>, TError,{data: TokenRefreshRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof refreshToken>>,
-        TError,
-        {data: TokenRefreshRequest},
-        TContext
-      > => {
+export const useRefreshToken = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof refreshToken>>,
+      TError,
+      { data: TokenRefreshRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof refreshToken>>,
+  TError,
+  { data: TokenRefreshRequest },
+  TContext
+> => {
+  const mutationOptions = getRefreshTokenMutationOptions(options);
 
-      const mutationOptions = getRefreshTokenMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 카카오 소셜 로그인
  */
-export const kakaoLogin = (
-    kakaoLoginRequest: KakaoLoginRequest,
- signal?: AbortSignal
-) => {
-      
-      
-      return fetcher<ApiResponseLoginResponse>(
-      {url: `/api/auth/social/kakao`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: kakaoLoginRequest, signal
-    },
-      );
-    }
-  
+export const kakaoLogin = (kakaoLoginRequest: KakaoLoginRequest, signal?: AbortSignal) => {
+  return fetcher<ApiResponseLoginResponse>({
+    url: `/api/auth/social/kakao`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: kakaoLoginRequest,
+    signal,
+  });
+};
 
+export const getKakaoLoginMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof kakaoLogin>>,
+    TError,
+    { data: KakaoLoginRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof kakaoLogin>>,
+  TError,
+  { data: KakaoLoginRequest },
+  TContext
+> => {
+  const mutationKey = ["kakaoLogin"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getKakaoLoginMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof kakaoLogin>>, TError,{data: KakaoLoginRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof kakaoLogin>>, TError,{data: KakaoLoginRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof kakaoLogin>>,
+    { data: KakaoLoginRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['kakaoLogin'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return kakaoLogin(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type KakaoLoginMutationResult = NonNullable<Awaited<ReturnType<typeof kakaoLogin>>>;
+export type KakaoLoginMutationBody = KakaoLoginRequest;
+export type KakaoLoginMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof kakaoLogin>>, {data: KakaoLoginRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  kakaoLogin(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type KakaoLoginMutationResult = NonNullable<Awaited<ReturnType<typeof kakaoLogin>>>
-    export type KakaoLoginMutationBody = KakaoLoginRequest
-    export type KakaoLoginMutationError = unknown
-
-    /**
+/**
  * @summary 카카오 소셜 로그인
  */
-export const useKakaoLogin = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof kakaoLogin>>, TError,{data: KakaoLoginRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof kakaoLogin>>,
-        TError,
-        {data: KakaoLoginRequest},
-        TContext
-      > => {
+export const useKakaoLogin = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof kakaoLogin>>,
+      TError,
+      { data: KakaoLoginRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof kakaoLogin>>,
+  TError,
+  { data: KakaoLoginRequest },
+  TContext
+> => {
+  const mutationOptions = getKakaoLoginMutationOptions(options);
 
-      const mutationOptions = getKakaoLoginMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 구글 소셜 로그인
  */
-export const googleLogin = (
-    googleLoginRequest: GoogleLoginRequest,
- signal?: AbortSignal
-) => {
-      
-      
-      return fetcher<ApiResponseLoginResponse>(
-      {url: `/api/auth/social/google`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: googleLoginRequest, signal
-    },
-      );
-    }
-  
+export const googleLogin = (googleLoginRequest: GoogleLoginRequest, signal?: AbortSignal) => {
+  return fetcher<ApiResponseLoginResponse>({
+    url: `/api/auth/social/google`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: googleLoginRequest,
+    signal,
+  });
+};
 
+export const getGoogleLoginMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof googleLogin>>,
+    TError,
+    { data: GoogleLoginRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof googleLogin>>,
+  TError,
+  { data: GoogleLoginRequest },
+  TContext
+> => {
+  const mutationKey = ["googleLogin"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getGoogleLoginMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof googleLogin>>, TError,{data: GoogleLoginRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof googleLogin>>, TError,{data: GoogleLoginRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof googleLogin>>,
+    { data: GoogleLoginRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['googleLogin'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return googleLogin(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type GoogleLoginMutationResult = NonNullable<Awaited<ReturnType<typeof googleLogin>>>;
+export type GoogleLoginMutationBody = GoogleLoginRequest;
+export type GoogleLoginMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof googleLogin>>, {data: GoogleLoginRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  googleLogin(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type GoogleLoginMutationResult = NonNullable<Awaited<ReturnType<typeof googleLogin>>>
-    export type GoogleLoginMutationBody = GoogleLoginRequest
-    export type GoogleLoginMutationError = unknown
-
-    /**
+/**
  * @summary 구글 소셜 로그인
  */
-export const useGoogleLogin = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof googleLogin>>, TError,{data: GoogleLoginRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof googleLogin>>,
-        TError,
-        {data: GoogleLoginRequest},
-        TContext
-      > => {
+export const useGoogleLogin = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof googleLogin>>,
+      TError,
+      { data: GoogleLoginRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof googleLogin>>,
+  TError,
+  { data: GoogleLoginRequest },
+  TContext
+> => {
+  const mutationOptions = getGoogleLoginMutationOptions(options);
 
-      const mutationOptions = getGoogleLoginMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    /**
+  return useMutation(mutationOptions, queryClient);
+};
+/**
  * @summary 로그아웃
  */
-export const logout = (
-    logoutRequest: LogoutRequest,
- signal?: AbortSignal
-) => {
-      
-      
-      return fetcher<ApiResponse>(
-      {url: `/api/auth/logout`, method: 'POST',
-      headers: {'Content-Type': 'application/json', },
-      data: logoutRequest, signal
-    },
-      );
-    }
-  
+export const logout = (logoutRequest: LogoutRequest, signal?: AbortSignal) => {
+  return fetcher<ApiResponse>({
+    url: `/api/auth/logout`,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    data: logoutRequest,
+    signal,
+  });
+};
 
+export const getLogoutMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof logout>>,
+    TError,
+    { data: LogoutRequest },
+    TContext
+  >;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof logout>>,
+  TError,
+  { data: LogoutRequest },
+  TContext
+> => {
+  const mutationKey = ["logout"];
+  const { mutation: mutationOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey } };
 
-export const getLogoutMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,{data: LogoutRequest}, TContext>, }
-): UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,{data: LogoutRequest}, TContext> => {
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof logout>>,
+    { data: LogoutRequest }
+  > = (props) => {
+    const { data } = props ?? {};
 
-const mutationKey = ['logout'];
-const {mutation: mutationOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }};
+    return logout(data);
+  };
 
-      
+  return { mutationFn, ...mutationOptions };
+};
 
+export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>;
+export type LogoutMutationBody = LogoutRequest;
+export type LogoutMutationError = unknown;
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof logout>>, {data: LogoutRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  logout(data,)
-        }
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type LogoutMutationResult = NonNullable<Awaited<ReturnType<typeof logout>>>
-    export type LogoutMutationBody = LogoutRequest
-    export type LogoutMutationError = unknown
-
-    /**
+/**
  * @summary 로그아웃
  */
-export const useLogout = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof logout>>, TError,{data: LogoutRequest}, TContext>, }
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof logout>>,
-        TError,
-        {data: LogoutRequest},
-        TContext
-      > => {
+export const useLogout = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof logout>>,
+      TError,
+      { data: LogoutRequest },
+      TContext
+    >;
+  },
+  queryClient?: QueryClient
+): UseMutationResult<
+  Awaited<ReturnType<typeof logout>>,
+  TError,
+  { data: LogoutRequest },
+  TContext
+> => {
+  const mutationOptions = getLogoutMutationOptions(options);
 
-      const mutationOptions = getLogoutMutationOptions(options);
-
-      return useMutation(mutationOptions, queryClient);
-    }
-    
+  return useMutation(mutationOptions, queryClient);
+};

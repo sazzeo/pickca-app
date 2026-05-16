@@ -34,7 +34,7 @@ export default function QuizSettingsScreen() {
   }>();
 
   const [selectedStatuses, setSelectedStatuses] = useState<Set<LearningStatusKey>>(
-    new Set(["NOT_STARTED", "LEARNING", "RELEARNING"]),
+    new Set(["NOT_STARTED", "LEARNING", "RELEARNING"])
   );
   const [selectedCount, setSelectedCount] = useState<number>(5);
   const [selectedMode, setSelectedMode] = useState<QuizModeKey>("MIXED");
@@ -307,29 +307,31 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     color: Colors.text.secondary,
+    textAlign: "right",
   },
   chipRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
+    gap: 8,
   },
   chip: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    width: "31%",
+    paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: Colors.border.button,
     backgroundColor: Colors.bg.white,
+    alignItems: "center",
   },
   chipSelected: {
     backgroundColor: Colors.brand.greenSurface,
-    borderColor: Colors.brand.greenDark,
+    borderColor: Colors.brand.greenSurface,
   },
   chipPressed: {
     opacity: 0.85,
   },
   chipText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "500",
     color: Colors.text.primary,
   },
