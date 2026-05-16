@@ -313,8 +313,10 @@ const styles = StyleSheet.create({
   cardsRow: {
     flexDirection: "row",
     paddingLeft: CARD_H_PADDING,
+    flexShrink: 0,
   },
   cardWrapper: {
+    width: CARD_WIDTH,
     marginRight: CARD_GAP,
   },
 
