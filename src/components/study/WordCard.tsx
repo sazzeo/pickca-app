@@ -2,9 +2,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
+import type { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
+import { LearningStatusChip } from "@/components/common/LearningStatusChip";
 import { Colors } from "@/lib/colors";
-
-export type WordCardStatus = "학습 전" | "학습 중" | "암기 완료" | "다시 보기";
 
 export interface WordCardItem {
   id: string;
@@ -13,7 +13,7 @@ export interface WordCardItem {
   pronunciationKo?: string;
   meaningKo: string;
   pos?: string;
-  status: WordCardStatus;
+  learningStatus: WordbookWordResponseLearningStatus;
 }
 
 interface WordCardProps {
@@ -41,9 +41,7 @@ export function WordCard({ item, index, total, width, height, showSwipeHint }: W
 
       {/* 학습 상태 뱃지 */}
       <View style={styles.body}>
-        <View style={styles.statusBadge}>
-          <Text style={styles.statusText}>{item.status}</Text>
-        </View>
+        <LearningStatusChip status={item.learningStatus} />
 
         {/* 단어 */}
         <Text style={styles.lemma}>{item.lemma}</Text>
@@ -94,17 +92,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 12,
-  },
-  statusBadge: {
-    backgroundColor: Colors.action.orangeLight,
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 5,
-  },
-  statusText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.action.orangeDeep,
   },
   lemma: {
     fontSize: 32,

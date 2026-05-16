@@ -9,6 +9,7 @@ import { useGetWords, useGetSources, useRemoveWord } from "@/api/generated/wordb
 import type { WordbookWordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { LearningStatusChip } from "@/components/common/LearningStatusChip";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { Colors } from "@/lib/colors";
@@ -22,13 +23,6 @@ const FILTER_TABS = [
 ] as const;
 
 type FilterTabKey = (typeof FILTER_TABS)[number]["key"];
-
-const LEARNING_STATUS_LABEL: Record<WordbookWordResponseLearningStatus, string> = {
-  NOT_STARTED: "학습 전",
-  LEARNING: "학습 중",
-  MEMORIZED: "외웠음",
-  RELEARNING: "재학습 중",
-};
 
 function formatSourceDate(createdAt: string): string {
   const d = new Date(createdAt);
@@ -48,29 +42,6 @@ function formatRelativeDate(createdAt: string): string {
   if (diffDays === 0) return "오늘";
   if (diffDays === 1) return "어제";
   return `${diffDays}일 전`;
-}
-
-function LearningStatusChip({ status }: { status: WordbookWordResponseLearningStatus }) {
-  const chipStyle = (() => {
-    switch (status) {
-      case WordbookWordResponseLearningStatus.MEMORIZED:
-        return { bg: Colors.brand.green, text: Colors.text.white };
-      case WordbookWordResponseLearningStatus.LEARNING:
-        return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
-      case WordbookWordResponseLearningStatus.RELEARNING:
-        return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
-      default:
-        return { bg: Colors.bg.cancelButton, text: Colors.text.secondary };
-    }
-  })();
-
-  return (
-    <View style={[styles.statusChip, { backgroundColor: chipStyle.bg }]}>
-      <Text style={[styles.statusChipText, { color: chipStyle.text }]}>
-        {LEARNING_STATUS_LABEL[status]}
-      </Text>
-    </View>
-  );
 }
 
 function HighlightedText({ text, highlightWords }: { text: string; highlightWords: Set<string> }) {
@@ -662,17 +633,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 8,
-  },
-  statusChip: {
-    height: 28,
-    borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 10,
-  },
-  statusChipText: {
-    fontSize: 12,
-    fontWeight: "500",
   },
   moreButton: {
     padding: 4,

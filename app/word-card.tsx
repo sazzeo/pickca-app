@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGetWords, useMarkAsStudied } from "@/api/generated/wordbooks/wordbooks";
 import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
 import type { WordbookWordResponse } from "@/api/generated/pickcaAPI.schemas";
-import { WordCard, type WordCardItem, type WordCardStatus } from "@/components/study/WordCard";
+import { WordCard, type WordCardItem } from "@/components/study/WordCard";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
@@ -35,13 +35,6 @@ const SPRING_CONFIG = {
   mass: 0.8,
 };
 
-const LEARNING_STATUS_MAP: Record<WordbookWordResponseLearningStatus, WordCardStatus> = {
-  NOT_STARTED: "학습 전",
-  LEARNING: "학습 중",
-  MEMORIZED: "암기 완료",
-  RELEARNING: "다시 보기",
-};
-
 function mapToCardItem(word: WordbookWordResponse, index: number): WordCardItem {
   return {
     id: String(word.id ?? `idx-${index}`),
@@ -50,7 +43,7 @@ function mapToCardItem(word: WordbookWordResponse, index: number): WordCardItem 
     pronunciationKo: word.phoneticKorean,
     meaningKo: resolvePrimaryMeaning(word),
     pos: resolvePartOfSpeech(word),
-    status: LEARNING_STATUS_MAP[word.learningStatus] ?? "학습 전",
+    learningStatus: word.learningStatus,
   };
 }
 
@@ -106,7 +99,7 @@ export default function WordCardScreen() {
           viewedWordIds.has(word.id) &&
           word.learningStatus === WordbookWordResponseLearningStatus.NOT_STARTED
         ) {
-          return { ...card, status: "학습 중" as WordCardStatus };
+          return { ...card, learningStatus: WordbookWordResponseLearningStatus.LEARNING };
         }
         return card;
       }),
