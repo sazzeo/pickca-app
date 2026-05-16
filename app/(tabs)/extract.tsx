@@ -1,13 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { useExtract } from "@/api/generated/word/word";
@@ -146,10 +140,7 @@ export default function ExtractScreen() {
             <View style={styles.inputBottomDivider} />
 
             <Pressable
-              style={({ pressed }) => [
-                styles.uploadButton,
-                pressed && styles.uploadButtonPressed,
-              ]}
+              style={({ pressed }) => [styles.uploadButton, pressed && styles.uploadButtonPressed]}
               onPress={handleImageUpload}
               android_ripple={{ color: Colors.brand.greenMid }}
               accessibilityRole="button"
@@ -166,10 +157,7 @@ export default function ExtractScreen() {
         </View>
 
         <Pressable
-          style={[
-            styles.extractButton,
-            isSubmitEnabled && styles.extractButtonEnabled,
-          ]}
+          style={[styles.extractButton, isSubmitEnabled && styles.extractButtonEnabled]}
           onPress={handleExtract}
           disabled={!isSubmitEnabled}
           accessibilityRole="button"

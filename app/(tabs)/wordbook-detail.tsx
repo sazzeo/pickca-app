@@ -1,14 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Modal, Portal, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -108,13 +101,13 @@ export default function WordbookDetailScreen() {
   const { data, isPending, isError, refetch } = useGetWords(
     wordbookId,
     { memberId },
-    { query: { enabled: memberId > 0 && wordbookId > 0 } },
+    { query: { enabled: memberId > 0 && wordbookId > 0 } }
   );
 
   const { data: sourcesData, isPending: isSourcesPending } = useGetSources(
     wordbookId,
     { memberId, pageable: { page: 0, size: 50 } },
-    { query: { enabled: memberId > 0 && wordbookId > 0 && sourceSheetVisible } },
+    { query: { enabled: memberId > 0 && wordbookId > 0 && sourceSheetVisible } }
   );
 
   const { mutate: removeWord, isPending: isRemoving } = useRemoveWord({
@@ -133,15 +126,23 @@ export default function WordbookDetailScreen() {
   const words = (data?.data?.words ?? []) as WordbookWordResponse[];
   const apiErrorMessage = data?.success === false ? data.error?.message : undefined;
 
-  const filterCounts = useMemo(() => ({
-    all: words.length,
-    NOT_STARTED: words.filter((w) => w.learningStatus === WordbookWordResponseLearningStatus.NOT_STARTED).length,
-    LEARNING: words.filter((w) =>
-      w.learningStatus === WordbookWordResponseLearningStatus.LEARNING ||
-      w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING
-    ).length,
-    MEMORIZED: words.filter((w) => w.learningStatus === WordbookWordResponseLearningStatus.MEMORIZED).length,
-  }), [words]);
+  const filterCounts = useMemo(
+    () => ({
+      all: words.length,
+      NOT_STARTED: words.filter(
+        (w) => w.learningStatus === WordbookWordResponseLearningStatus.NOT_STARTED
+      ).length,
+      LEARNING: words.filter(
+        (w) =>
+          w.learningStatus === WordbookWordResponseLearningStatus.LEARNING ||
+          w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING
+      ).length,
+      MEMORIZED: words.filter(
+        (w) => w.learningStatus === WordbookWordResponseLearningStatus.MEMORIZED
+      ).length,
+    }),
+    [words]
+  );
 
   const shownWords = useMemo(() => {
     if (selectedFilter === "all") return words;
@@ -149,20 +150,21 @@ export default function WordbookDetailScreen() {
       return words.filter(
         (w) =>
           w.learningStatus === WordbookWordResponseLearningStatus.LEARNING ||
-          w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING,
+          w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING
       );
     }
     return words.filter((w) => w.learningStatus === selectedFilter);
   }, [selectedFilter, words]);
 
   const sources = sourcesData?.data?.sources ?? [];
-  const highlightWords = useMemo(
-    () => new Set(words.map((w) => w.word.toLowerCase())),
-    [words],
-  );
+  const highlightWords = useMemo(() => new Set(words.map((w) => w.word.toLowerCase())), [words]);
 
   const currentSource = sources[sourceIndex];
-  const sourceText = currentSource ? (currentSource as unknown as { sourceText?: string; text?: string }).sourceText ?? (currentSource as unknown as { sourceText?: string; text?: string }).text ?? currentSource.name : "";
+  const sourceText = currentSource
+    ? ((currentSource as unknown as { sourceText?: string; text?: string }).sourceText ??
+      (currentSource as unknown as { sourceText?: string; text?: string }).text ??
+      currentSource.name)
+    : "";
   const sourceDate = currentSource ? formatSourceDate(currentSource.createdAt) : "";
 
   function openSourceSheet() {
@@ -338,9 +340,7 @@ export default function WordbookDetailScreen() {
 
           <View style={sourceStyles.sheetHeader}>
             <Text style={sourceStyles.sheetTitle}>원문 보기</Text>
-            {sourceDate ? (
-              <Text style={sourceStyles.sheetDate}>{sourceDate}</Text>
-            ) : null}
+            {sourceDate ? <Text style={sourceStyles.sheetDate}>{sourceDate}</Text> : null}
           </View>
 
           {isSourcesPending ? (

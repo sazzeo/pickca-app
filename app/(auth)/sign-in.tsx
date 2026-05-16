@@ -28,11 +28,9 @@ const GoogleSignInPanel = lazy(() =>
   ).then((m) => ({ default: m.GoogleSignInPanel }))
 );
 
-const isExpoGo =
-  Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
-const expoGoDevLoginEnabled =
-  process.env.EXPO_PUBLIC_EXPO_GO_DEV_LOGIN === "1";
+const expoGoDevLoginEnabled = process.env.EXPO_PUBLIC_EXPO_GO_DEV_LOGIN === "1";
 
 function ExpoGoDevLoginForm() {
   const { signIn } = useAuth();
@@ -61,13 +59,15 @@ function ExpoGoDevLoginForm() {
       });
     } catch (e) {
       if (__DEV__) console.error("[DevLogin] error:", e);
-      const axiosError = e as { response?: { status?: number; data?: { error?: { message?: string } } } };
+      const axiosError = e as {
+        response?: { status?: number; data?: { error?: { message?: string } } };
+      };
       const status = axiosError.response?.status;
       const message =
         status === 404
           ? `DB에 존재하지 않는 이메일입니다.\n(${normalizedEmail})`
-          : axiosError.response?.data?.error?.message ??
-            (e instanceof Error ? e.message : "알 수 없는 오류");
+          : (axiosError.response?.data?.error?.message ??
+            (e instanceof Error ? e.message : "알 수 없는 오류"));
       Alert.alert("로그인 오류", message);
     } finally {
       setSubmitting(false);
@@ -89,12 +89,7 @@ function ExpoGoDevLoginForm() {
         keyboardType="email-address"
         editable={!submitting}
       />
-      <Button
-        mode="contained"
-        onPress={handleDevSignIn}
-        loading={submitting}
-        disabled={submitting}
-      >
+      <Button mode="contained" onPress={handleDevSignIn} loading={submitting} disabled={submitting}>
         개발용 로그인
       </Button>
     </View>
@@ -119,8 +114,8 @@ export default function SignInScreen() {
         ) : isExpoGo ? (
           <Text variant="bodyMedium" style={styles.expoGoMessage}>
             Expo Go에는 네이티브 Google 로그인 모듈이 없습니다.{"\n"}
-            `.env`에 EXPO_PUBLIC_EXPO_GO_DEV_LOGIN=1을 넣고 번들러를 재시작하면
-            개발용 토큰 로그인 폼이 표시됩니다.{"\n"}
+            `.env`에 EXPO_PUBLIC_EXPO_GO_DEV_LOGIN=1을 넣고 번들러를 재시작하면 개발용 토큰 로그인
+            폼이 표시됩니다.{"\n"}
             또는 `pnpm ios` / `pnpm android`로 development build를 사용하세요.
           </Text>
         ) : (

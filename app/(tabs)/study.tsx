@@ -10,11 +10,7 @@ export default function StudyScreen() {
     <View style={styles.container}>
       <AppHeader />
       <View style={styles.body}>
-        <MaterialCommunityIcons
-          name="cards-outline"
-          size={48}
-          color={Colors.action.yellow}
-        />
+        <MaterialCommunityIcons name="cards-outline" size={48} color={Colors.action.yellow} />
         <Text style={styles.title}>학습하기</Text>
         <Text style={styles.description}>
           플래시카드와 퀴즈로 단어를{"\n"}암기하는 기능이 준비 중이에요.

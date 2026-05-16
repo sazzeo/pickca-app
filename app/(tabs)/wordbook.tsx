@@ -59,10 +59,7 @@ export default function WordbookScreen() {
     isPending,
     isError,
     refetch,
-  } = useGetWordbooks(
-    { memberId },
-    { query: { enabled: memberId > 0 } },
-  );
+  } = useGetWordbooks({ memberId }, { query: { enabled: memberId > 0 } });
   const { mutateAsync: updateWordbookName } = useUpdateWordbookName();
   const { mutateAsync: deleteWordbook } = useDeleteWordbook();
 
@@ -72,7 +69,7 @@ export default function WordbookScreen() {
 
   const totalPickedWords = useMemo(
     () => wordbooks.reduce((sum, w) => sum + w.wordCount, 0),
-    [wordbooks],
+    [wordbooks]
   );
 
   const filteredWordbooks = useMemo(() => {
@@ -172,26 +169,17 @@ export default function WordbookScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: tabBarApproxHeight + 24 },
-        ]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarApproxHeight + 24 }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.titleBlock}>
           <Text style={styles.screenTitle}>내 단어장</Text>
-          <Text style={styles.screenSubtitle}>
-            총 {totalPickedWords}개의 단어를 Pick했어요
-          </Text>
+          <Text style={styles.screenSubtitle}>총 {totalPickedWords}개의 단어를 Pick했어요</Text>
         </View>
 
         <View style={styles.searchRow}>
-          <MaterialCommunityIcons
-            name="magnify"
-            size={22}
-            color={Colors.text.tertiary}
-          />
+          <MaterialCommunityIcons name="magnify" size={22} color={Colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="그룹 검색"
@@ -214,10 +202,7 @@ export default function WordbookScreen() {
               {apiErrorMessage ?? "단어장 목록을 불러오지 못했어요."}
             </Text>
             <Pressable
-              style={({ pressed }) => [
-                styles.retryButton,
-                pressed && styles.retryButtonPressed,
-              ]}
+              style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
               onPress={() => refetch()}
               accessibilityRole="button"
               accessibilityLabel="다시 시도"
@@ -228,9 +213,7 @@ export default function WordbookScreen() {
         ) : filteredWordbooks.length === 0 ? (
           <View style={styles.centerBlock}>
             <Text style={styles.emptyText}>
-              {wordbooks.length === 0
-                ? "아직 단어장이 없어요."
-                : "검색 결과가 없어요."}
+              {wordbooks.length === 0 ? "아직 단어장이 없어요." : "검색 결과가 없어요."}
             </Text>
           </View>
         ) : (
