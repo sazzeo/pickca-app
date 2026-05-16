@@ -161,36 +161,6 @@ export default function WordCardScreen() {
     router.back();
   }, [flushStudy]);
 
-  if (isPending) {
-    return (
-      <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <Header onBack={() => router.back()} />
-        <View style={styles.emptyState}>
-          <ActivityIndicator size="large" color={Colors.brand.green} />
-        </View>
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <Header onBack={() => router.back()} />
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>단어를 불러오지 못했어요.</Text>
-          <Pressable
-            style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
-            onPress={() => refetch()}
-            accessibilityRole="button"
-            accessibilityLabel="다시 시도"
-          >
-            <Text style={styles.retryLabel}>다시 시도</Text>
-          </Pressable>
-        </View>
-      </View>
-    );
-  }
-
   // --- Pan Gesture ---
   const panGesture = Gesture.Pan()
     .activeOffsetX([-8, 8])
@@ -225,6 +195,36 @@ export default function WordCardScreen() {
   const animatedRowStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
+
+  if (isPending) {
+    return (
+      <View style={[styles.screen, { paddingTop: insets.top }]}>
+        <Header onBack={() => router.back()} />
+        <View style={styles.emptyState}>
+          <ActivityIndicator size="large" color={Colors.brand.green} />
+        </View>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={[styles.screen, { paddingTop: insets.top }]}>
+        <Header onBack={() => router.back()} />
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyText}>단어를 불러오지 못했어요.</Text>
+          <Pressable
+            style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
+            onPress={() => refetch()}
+            accessibilityRole="button"
+            accessibilityLabel="다시 시도"
+          >
+            <Text style={styles.retryLabel}>다시 시도</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
 
   if (total === 0) {
     return (
