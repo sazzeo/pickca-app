@@ -67,6 +67,8 @@ export const Colors = {
   semantic: {
     /** 파괴 액션 버튼 (삭제·되돌리기 불가) */
     danger: "#BF3F2F",
+    /** 오답 카드 아이콘 등 연한 위험 서페이스 */
+    dangerLight: "#F5DDD9",
     /** 단어장 그룹 카드 등 중간 진행률 막대 */
     progressOrange: "#E8954A",
   },
