@@ -181,7 +181,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.default,
   },
   header: {
     height: 48,
@@ -244,7 +243,7 @@ const styles = StyleSheet.create({
     minHeight: 52,
   },
   rowPressed: {
-    backgroundColor: Colors.bg.default,
+    backgroundColor: Colors.bg.white,
   },
   rowLabel: {
     fontSize: 15,

@@ -25,6 +25,7 @@ export default function TabsLayout() {
       tabBar={(props) => <BottomTabBar {...props} />}
       screenOptions={{
         headerShown: false,
+        sceneStyle: { backgroundColor: Colors.bg.white },
       }}
     >
       {/* 탭 아이콘·레이블은 BottomTabBar의 TAB_CONFIG에서 관리한다 */}
@@ -34,6 +35,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="study" options={{ title: "학습" }} />
       {/* 탭바 미노출 화면 */}
       <Tabs.Screen name="wordbook-detail" options={{ href: null }} />
+      <Tabs.Screen name="wordbook-select" options={{ href: null }} />
       <Tabs.Screen name="quiz" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>

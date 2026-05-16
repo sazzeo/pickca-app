@@ -230,7 +230,6 @@ function Header({ onBack }: { onBack: () => void }) {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: Colors.bg.default,
     flexDirection: "column",
   },
 

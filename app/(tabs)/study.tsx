@@ -45,7 +45,7 @@ export default function StudyScreen() {
       title: "단어장 선택",
       subtitle: "특정 단어장으로 풀기",
       onPress: () => {
-        // TODO: 단어장 선택 퀴즈 화면으로 이동
+        router.push("/(tabs)/wordbook-select");
       },
     },
     {
@@ -126,7 +126,6 @@ export default function StudyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.default,
   },
   scrollView: {
     flex: 1,

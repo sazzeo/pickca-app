@@ -359,7 +359,6 @@ export default function ExtractResultScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: Colors.bg.default,
   },
   loadingContainer: {
     alignItems: "center",
@@ -641,7 +640,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: Colors.divider,
-    backgroundColor: Colors.bg.default,
+    backgroundColor: Colors.bg.white,
   },
   cta: {
     height: 48,
