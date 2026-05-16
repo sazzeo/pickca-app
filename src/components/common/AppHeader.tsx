@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
   },
   logoTextCa: {
-    color: Colors.action.yellow,
+    color: Colors.action.orange,
   },
   settingsButton: {
     width: 36,

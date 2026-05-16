@@ -5,19 +5,17 @@ import { Colors } from "@/lib/colors";
 
 interface GreetingSectionProps {
   isReturningUser?: boolean;
-  userName?: string;
 }
 
-export function GreetingSection({ isReturningUser = true, userName }: GreetingSectionProps) {
-  const greeting = isReturningUser
-    ? "또 오셨군요!"
-    : `안녕하세요${userName ? `, ${userName}님` : ""}!`;
+export function GreetingSection({ isReturningUser = true }: GreetingSectionProps) {
+  const greeting = isReturningUser ? "또 오셨군요!" : "어서오세요";
+  const titlePrefix = isReturningUser ? "오늘은 어떤 단어를\n" : "우리 같이 영어 단어\n";
 
   return (
     <View style={styles.container}>
       <Text style={styles.greetingSmall}>{greeting}</Text>
       <Text style={styles.titleLine}>
-        <Text style={styles.titleNormal}>{"오늘은 어떤 단어를\n"}</Text>
+        <Text style={styles.titleNormal}>{titlePrefix}</Text>
         <Text style={styles.titleHighlight}>Pick</Text>
         <Text style={styles.titleNormal}>해볼까요?</Text>
       </Text>

@@ -46,9 +46,9 @@ function LearningStatusChip({ status }: { status: WordbookWordResponseLearningSt
       case WordbookWordResponseLearningStatus.MEMORIZED:
         return { bg: Colors.brand.green, text: Colors.text.white };
       case WordbookWordResponseLearningStatus.LEARNING:
-        return { bg: Colors.action.yellowLight, text: Colors.action.yellowDeep };
+        return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
       case WordbookWordResponseLearningStatus.RELEARNING:
-        return { bg: Colors.action.yellowLight, text: Colors.action.yellowDeep };
+        return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
       default:
         return { bg: Colors.brand.greenLight, text: Colors.brand.greenDark };
     }

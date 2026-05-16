@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   statusBadge: {
-    backgroundColor: Colors.action.yellowLight,
+    backgroundColor: Colors.action.orangeLight,
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 5,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 13,
     fontWeight: "600",
-    color: Colors.action.yellowDeep,
+    color: Colors.action.orangeDeep,
   },
   lemma: {
     fontSize: 32,
