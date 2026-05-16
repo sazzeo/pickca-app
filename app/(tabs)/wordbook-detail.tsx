@@ -298,6 +298,7 @@ export default function WordbookDetailScreen() {
                       params: {
                         wordbookId: String(wordbookId),
                         initialIndex: String(index),
+                        ...(selectedFilter !== "all" && { learningStatus: selectedFilter }),
                       },
                     })
                   }
