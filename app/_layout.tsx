@@ -8,6 +8,7 @@ import { PaperProvider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Colors } from "@/lib/colors";
 import { theme } from "@/lib/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -32,7 +33,12 @@ export default function RootLayout() {
         <PaperProvider theme={theme}>
           <SafeAreaProvider>
             <AuthProvider>
-              <Stack screenOptions={{ headerShown: false }} />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  contentStyle: { backgroundColor: Colors.bg.white },
+                }}
+              />
             </AuthProvider>
           </SafeAreaProvider>
         </PaperProvider>
@@ -44,5 +50,6 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+    backgroundColor: Colors.bg.white,
   },
 });

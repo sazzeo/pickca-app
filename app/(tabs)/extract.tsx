@@ -192,7 +192,6 @@ export default function ExtractScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.default,
   },
   body: {
     flex: 1,
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border.input,
     borderRadius: 16,
-    backgroundColor: Colors.bg.default,
+    backgroundColor: Colors.bg.white,
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 8,

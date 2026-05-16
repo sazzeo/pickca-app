@@ -40,6 +40,17 @@ function formatSourceDate(createdAt: string): string {
   return `${y}.${m}.${day}`;
 }
 
+function formatRelativeDate(createdAt: string): string {
+  const d = new Date(createdAt);
+  if (Number.isNaN(d.getTime())) return "";
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "오늘";
+  if (diffDays === 1) return "어제";
+  return `${diffDays}일 전`;
+}
+
 function LearningStatusChip({ status }: { status: WordbookWordResponseLearningStatus }) {
   const chipStyle = (() => {
     switch (status) {
@@ -50,7 +61,7 @@ function LearningStatusChip({ status }: { status: WordbookWordResponseLearningSt
       case WordbookWordResponseLearningStatus.RELEARNING:
         return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
       default:
-        return { bg: Colors.brand.greenLight, text: Colors.brand.greenDark };
+        return { bg: Colors.bg.cancelButton, text: Colors.text.secondary };
     }
   })();
 
@@ -107,7 +118,7 @@ export default function WordbookDetailScreen() {
   const { data: sourcesData, isPending: isSourcesPending } = useGetSources(
     wordbookId,
     { memberId, pageable: { page: 0, size: 50 } },
-    { query: { enabled: memberId > 0 && wordbookId > 0 && sourceSheetVisible } }
+    { query: { enabled: memberId > 0 && wordbookId > 0 } }
   );
 
   const { mutate: removeWord, isPending: isRemoving } = useRemoveWord({
@@ -124,6 +135,7 @@ export default function WordbookDetailScreen() {
   });
 
   const words = (data?.data?.words ?? []) as WordbookWordResponse[];
+  const wordbookTitle = data?.data?.title ?? "";
   const apiErrorMessage = data?.success === false ? data.error?.message : undefined;
 
   const filterCounts = useMemo(
@@ -159,6 +171,14 @@ export default function WordbookDetailScreen() {
   const sources = sourcesData?.data?.sources ?? [];
   const highlightWords = useMemo(() => new Set(words.map((w) => w.word.toLowerCase())), [words]);
 
+  const latestCollectLabel = useMemo(() => {
+    if (sources.length === 0) return "";
+    const dates = sources.map((s) => new Date(s.createdAt).getTime()).filter((t) => !Number.isNaN(t));
+    if (dates.length === 0) return "";
+    const latest = new Date(Math.max(...dates)).toISOString();
+    return formatRelativeDate(latest);
+  }, [sources]);
+
   const currentSource = sources[sourceIndex];
   const sourceText = currentSource
     ? ((currentSource as unknown as { sourceText?: string; text?: string }).sourceText ??
@@ -187,14 +207,7 @@ export default function WordbookDetailScreen() {
 
         <Text style={styles.headerTitle}>단어 카드</Text>
 
-        <Pressable
-          style={({ pressed }) => [styles.sourceButton, pressed && styles.sourceButtonPressed]}
-          onPress={openSourceSheet}
-          accessibilityRole="button"
-          accessibilityLabel="원문 보기"
-        >
-          <Text style={styles.sourceButtonText}>원문 보기</Text>
-        </Pressable>
+        <View style={styles.headerRight} />
       </View>
 
       <ScrollView
@@ -203,6 +216,47 @@ export default function WordbookDetailScreen() {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >
+        {wordbookTitle ? (
+          <View style={styles.titleCard}>
+            <View style={styles.titleCardTop}>
+              <Text style={styles.titleCardTitle} numberOfLines={1}>
+                {wordbookTitle}
+              </Text>
+              <Pressable
+                style={({ pressed }) => [styles.sourceButton, pressed && styles.sourceButtonPressed]}
+                onPress={openSourceSheet}
+                accessibilityRole="button"
+                accessibilityLabel="원문 보기"
+              >
+                <Text style={styles.sourceButtonText}>원문 보기</Text>
+              </Pressable>
+            </View>
+            <View style={styles.titleCardMeta}>
+              <View style={styles.titleCardMetaItem}>
+                <MaterialCommunityIcons
+                  name="file-document-outline"
+                  size={14}
+                  color={Colors.text.tertiary}
+                />
+                <Text style={styles.titleCardMetaText}>{words.length}단어</Text>
+              </View>
+              {latestCollectLabel ? (
+                <>
+                  <Text style={styles.titleCardMetaDivider}>|</Text>
+                  <View style={styles.titleCardMetaItem}>
+                    <MaterialCommunityIcons
+                      name="calendar-outline"
+                      size={14}
+                      color={Colors.text.tertiary}
+                    />
+                    <Text style={styles.titleCardMetaText}>최근 수집 {latestCollectLabel}</Text>
+                  </View>
+                </>
+              ) : null}
+            </View>
+          </View>
+        ) : null}
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -301,9 +355,14 @@ export default function WordbookDetailScreen() {
 
                   <View pointerEvents="none">
                     <Text style={styles.wordTitle}>{word.word}</Text>
-                    <Text style={styles.wordDescription}>
-                      {resolvePartOfSpeech(word)} {resolvePrimaryMeaning(word)}
-                    </Text>
+                    <View style={styles.wordDescriptionRow}>
+                      <Text style={styles.wordDescription}>
+                        {resolvePartOfSpeech(word)} {resolvePrimaryMeaning(word)}
+                      </Text>
+                      {word.wrongCount >= 2 ? (
+                        <Text style={styles.wordTag}>여러번 틀림</Text>
+                      ) : null}
+                    </View>
                   </View>
                 </View>
               </View>
@@ -415,7 +474,6 @@ export default function WordbookDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.default,
   },
   header: {
     height: 56,
@@ -423,7 +481,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: Colors.bg.default,
+    backgroundColor: Colors.bg.white,
   },
   backButton: {
     flexDirection: "row",
@@ -444,22 +502,67 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: Colors.text.primary,
   },
+  headerRight: {
+    width: 72,
+  },
   sourceButton: {
-    minWidth: 72,
     height: 32,
     borderRadius: 10,
-    backgroundColor: Colors.brand.greenLight,
+    borderWidth: 1,
+    borderColor: Colors.border.input,
+    backgroundColor: Colors.bg.white,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
   },
   sourceButtonPressed: {
     opacity: 0.85,
   },
   sourceButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
-    color: Colors.text.secondary,
+    color: Colors.text.primary,
+  },
+  titleCard: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.border.input,
+    backgroundColor: Colors.bg.white,
+  },
+  titleCardTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    marginBottom: 10,
+  },
+  titleCardTitle: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.text.primary,
+  },
+  titleCardMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  titleCardMetaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  titleCardMetaText: {
+    fontSize: 12,
+    color: Colors.text.tertiary,
+  },
+  titleCardMetaDivider: {
+    fontSize: 12,
+    color: Colors.text.tertiary,
   },
   scrollView: {
     flex: 1,
@@ -479,7 +582,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: Colors.border.input,
-    backgroundColor: Colors.bg.default,
+    backgroundColor: Colors.bg.white,
     paddingHorizontal: 14,
     alignItems: "center",
     justifyContent: "center",
@@ -532,7 +635,12 @@ const styles = StyleSheet.create({
   },
   wordCard: {
     borderRadius: 12,
-    backgroundColor: Colors.bg.muted,
+    backgroundColor: Colors.bg.white,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   wordCardPressable: {
     borderRadius: 12,
@@ -574,9 +682,21 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     marginBottom: 2,
   },
+  wordDescriptionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   wordDescription: {
+    flex: 1,
     fontSize: 13,
     color: Colors.text.secondary,
+  },
+  wordTag: {
+    fontSize: 12,
+    color: Colors.action.orangeDark,
+    fontWeight: "500",
+    marginLeft: 8,
   },
 });
 

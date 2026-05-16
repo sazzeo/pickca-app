@@ -268,7 +268,6 @@ export default function WordbookScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.bg.default,
   },
   scrollView: {
     flex: 1,
