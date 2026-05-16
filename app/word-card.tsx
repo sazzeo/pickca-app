@@ -63,7 +63,10 @@ export default function WordCardScreen() {
   }>();
 
   const wordbookId = Number(wordbookIdParam ?? "0");
-  const learningStatus = (learningStatusParam as GetWordsLearningStatus) || undefined;
+  const learningStatusValue = Array.isArray(learningStatusParam)
+    ? learningStatusParam[0]
+    : learningStatusParam;
+  const learningStatus = (learningStatusValue as GetWordsLearningStatus) || undefined;
 
   const { data, isPending, isError, refetch } = useGetWords(
     wordbookId,
