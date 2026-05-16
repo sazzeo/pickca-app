@@ -2,9 +2,9 @@
 export const Colors = {
   /** 브랜드 그린 계열 */
   brand: {
-    green: "#4A7C1F",
+    green: "#3D5420",
     greenDark: "#3A6218",
-    greenLight: "#EEF3E4",
+    greenLight: "#7BA05B",
     greenMid: "#C8DDA8",
     /** 입력 카드·업로드 버튼 등 연한 그린 서페이스 */
     greenSurface: "#DDE6D1",
@@ -12,12 +12,12 @@ export const Colors = {
 
   /** 액션 컬러 */
   action: {
-    yellow: "#E9B83A",
-    yellowLight: "#FDF6E0",
+    orange: "#FF8C18",
+    orangeLight: "#F2B35D",
     /** 학습 카드 아이콘 컬러 */
-    yellowDark: "#C08A00",
+    orangeDark: "#C08A00",
     /** 학습 카드 텍스트 액션 컬러 */
-    yellowDeep: "#A07000",
+    orangeDeep: "#A07000",
   },
 
   /** 텍스트 */

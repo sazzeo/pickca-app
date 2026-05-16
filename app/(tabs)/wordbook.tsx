@@ -22,24 +22,9 @@ import type { Item } from "@/api/generated/pickcaAPI.schemas";
 import { AppHeader } from "@/components/common/AppHeader";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
-import {
-  WordbookGroupCard,
-  type WordbookGroupCardSurface,
-} from "@/components/wordbook/WordbookGroupCard";
+import { WordbookCard } from "@/components/wordbook/WordbookCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
-import { formatRelativeTimeKo } from "@/lib/formatRelativeTimeKo";
-
-function surfaceForWordbookId(id: number): WordbookGroupCardSurface {
-  const mod = Math.abs(id) % 3;
-  if (mod === 0) {
-    return "green";
-  }
-  if (mod === 1) {
-    return "cream";
-  }
-  return "neutral";
-}
 
 export default function WordbookScreen() {
   const { user } = useAuth();
@@ -218,25 +203,30 @@ export default function WordbookScreen() {
           </View>
         ) : (
           <View style={styles.cardList}>
-            {filteredWordbooks.map((item) => (
-              <WordbookGroupCard
-                key={String(item.id)}
-                title={item.name}
-                progressPercent={Math.round(item.progressRate)}
-                wordCount={item.wordCount}
-                relativeTime={formatRelativeTimeKo(item.createdAt)}
-                surface={surfaceForWordbookId(item.id)}
-                menuItems={createWordbookMenuItems(item.id)}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(tabs)/wordbook-detail",
-                    params: {
-                      wordbookId: String(item.id),
-                    },
-                  })
-                }
-              />
-            ))}
+            {filteredWordbooks.map((item) => {
+              // TODO: API 확장 후 memorizedRate/learningRate/notStartedRate 직접 사용
+              const memorizedRate = Math.round(item.progressRate);
+              const remainingRate = 100 - memorizedRate;
+              return (
+                <WordbookCard
+                  key={String(item.id)}
+                  title={item.name}
+                  wordCount={item.wordCount}
+                  memorizedRate={memorizedRate}
+                  learningRate={Math.round(remainingRate * 0.5)}
+                  notStartedRate={remainingRate - Math.round(remainingRate * 0.5)}
+                  menuItems={createWordbookMenuItems(item.id)}
+                  // TODO: 퀴즈 미구현 — 추후 연결
+                  onQuizPress={() => {}}
+                  onViewWordsPress={() =>
+                    router.push({
+                      pathname: "/(tabs)/wordbook-detail",
+                      params: { wordbookId: String(item.id) },
+                    })
+                  }
+                />
+              );
+            })}
           </View>
         )}
       </ScrollView>

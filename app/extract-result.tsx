@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 8,
-    backgroundColor: Colors.action.yellowLight,
+    backgroundColor: Colors.action.orangeLight,
     marginBottom: 12,
   },
   posText: {
