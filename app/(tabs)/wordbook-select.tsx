@@ -24,12 +24,7 @@ export default function WordbookSelectScreen() {
   const memberId = user?.memberId ?? 0;
   const [searchQuery, setSearchQuery] = useState("");
 
-  const {
-    data: wordbooksData,
-    isPending,
-    isError,
-    refetch,
-  } = useGetWordbooks({ memberId }, { query: { enabled: memberId > 0 } });
+  const { data: wordbooksData, isPending, isError, refetch } = useGetWordbooks();
 
   const wordbooks: Item[] = wordbooksData?.data?.wordbooks ?? [];
   const apiErrorMessage =

@@ -34,7 +34,6 @@ export default function ProfileScreen() {
     try {
       await updateNickname({
         data: { nickname: nicknameInput.trim() },
-        params: { memberId: user.memberId },
       });
       await updateUser({ ...user, nickname: nicknameInput.trim() });
       setIsNicknameDialogVisible(false);

@@ -14,9 +14,7 @@ import type {
 
 import type {
   ApiResponse,
-  UpdateCefrLevelParams,
   UpdateCefrLevelRequest,
-  UpdateNicknameParams,
   UpdateNicknameRequest,
 } from "../pickcaAPI.schemas";
 
@@ -25,16 +23,12 @@ import { fetcher } from "../../../lib/axios";
 /**
  * @summary 닉네임 변경
  */
-export const updateNickname = (
-  updateNicknameRequest: UpdateNicknameRequest,
-  params: UpdateNicknameParams
-) => {
+export const updateNickname = (updateNicknameRequest: UpdateNicknameRequest) => {
   return fetcher<ApiResponse>({
     url: `/api/members/me/nickname`,
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     data: updateNicknameRequest,
-    params,
   });
 };
 
@@ -42,13 +36,13 @@ export const getUpdateNicknameMutationOptions = <TError = unknown, TContext = un
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateNickname>>,
     TError,
-    { data: UpdateNicknameRequest; params: UpdateNicknameParams },
+    { data: UpdateNicknameRequest },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateNickname>>,
   TError,
-  { data: UpdateNicknameRequest; params: UpdateNicknameParams },
+  { data: UpdateNicknameRequest },
   TContext
 > => {
   const mutationKey = ["updateNickname"];
@@ -60,11 +54,11 @@ export const getUpdateNicknameMutationOptions = <TError = unknown, TContext = un
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updateNickname>>,
-    { data: UpdateNicknameRequest; params: UpdateNicknameParams }
+    { data: UpdateNicknameRequest }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return updateNickname(data, params);
+    return updateNickname(data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -82,7 +76,7 @@ export const useUpdateNickname = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof updateNickname>>,
       TError,
-      { data: UpdateNicknameRequest; params: UpdateNicknameParams },
+      { data: UpdateNicknameRequest },
       TContext
     >;
   },
@@ -90,7 +84,7 @@ export const useUpdateNickname = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof updateNickname>>,
   TError,
-  { data: UpdateNicknameRequest; params: UpdateNicknameParams },
+  { data: UpdateNicknameRequest },
   TContext
 > => {
   const mutationOptions = getUpdateNicknameMutationOptions(options);
@@ -100,16 +94,12 @@ export const useUpdateNickname = <TError = unknown, TContext = unknown>(
 /**
  * @summary 단어 추출 최소 CEFR 레벨 변경
  */
-export const updateCefrLevel = (
-  updateCefrLevelRequest: UpdateCefrLevelRequest,
-  params: UpdateCefrLevelParams
-) => {
+export const updateCefrLevel = (updateCefrLevelRequest: UpdateCefrLevelRequest) => {
   return fetcher<ApiResponse>({
     url: `/api/members/me/cefr-level`,
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     data: updateCefrLevelRequest,
-    params,
   });
 };
 
@@ -117,13 +107,13 @@ export const getUpdateCefrLevelMutationOptions = <TError = unknown, TContext = u
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateCefrLevel>>,
     TError,
-    { data: UpdateCefrLevelRequest; params: UpdateCefrLevelParams },
+    { data: UpdateCefrLevelRequest },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateCefrLevel>>,
   TError,
-  { data: UpdateCefrLevelRequest; params: UpdateCefrLevelParams },
+  { data: UpdateCefrLevelRequest },
   TContext
 > => {
   const mutationKey = ["updateCefrLevel"];
@@ -135,11 +125,11 @@ export const getUpdateCefrLevelMutationOptions = <TError = unknown, TContext = u
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updateCefrLevel>>,
-    { data: UpdateCefrLevelRequest; params: UpdateCefrLevelParams }
+    { data: UpdateCefrLevelRequest }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return updateCefrLevel(data, params);
+    return updateCefrLevel(data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -159,7 +149,7 @@ export const useUpdateCefrLevel = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof updateCefrLevel>>,
       TError,
-      { data: UpdateCefrLevelRequest; params: UpdateCefrLevelParams },
+      { data: UpdateCefrLevelRequest },
       TContext
     >;
   },
@@ -167,7 +157,7 @@ export const useUpdateCefrLevel = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof updateCefrLevel>>,
   TError,
-  { data: UpdateCefrLevelRequest; params: UpdateCefrLevelParams },
+  { data: UpdateCefrLevelRequest },
   TContext
 > => {
   const mutationOptions = getUpdateCefrLevelMutationOptions(options);

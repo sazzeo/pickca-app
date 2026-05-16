@@ -236,6 +236,16 @@ export interface ApiResponse {
   error?: ApiError;
 }
 
+export interface QuizResultRequest {
+  /** 정답 여부 (true: 정답, false: 오답) */
+  correct: boolean;
+}
+
+export interface BatchStudyRequest {
+  /** 학습한 단어 ID 목록 */
+  wordIds: number[];
+}
+
 export interface TokenRefreshRequest {
   /** 리프레시 토큰 */
   refreshToken: string;
@@ -466,6 +476,57 @@ export interface ApiResponseWordbookWordListResponse {
   error?: ApiError;
 }
 
+export interface WordbookWordListResponse {
+  /** 단어장 이름 */
+  title: string;
+  /** 단어장에 저장된 단어 목록 */
+  words: WordbookWordResponse[];
+}
+
+/**
+ * 품사
+ */
+export type WordbookWordMeaningResponsePartOfSpeech =
+  (typeof WordbookWordMeaningResponsePartOfSpeech)[keyof typeof WordbookWordMeaningResponsePartOfSpeech];
+
+export const WordbookWordMeaningResponsePartOfSpeech = {
+  NOUN: "NOUN",
+  VERB: "VERB",
+  ADJECTIVE: "ADJECTIVE",
+  ADVERB: "ADVERB",
+  PREPOSITION: "PREPOSITION",
+  CONJUNCTION: "CONJUNCTION",
+  INTERJECTION: "INTERJECTION",
+  PRONOUN: "PRONOUN",
+} as const;
+
+export interface WordbookWordMeaningResponse {
+  /** 품사 */
+  partOfSpeech: WordbookWordMeaningResponsePartOfSpeech;
+  /** 노출 순서 */
+  orderIndex: number;
+  /** 대표 한국어 뜻 */
+  koreanPrimary: string;
+  /** 전체 한국어 뜻 (쉼표 구분) */
+  koreanMeanings: string;
+}
+
+/**
+ * 수집 상태 (DONE/PENDING/FAILED)
+ */
+export type WordbookWordResponseCollectStatus =
+  (typeof WordbookWordResponseCollectStatus)[keyof typeof WordbookWordResponseCollectStatus];
+
+export const WordbookWordResponseCollectStatus = {
+  PENDING: "PENDING",
+  PARTIAL: "PARTIAL",
+  DONE: "DONE",
+  FAILED: "FAILED",
+} as const;
+
+/**
+ * 학습 상태 (NOT_STARTED/LEARNING/MEMORIZED/RELEARNING)
+ */
 export type WordbookWordResponseLearningStatus =
   (typeof WordbookWordResponseLearningStatus)[keyof typeof WordbookWordResponseLearningStatus];
 
@@ -481,8 +542,8 @@ export interface WordbookWordResponse {
   id: number;
   /** 영단어 */
   word: string;
-  /** 수집 상태 (DONE/PENDING/PARTIAL/FAILED) */
-  collectStatus: WordResponseCollectStatus;
+  /** 수집 상태 (DONE/PENDING/FAILED) */
+  collectStatus: WordbookWordResponseCollectStatus;
   /** IPA 발음기호 */
   phonetic?: string;
   /** 한국어 독음 */
@@ -490,26 +551,11 @@ export interface WordbookWordResponse {
   /** 대표 뜻 (쉼표 구분, 최대 2개, 사전식 포맷) */
   primaryMeanings?: string;
   /** 품사별 의미 목록 */
-  meanings: WordMeaningResponse[];
-  /** 학습 상태 */
+  meanings: WordbookWordMeaningResponse[];
+  /** 학습 상태 (NOT_STARTED/LEARNING/MEMORIZED/RELEARNING) */
   learningStatus: WordbookWordResponseLearningStatus;
   /** 누적 오답 횟수 */
   wrongCount: number;
-}
-
-export interface WordbookWordListResponse {
-  /** 단어장 이름 */
-  title: string;
-  /** 단어장에 저장된 단어 목록 */
-  words: WordbookWordResponse[];
-}
-
-export interface Pageable {
-  /** @minimum 0 */
-  page?: number;
-  /** @minimum 1 */
-  size?: number;
-  sort?: string[];
 }
 
 export interface ApiResponseWordbookSourceListResponse {
@@ -522,11 +568,7 @@ export interface WordbookSourceListResponse {
   /** 원본 문장 목록 */
   sources: Item[];
   /** 전체 원본 문장 수 */
-  totalElements: number;
-  /** 전체 페이지 수 */
-  totalPages: number;
-  /** 다음 페이지 존재 여부 */
-  hasNext: boolean;
+  total: number;
 }
 
 /**
@@ -619,26 +661,6 @@ export interface PageResponseAdminWordResponse {
   totalPages: number;
 }
 
-export type ExtractParams = {
-  memberId: number;
-};
-
-export type GetWordbooksParams = {
-  memberId: number;
-};
-
-export type CreateWordbookParams = {
-  memberId: number;
-};
-
-export type GetWordsParams = {
-  memberId: number;
-};
-
-export type AddWordsParams = {
-  memberId: number;
-};
-
 export type ListParams = {
   request: AdminWordListRequest;
 };
@@ -647,32 +669,6 @@ export type CefrImportBody = {
   file: Blob;
 };
 
-export type DeleteWordbookParams = {
-  memberId: number;
-};
-
-export type UpdateWordbookNameParams = {
-  memberId: number;
-};
-
-export type UpdateNicknameParams = {
-  memberId: number;
-};
-
-export type UpdateCefrLevelParams = {
-  memberId: number;
-};
-
 export type GetWords1Params = {
-  memberId: number;
   words: string[];
-};
-
-export type GetSourcesParams = {
-  memberId: number;
-  pageable: Pageable;
-};
-
-export type RemoveWordParams = {
-  memberId: number;
 };

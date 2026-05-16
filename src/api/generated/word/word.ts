@@ -22,7 +22,6 @@ import type {
 
 import type {
   ApiResponseWordExtractResponse,
-  ExtractParams,
   GetWords1Params,
   WordExtractRequest,
 } from "../pickcaAPI.schemas";
@@ -32,17 +31,12 @@ import { fetcher } from "../../../lib/axios";
 /**
  * @summary 텍스트에서 단어 추출 및 조회
  */
-export const extract = (
-  wordExtractRequest: WordExtractRequest,
-  params: ExtractParams,
-  signal?: AbortSignal
-) => {
+export const extract = (wordExtractRequest: WordExtractRequest, signal?: AbortSignal) => {
   return fetcher<ApiResponseWordExtractResponse>({
     url: `/api/words/extract`,
     method: "POST",
     headers: { "Content-Type": "application/json" },
     data: wordExtractRequest,
-    params,
     signal,
   });
 };
@@ -51,13 +45,13 @@ export const getExtractMutationOptions = <TError = unknown, TContext = unknown>(
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof extract>>,
     TError,
-    { data: WordExtractRequest; params: ExtractParams },
+    { data: WordExtractRequest },
     TContext
   >;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof extract>>,
   TError,
-  { data: WordExtractRequest; params: ExtractParams },
+  { data: WordExtractRequest },
   TContext
 > => {
   const mutationKey = ["extract"];
@@ -69,11 +63,11 @@ export const getExtractMutationOptions = <TError = unknown, TContext = unknown>(
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof extract>>,
-    { data: WordExtractRequest; params: ExtractParams }
+    { data: WordExtractRequest }
   > = (props) => {
-    const { data, params } = props ?? {};
+    const { data } = props ?? {};
 
-    return extract(data, params);
+    return extract(data);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -91,7 +85,7 @@ export const useExtract = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof extract>>,
       TError,
-      { data: WordExtractRequest; params: ExtractParams },
+      { data: WordExtractRequest },
       TContext
     >;
   },
@@ -99,7 +93,7 @@ export const useExtract = <TError = unknown, TContext = unknown>(
 ): UseMutationResult<
   Awaited<ReturnType<typeof extract>>,
   TError,
-  { data: WordExtractRequest; params: ExtractParams },
+  { data: WordExtractRequest },
   TContext
 > => {
   const mutationOptions = getExtractMutationOptions(options);

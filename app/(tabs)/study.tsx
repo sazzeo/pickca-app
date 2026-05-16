@@ -26,10 +26,7 @@ export default function StudyScreen() {
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const memberId = user?.memberId ?? 0;
 
-  const { data: wordbooksData } = useGetWordbooks(
-    { memberId },
-    { query: { enabled: memberId > 0 } }
-  );
+  const { data: wordbooksData } = useGetWordbooks();
 
   const totalWordCount = useMemo(() => {
     const wordbooks = wordbooksData?.data?.wordbooks ?? [];
@@ -110,11 +107,7 @@ export default function StudyScreen() {
                 <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
               </View>
 
-              <MaterialCommunityIcons
-                name="chevron-right"
-                size={22}
-                color={Colors.text.tertiary}
-              />
+              <MaterialCommunityIcons name="chevron-right" size={22} color={Colors.text.tertiary} />
             </Pressable>
           ))}
         </View>

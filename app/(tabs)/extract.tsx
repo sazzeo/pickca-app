@@ -68,7 +68,6 @@ export default function ExtractScreen() {
     try {
       const result = await extractWords({
         data: { text: trimmed },
-        params: { memberId: user?.memberId ?? 0 },
       });
       const words = result.data?.words ?? [];
       if (words.length === 0) {

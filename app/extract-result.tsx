@@ -83,7 +83,7 @@ export default function ExtractResultScreen() {
           .filter((w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED")
           .map((w) => w.lemma);
 
-        getWords1({ words: pendingLemmas, memberId: user?.memberId ?? 0 })
+        getWords1({ words: pendingLemmas })
           .then((response) => {
             const updated = response.data?.words ?? [];
             if (updated.length === 0) return;

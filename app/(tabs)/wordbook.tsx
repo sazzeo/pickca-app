@@ -39,12 +39,7 @@ export default function WordbookScreen() {
 
   const memberId = user?.memberId ?? 0;
 
-  const {
-    data: wordbooksData,
-    isPending,
-    isError,
-    refetch,
-  } = useGetWordbooks({ memberId }, { query: { enabled: memberId > 0 } });
+  const { data: wordbooksData, isPending, isError, refetch } = useGetWordbooks();
   const { mutateAsync: updateWordbookName } = useUpdateWordbookName();
   const { mutateAsync: deleteWordbook } = useDeleteWordbook();
 
@@ -111,7 +106,6 @@ export default function WordbookScreen() {
       await updateWordbookName({
         wordbookId: editingWordbookId,
         data: { name: trimmedName },
-        params: { memberId },
       });
       setEditingWordbookId(null);
       setEditInput("");
@@ -135,7 +129,6 @@ export default function WordbookScreen() {
     try {
       await deleteWordbook({
         wordbookId: deletingWordbookId,
-        params: { memberId },
       });
       setDeletingWordbookId(null);
       await refetch();

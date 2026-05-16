@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
-import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -11,13 +11,12 @@ import Animated, {
 } from "react-native-reanimated";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-import { useGetWords } from "@/api/generated/wordbooks/wordbooks";
-import { WordCard, type WordCardItem } from "@/components/study/WordCard";
-import { useAuth } from "@/contexts/AuthContext";
+import { useGetWords, useMarkAsStudied } from "@/api/generated/wordbooks/wordbooks";
+import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
+import type { WordbookWordResponse } from "@/api/generated/pickcaAPI.schemas";
+import { WordCard, type WordCardItem, type WordCardStatus } from "@/components/study/WordCard";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
-import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
 
 const PEEK_SIZE = 20;
 const CARD_GAP = 12;
@@ -36,7 +35,14 @@ const SPRING_CONFIG = {
   mass: 0.8,
 };
 
-function mapToCardItem(word: WordResponse, index: number): WordCardItem {
+const LEARNING_STATUS_MAP: Record<WordbookWordResponseLearningStatus, WordCardStatus> = {
+  NOT_STARTED: "학습 전",
+  LEARNING: "학습 중",
+  MEMORIZED: "암기 완료",
+  RELEARNING: "다시 보기",
+};
+
+function mapToCardItem(word: WordbookWordResponse, index: number): WordCardItem {
   return {
     id: String(word.id ?? `idx-${index}`),
     lemma: word.word,
@@ -44,7 +50,7 @@ function mapToCardItem(word: WordResponse, index: number): WordCardItem {
     pronunciationKo: word.phoneticKorean,
     meaningKo: resolvePrimaryMeaning(word),
     pos: resolvePartOfSpeech(word),
-    status: "학습 중",
+    status: LEARNING_STATUS_MAP[word.learningStatus] ?? "학습 전",
   };
 }
 
@@ -55,33 +61,98 @@ export default function WordCardScreen() {
     initialIndex?: string;
   }>();
 
-  const { user } = useAuth();
   const wordbookId = Number(wordbookIdParam ?? "0");
-  const memberId = user?.memberId ?? 0;
 
-  const { data, isPending, isError, refetch } = useGetWords(
-    wordbookId,
-    { memberId },
-    { query: { enabled: memberId > 0 && wordbookId > 0 } }
+  const { data, isPending, isError, refetch } = useGetWords(wordbookId, {
+    query: { enabled: wordbookId > 0 },
+  });
+
+  const words = (data?.data?.words ?? []) as WordbookWordResponse[];
+
+  // 본 카드 ID 추적 (batch study용)
+  const viewedWordIdsRef = useRef<Set<number>>(new Set());
+  const hasFlushedRef = useRef(false);
+  const { mutate: markAsStudied } = useMarkAsStudied();
+
+  const flushStudy = useCallback(() => {
+    if (hasFlushedRef.current) return;
+    const ids = Array.from(viewedWordIdsRef.current);
+    if (ids.length === 0 || wordbookId === 0) return;
+    hasFlushedRef.current = true;
+    markAsStudied({ wordbookId, data: { wordIds: ids } });
+  }, [wordbookId, markAsStudied]);
+
+  // 앱 백그라운드 시 flush
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "background" || state === "inactive") {
+        flushStudy();
+      }
+      if (state === "active") {
+        hasFlushedRef.current = false;
+      }
+    });
+    return () => subscription.remove();
+  }, [flushStudy]);
+
+  // 낙관적 UI: viewedWordIds에 있는 카드는 "학습 중"으로 표시
+  const [viewedWordIds, setViewedWordIds] = useState<Set<number>>(new Set());
+
+  const cards: WordCardItem[] = useMemo(
+    () =>
+      words.map((word, index) => {
+        const card = mapToCardItem(word, index);
+        if (
+          viewedWordIds.has(word.id) &&
+          word.learningStatus === WordbookWordResponseLearningStatus.NOT_STARTED
+        ) {
+          return { ...card, status: "학습 중" as WordCardStatus };
+        }
+        return card;
+      }),
+    [words, viewedWordIds]
   );
-
-  const cards: WordCardItem[] = useMemo(() => (data?.data?.words ?? []).map(mapToCardItem), [data]);
 
   const total = cards.length;
   const initialIndex = Math.max(0, Math.min(Number(initialIndexParam ?? "0"), total - 1));
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  // UI 스레드 worklet에서 읽어야 하므로 SharedValue로 관리
   const currentIndexSV = useSharedValue(initialIndex);
-
-  // 카드 덱 전체의 translateX — initialIndex 위치에서 시작
   const translateX = useSharedValue(-initialIndex * SNAP_INTERVAL);
+
+  // 초기 카드 viewed 처리
+  const wordsLoaded = words.length > 0;
+  useEffect(() => {
+    if (wordsLoaded && initialIndex < words.length) {
+      const wordId = words[initialIndex].id;
+      viewedWordIdsRef.current.add(wordId);
+      setViewedWordIds(new Set(viewedWordIdsRef.current));
+    }
+  }, [wordsLoaded]); // 단어 데이터 최초 로드 시 1회만 실행
+
+  const markAsViewed = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < words.length) {
+        const wordId = words[index].id;
+        if (!viewedWordIdsRef.current.has(wordId)) {
+          viewedWordIdsRef.current.add(wordId);
+          setViewedWordIds(new Set(viewedWordIdsRef.current));
+        }
+      }
+    },
+    [words]
+  );
 
   const headerHeight = insets.top + 52 + 48;
   const footerHeight = Math.max(insets.bottom, 16);
   const cardHeight = SCREEN_HEIGHT - headerHeight - footerHeight - 48;
 
   const progressRatio = total > 0 ? (currentIndex + 1) / total : 0;
+
+  const handleBack = useCallback(() => {
+    flushStudy();
+    router.back();
+  }, [flushStudy]);
 
   if (isPending) {
     return (
@@ -138,8 +209,9 @@ export default function WordCardScreen() {
       translateX.value = withSpring(-next * SNAP_INTERVAL, SPRING_CONFIG);
 
       if (next !== idx) {
-        currentIndexSV.value = next; // UI 스레드 즉시 반영
-        runOnJS(setCurrentIndex)(next); // React 상태 동기화 (진행률 바 등)
+        currentIndexSV.value = next;
+        runOnJS(setCurrentIndex)(next);
+        runOnJS(markAsViewed)(next);
       }
     });
 
@@ -160,7 +232,7 @@ export default function WordCardScreen() {
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
-      <Header onBack={() => router.back()} />
+      <Header onBack={handleBack} />
 
       {/* 진행률 바 */}
       <View style={styles.progressRow}>

@@ -42,10 +42,9 @@ export function WordbookSelectModal({
   const [newName, setNewName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: wordbooksData, isLoading: isLoadingWordbooks } = useGetWordbooks(
-    { memberId },
-    { query: { enabled: visible && view === "existing" } }
-  );
+  const { data: wordbooksData, isLoading: isLoadingWordbooks } = useGetWordbooks({
+    query: { enabled: visible && view === "existing" },
+  });
   const { mutateAsync: addWords } = useAddWords();
   const { mutateAsync: createWordbook } = useCreateWordbook();
 
@@ -64,7 +63,6 @@ export function WordbookSelectModal({
       await addWords({
         wordbookId,
         data: { wordIds, sourceText },
-        params: { memberId },
       });
       handleDismiss();
       onSuccess(wordIds.length, wordbookId);
@@ -83,7 +81,6 @@ export function WordbookSelectModal({
     try {
       const created = await createWordbook({
         data: { name: trimmed },
-        params: { memberId },
       });
       const newWordbookId = created.data?.id;
       if (!newWordbookId) {
@@ -93,7 +90,6 @@ export function WordbookSelectModal({
       await addWords({
         wordbookId: newWordbookId,
         data: { wordIds, sourceText },
-        params: { memberId },
       });
       handleDismiss();
       onSuccess(wordIds.length, newWordbookId);

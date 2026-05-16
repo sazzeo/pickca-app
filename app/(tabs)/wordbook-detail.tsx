@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Modal, Portal, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,7 +11,6 @@ import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.sc
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
-import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
@@ -95,7 +94,6 @@ function HighlightedText({ text, highlightWords }: { text: string; highlightWord
 
 export default function WordbookDetailScreen() {
   const insets = useSafeAreaInsets();
-  const { user } = useAuth();
   const { wordbookId: wordbookIdParam } = useLocalSearchParams<{
     wordbookId?: string;
   }>();
@@ -107,18 +105,20 @@ export default function WordbookDetailScreen() {
   const [sourceIndex, setSourceIndex] = useState(0);
 
   const wordbookId = Number(wordbookIdParam ?? "0");
-  const memberId = user?.memberId ?? 0;
 
-  const { data, isPending, isError, refetch } = useGetWords(
-    wordbookId,
-    { memberId },
-    { query: { enabled: memberId > 0 && wordbookId > 0 } }
-  );
+  const { data, isPending, isError, refetch } = useGetWords(wordbookId, {
+    query: { enabled: wordbookId > 0 },
+  });
 
-  const { data: sourcesData, isPending: isSourcesPending } = useGetSources(
-    wordbookId,
-    { memberId, pageable: { page: 0, size: 50 } },
-    { query: { enabled: memberId > 0 && wordbookId > 0 } }
+  const { data: sourcesData, isPending: isSourcesPending } = useGetSources(wordbookId, {
+    query: { enabled: wordbookId > 0 },
+  });
+
+  // word-card에서 돌아올 때 학습 상태 갱신
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
   );
 
   const { mutate: removeWord, isPending: isRemoving } = useRemoveWord({
@@ -173,7 +173,9 @@ export default function WordbookDetailScreen() {
 
   const latestCollectLabel = useMemo(() => {
     if (sources.length === 0) return "";
-    const dates = sources.map((s) => new Date(s.createdAt).getTime()).filter((t) => !Number.isNaN(t));
+    const dates = sources
+      .map((s) => new Date(s.createdAt).getTime())
+      .filter((t) => !Number.isNaN(t));
     if (dates.length === 0) return "";
     const latest = new Date(Math.max(...dates)).toISOString();
     return formatRelativeDate(latest);
@@ -223,7 +225,10 @@ export default function WordbookDetailScreen() {
                 {wordbookTitle}
               </Text>
               <Pressable
-                style={({ pressed }) => [styles.sourceButton, pressed && styles.sourceButtonPressed]}
+                style={({ pressed }) => [
+                  styles.sourceButton,
+                  pressed && styles.sourceButtonPressed,
+                ]}
                 onPress={openSourceSheet}
                 accessibilityRole="button"
                 accessibilityLabel="원문 보기"
@@ -382,7 +387,7 @@ export default function WordbookDetailScreen() {
         confirmDisabled={isRemoving}
         onConfirm={() => {
           if (deletingWordId == null) return;
-          removeWord({ wordbookId, wordId: deletingWordId, params: { memberId } });
+          removeWord({ wordbookId, wordId: deletingWordId });
         }}
       />
 
