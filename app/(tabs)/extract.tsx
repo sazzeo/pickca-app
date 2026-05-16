@@ -1,13 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { useExtract } from "@/api/generated/word/word";
@@ -121,19 +115,6 @@ export default function ExtractScreen() {
           </Text>
           <Text style={styles.description}>텍스트를 붙여넣거나 이미지를 올려보세요</Text>
 
-          {__DEV__ && (
-            <Pressable
-              onPress={() => router.push("/extract-result")}
-              style={styles.devPreviewLink}
-              accessibilityRole="button"
-              accessibilityLabel="추출 결과 화면 미리보기"
-            >
-              <Text style={styles.devPreviewText}>
-                추출 결과 화면 미리보기 (개발 전용)
-              </Text>
-            </Pressable>
-          )}
-
           <View style={styles.inputCard}>
             <View style={styles.inputHeader}>
               <Text style={styles.inputLabel}>텍스트 입력</Text>
@@ -159,10 +140,7 @@ export default function ExtractScreen() {
             <View style={styles.inputBottomDivider} />
 
             <Pressable
-              style={({ pressed }) => [
-                styles.uploadButton,
-                pressed && styles.uploadButtonPressed,
-              ]}
+              style={({ pressed }) => [styles.uploadButton, pressed && styles.uploadButtonPressed]}
               onPress={handleImageUpload}
               android_ripple={{ color: Colors.brand.greenMid }}
               accessibilityRole="button"
@@ -179,10 +157,7 @@ export default function ExtractScreen() {
         </View>
 
         <Pressable
-          style={[
-            styles.extractButton,
-            isSubmitEnabled && styles.extractButtonEnabled,
-          ]}
+          style={[styles.extractButton, isSubmitEnabled && styles.extractButtonEnabled]}
           onPress={handleExtract}
           disabled={!isSubmitEnabled}
           accessibilityRole="button"
@@ -241,17 +216,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.secondary,
     letterSpacing: -0.2,
-  },
-  devPreviewLink: {
-    alignSelf: "flex-start",
-    marginBottom: 20,
-    paddingVertical: 4,
-  },
-  devPreviewText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.brand.green,
-    textDecorationLine: "underline",
   },
   inputCard: {
     borderWidth: 1,

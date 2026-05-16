@@ -1,4 +1,3 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
@@ -56,49 +55,54 @@ export function WordbookGroupCard({
   const clampedPercent = Math.min(100, Math.max(0, progressPercent));
 
   return (
-    <Pressable
-      style={({ pressed }) => [
-        styles.card,
-        { backgroundColor },
-        pressed && styles.cardPressed,
-      ]}
-      onPress={onPress}
-      disabled={!onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${title} 단어장 열기`}
-    >
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle} numberOfLines={2}>
-          {title}
-        </Text>
-        <EllipsisDropdownMenu
-          triggerAccessibilityLabel={`${title} 메뉴 열기`}
-          items={menuItems}
-        />
-      </View>
-
-      <View style={styles.progressRow}>
-        <Text style={styles.progressLabel}>{clampedPercent}%</Text>
-        <View style={styles.progressTrack}>
-          <View
-            style={[
-              styles.progressFill,
-              {
-                width: `${clampedPercent}%`,
-                backgroundColor: progressFillColor,
-              },
-            ]}
+    <View style={[styles.card, { backgroundColor }]}>
+      <Pressable
+        style={({ pressed }) => [
+          StyleSheet.absoluteFillObject,
+          styles.cardPressable,
+          pressed && styles.cardPressed,
+        ]}
+        onPress={onPress}
+        disabled={!onPress}
+        accessibilityRole="button"
+        accessibilityLabel={`${title} 단어장 열기`}
+      />
+      <View style={styles.cardContent} pointerEvents="box-none">
+        <View style={styles.cardHeader} pointerEvents="box-none">
+          <View pointerEvents="none" style={styles.cardTitleWrap}>
+            <Text style={styles.cardTitle} numberOfLines={2}>
+              {title}
+            </Text>
+          </View>
+          <EllipsisDropdownMenu
+            triggerAccessibilityLabel={`${title} 메뉴 열기`}
+            items={menuItems}
           />
         </View>
-      </View>
 
-      <View style={styles.cardFooter}>
-        <View style={styles.wordChip}>
-          <Text style={styles.wordChipText}>{wordCount}단어</Text>
+        <View style={styles.progressRow} pointerEvents="none">
+          <Text style={styles.progressLabel}>{clampedPercent}%</Text>
+          <View style={styles.progressTrack}>
+            <View
+              style={[
+                styles.progressFill,
+                {
+                  width: `${clampedPercent}%`,
+                  backgroundColor: progressFillColor,
+                },
+              ]}
+            />
+          </View>
         </View>
-        <Text style={styles.relativeTime}>{relativeTime}</Text>
+
+        <View style={styles.cardFooter} pointerEvents="none">
+          <View style={styles.wordChip}>
+            <Text style={styles.wordChipText}>{wordCount}단어</Text>
+          </View>
+          <Text style={styles.relativeTime}>{relativeTime}</Text>
+        </View>
       </View>
-    </Pressable>
+    </View>
   );
 }
 
@@ -106,12 +110,17 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "column",
     borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
     marginBottom: 12,
+  },
+  cardPressable: {
+    borderRadius: 16,
   },
   cardPressed: {
     opacity: 0.85,
+  },
+  cardContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   cardHeader: {
     position: "relative",
@@ -123,8 +132,10 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 10,
   },
-  cardTitle: {
+  cardTitleWrap: {
     flex: 1,
+  },
+  cardTitle: {
     fontSize: 15,
     fontWeight: "700",
     color: Colors.text.primary,

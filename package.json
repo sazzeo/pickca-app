@@ -1,6 +1,6 @@
 {
   "name": "pickca-app",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "main": "expo-router/entry",
@@ -14,7 +14,8 @@
     "fm:check": "prettier --check \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\"",
     "fm:fix": "prettier --write \"src/**/*.{ts,tsx}\" \"app/**/*.{ts,tsx}\"",
     "generate": "orval",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "jest"
   },
   "dependencies": {
     "@babel/runtime": "^7.29.2",
@@ -44,12 +45,27 @@
     "@babel/core": "^7.25.2",
     "@react-navigation/bottom-tabs": "7.15.9",
     "@tanstack/eslint-plugin-query": "^5.67.0",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^13.3.3",
     "@types/react": "~18.3.12",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
+    "jest-expo": "^52.0.6",
     "orval": "^7.6.0",
     "prettier": "^3.5.0",
+    "react-test-renderer": "18.3.1",
     "typescript": "^5.7.0"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(?:.pnpm/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg))"
+    ],
+    "moduleNameMapper": {
+      "@expo/vector-icons": "<rootDir>/__mocks__/@expo/vector-icons.js",
+      "@expo/vector-icons/(.*)": "<rootDir>/__mocks__/@expo/vector-icons.js",
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
   }
 }

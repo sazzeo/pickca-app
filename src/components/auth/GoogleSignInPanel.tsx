@@ -11,7 +11,7 @@ import { useGoogleLogin } from "@/api/generated/auth/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { createMemberIdFromEmail } from "@/lib/member";
 
-export default function GoogleSignInPanel() {
+export function GoogleSignInPanel() {
   const { signIn } = useAuth();
   const inFlight = useRef(false);
   const { mutateAsync: googleLogin } = useGoogleLogin();
@@ -52,13 +52,10 @@ export default function GoogleSignInPanel() {
       const accessToken = payload?.accessToken;
       const refreshToken = payload?.refreshToken;
       const nickname = payload?.nickname;
-      const responseMemberId = (
-        payload as { memberId?: number; id?: number; userId?: number } | undefined
-      )?.memberId ?? (
-        payload as { memberId?: number; id?: number; userId?: number } | undefined
-      )?.id ?? (
-        payload as { memberId?: number; id?: number; userId?: number } | undefined
-      )?.userId;
+      const responseMemberId =
+        (payload as { memberId?: number; id?: number; userId?: number } | undefined)?.memberId ??
+        (payload as { memberId?: number; id?: number; userId?: number } | undefined)?.id ??
+        (payload as { memberId?: number; id?: number; userId?: number } | undefined)?.userId;
 
       if (!accessToken || !refreshToken || !nickname) {
         Alert.alert("오류", "로그인 응답 형식이 올바르지 않습니다.");
@@ -83,8 +80,7 @@ export default function GoogleSignInPanel() {
       }
 
       const message = axios.isAxiosError(error)
-        ? (error.response?.data?.error?.message as string | undefined) ??
-          error.message
+        ? ((error.response?.data?.error?.message as string | undefined) ?? error.message)
         : error instanceof Error
           ? error.message
           : "알 수 없는 오류";

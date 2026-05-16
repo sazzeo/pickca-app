@@ -44,7 +44,7 @@ export function WordbookSelectModal({
 
   const { data: wordbooksData, isLoading: isLoadingWordbooks } = useGetWordbooks(
     { memberId },
-    { query: { enabled: visible && view === "existing" } },
+    { query: { enabled: visible && view === "existing" } }
   );
   const { mutateAsync: addWords } = useAddWords();
   const { mutateAsync: createWordbook } = useCreateWordbook();
@@ -114,7 +114,9 @@ export function WordbookSelectModal({
         {view === "select" && (
           <View style={styles.content}>
             <Text style={styles.title}>단어장에 추가하기</Text>
-            <Text style={styles.subtitle}>{wordIds.length}개 단어를 저장할 단어장을 선택해 주세요.</Text>
+            <Text style={styles.subtitle}>
+              {wordIds.length}개 단어를 저장할 단어장을 선택해 주세요.
+            </Text>
 
             <Pressable
               style={({ pressed }) => [styles.optionButton, pressed && styles.optionButtonPressed]}
@@ -122,7 +124,11 @@ export function WordbookSelectModal({
               accessibilityRole="button"
             >
               <View style={styles.optionIcon}>
-                <MaterialCommunityIcons name="book-open-variant" size={22} color={Colors.brand.greenDark} />
+                <MaterialCommunityIcons
+                  name="book-open-variant"
+                  size={22}
+                  color={Colors.brand.greenDark}
+                />
               </View>
               <View style={styles.optionTextCol}>
                 <Text style={styles.optionLabel}>기존 단어장에 추가하기</Text>
@@ -184,7 +190,10 @@ export function WordbookSelectModal({
                 {wordbooks.map((wb) => (
                   <Pressable
                     key={wb.id}
-                    style={({ pressed }) => [styles.wordbookRow, pressed && styles.wordbookRowPressed]}
+                    style={({ pressed }) => [
+                      styles.wordbookRow,
+                      pressed && styles.wordbookRowPressed,
+                    ]}
                     onPress={() => void handleAddToWordbook(wb.id)}
                     disabled={isSubmitting}
                     accessibilityRole="button"
@@ -196,7 +205,11 @@ export function WordbookSelectModal({
                     {isSubmitting ? (
                       <ActivityIndicator size="small" color={Colors.brand.greenDark} />
                     ) : (
-                      <MaterialCommunityIcons name="plus" size={20} color={Colors.brand.greenDark} />
+                      <MaterialCommunityIcons
+                        name="plus"
+                        size={20}
+                        color={Colors.brand.greenDark}
+                      />
                     )}
                   </Pressable>
                 ))}

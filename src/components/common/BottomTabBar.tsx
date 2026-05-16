@@ -6,10 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "@/lib/colors";
 
-const TAB_CONFIG: Record<
-  string,
-  { label: string; icon: string; activeIcon: string }
-> = {
+const TAB_CONFIG: Record<string, { label: string; icon: string; activeIcon: string }> = {
   index: {
     label: "홈",
     icon: "home-outline",

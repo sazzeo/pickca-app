@@ -1,11 +1,5 @@
 import { router } from "expo-router";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 import {
   clearTokens,
@@ -22,6 +16,7 @@ interface AuthContextType {
   isLoading: boolean;
   signIn: (accessToken: string, refreshToken: string, user: StoredUser) => Promise<void>;
   signOut: () => Promise<void>;
+  updateUser: (user: StoredUser) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,10 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     (async () => {
-      const [token, storedUser] = await Promise.all([
-        getAccessToken(),
-        getStoredUser(),
-      ]);
+      const [token, storedUser] = await Promise.all([getAccessToken(), getStoredUser()]);
       if (token && storedUser) {
         setUser(storedUser);
       }
@@ -58,6 +50,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.replace("/(auth)/sign-in");
   }, []);
 
+  const updateUser = useCallback(async (updated: StoredUser) => {
+    await setStoredUser(updated);
+    setUser(updated);
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -66,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         signIn,
         signOut,
+        updateUser,
       }}
     >
       {children}

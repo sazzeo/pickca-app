@@ -25,14 +25,7 @@ interface WordCardProps {
   showSwipeHint?: boolean;
 }
 
-export function WordCard({
-  item,
-  index,
-  total,
-  width,
-  height,
-  showSwipeHint,
-}: WordCardProps) {
+export function WordCard({ item, index, total, width, height, showSwipeHint }: WordCardProps) {
   return (
     <View style={[styles.card, { width, height }]}>
       {/* 스와이프 힌트 아이콘 — 첫 카드에만 표시 */}

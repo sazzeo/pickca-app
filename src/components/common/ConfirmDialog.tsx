@@ -38,16 +38,11 @@ export function ConfirmDialog({
   onCancel,
   onConfirm,
 }: ConfirmDialogProps) {
-  const confirmBackgroundColor =
-    tone === "danger" ? Colors.semantic.danger : Colors.brand.green;
+  const confirmBackgroundColor = tone === "danger" ? Colors.semantic.danger : Colors.brand.green;
 
   return (
     <Portal>
-      <Modal
-        visible={visible}
-        onDismiss={onCancel}
-        contentContainerStyle={styles.modalContainer}
-      >
+      <Modal visible={visible} onDismiss={onCancel} contentContainerStyle={styles.modalContainer}>
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
 
@@ -62,7 +57,7 @@ export function ConfirmDialog({
               maxLength={input.maxLength}
               autoFocus={input.autoFocus}
               style={styles.input}
-              outlineColor="#A9B0A6"
+              outlineColor={Colors.border.inputOutline}
               activeOutlineColor={Colors.brand.green}
               textColor={Colors.text.primary}
               selectionColor={Colors.brand.green}
@@ -141,7 +136,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cancelButton: {
-    backgroundColor: "#E7E5E1",
+    backgroundColor: Colors.bg.cancelButton,
   },
   cancelButtonText: {
     fontSize: 16,

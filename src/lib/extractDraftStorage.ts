@@ -20,9 +20,7 @@ function isValidDraft(raw: unknown): raw is ExtractDraft {
   );
 }
 
-export async function saveExtractDraft(
-  payload: Omit<ExtractDraft, "updatedAt">
-): Promise<void> {
+export async function saveExtractDraft(payload: Omit<ExtractDraft, "updatedAt">): Promise<void> {
   const draft: ExtractDraft = {
     ...payload,
     updatedAt: Date.now(),

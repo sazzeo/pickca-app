@@ -24,16 +24,10 @@ export default function HomeScreen() {
 
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: tabBarApproxHeight + 24 },
-        ]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarApproxHeight + 24 }]}
         showsVerticalScrollIndicator={false}
       >
-        <GreetingSection
-          isReturningUser={isReturningUser}
-          userName={user?.nickname}
-        />
+        <GreetingSection isReturningUser={isReturningUser} userName={user?.nickname} />
 
         {/* 메뉴 섹션 */}
         <View style={styles.sectionHeader}>

@@ -1,13 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -17,106 +11,8 @@ import { WordbookSelectModal } from "@/components/common/WordbookSelectModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { mapWord } from "@/lib/wordExtraction";
 import { Colors } from "@/lib/colors";
-import {
-  clearExtractDraft,
-  getExtractDraft,
-  saveExtractDraft,
-} from "@/lib/extractDraftStorage";
+import { clearExtractDraft, getExtractDraft, saveExtractDraft } from "@/lib/extractDraftStorage";
 import type { ExtractWordItem } from "@/types/word";
-
-// 개발 전용 목업 — 앞 2개는 DONE(뜻 있음), 나머지는 PENDING(뜻 없음)으로 재조회 트리거 흐름 확인 가능
-const MOCK_EXTRACT_WORDS: ExtractWordItem[] = [
-  {
-    id: "1",
-    wordId: 1,
-    lemma: "mesmerizing",
-    meaningKo: "매혹적인",
-    pos: "adj",
-    pronunciation: "[ məˈsmərʌɪzɪŋ ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "2",
-    wordId: 2,
-    lemma: "understand",
-    meaningKo: "이해하다, 알다",
-    pos: "v",
-    pronunciation: "[ ˌʌndərˈstænd ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "3",
-    wordId: 3,
-    lemma: "genuine",
-    meaningKo: "—",
-    pos: "?",
-    pronunciation: "",
-    collectStatus: "PENDING",
-  },
-  {
-    id: "4",
-    wordId: 4,
-    lemma: "learning",
-    meaningKo: "—",
-    pos: "?",
-    pronunciation: "",
-    collectStatus: "PENDING",
-  },
-  {
-    id: "5",
-    wordId: 5,
-    lemma: "challenging",
-    meaningKo: "도전적인",
-    pos: "adj",
-    pronunciation: "[ ˈtʃælɪndʒɪŋ ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "6",
-    wordId: 6,
-    lemma: "vocabulary",
-    meaningKo: "어휘",
-    pos: "n",
-    pronunciation: "[ voʊˈkæbjəleri ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "7",
-    wordId: 7,
-    lemma: "consistent",
-    meaningKo: "일관된, 꾸준한",
-    pos: "adj",
-    pronunciation: "[ kənˈsɪstənt ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "8",
-    wordId: 8,
-    lemma: "confidence",
-    meaningKo: "자신감",
-    pos: "n",
-    pronunciation: "[ ˈkɑːnfɪdəns ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "9",
-    wordId: 9,
-    lemma: "communication",
-    meaningKo: "의사소통",
-    pos: "n",
-    pronunciation: "[ kəˌmjuːnɪˈkeɪʃn ]",
-    collectStatus: "DONE",
-  },
-  {
-    id: "10",
-    wordId: 10,
-    lemma: "gradually",
-    meaningKo: "점차, 서서히",
-    pos: "adv",
-    pronunciation: "[ ˈɡrædʒuəli ]",
-    collectStatus: "DONE",
-  },
-];
 
 type HistoryEntry = ExtractWordItem & { picked: boolean };
 
@@ -151,8 +47,6 @@ export default function ExtractResultScreen() {
       if (draft) {
         setSourceText(draft.sourceText);
         setWords(draft.words);
-      } else if (__DEV__) {
-        setWords(MOCK_EXTRACT_WORDS);
       } else {
         setWords([]);
       }
@@ -165,14 +59,9 @@ export default function ExtractResultScreen() {
   const current = words[cursor];
   const nextWord = cursor + 1 < total ? words[cursor + 1] : null;
 
-  const progressRatio =
-    total > 0 ? Math.min((cursor + 1) / total, 1) : 0;
+  const progressRatio = total > 0 ? Math.min((cursor + 1) / total, 1) : 0;
   const progressLabel =
-    total === 0
-      ? "0 / 0"
-      : cursor >= total
-        ? `${total} / ${total}`
-        : `${cursor + 1} / ${total}`;
+    total === 0 ? "0 / 0" : cursor >= total ? `${total} / ${total}` : `${cursor + 1} / ${total}`;
 
   /** 카드 영역은 고정 — 텍스트만 바뀜. 확인한 단어는 최신이 맨 위(아래로 쌓인 느낌) */
   const advance = (picked: boolean) => {
@@ -185,7 +74,7 @@ export default function ExtractResultScreen() {
     // 이미 재조회한 세션에서는 재호출 없음
     if (!hasFetched.current) {
       const firstPendingIdx = words.findIndex(
-        (w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED",
+        (w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED"
       );
       // firstPendingIdx === 0이면 화면 진입 직후부터 PENDING — 이 케이스는 미처리(TODO)
       if (firstPendingIdx > 0 && nextCursor === firstPendingIdx - 1) {
@@ -216,7 +105,7 @@ export default function ExtractResultScreen() {
                 const fresh = updatedMap.get(item.lemma);
                 if (!fresh || fresh.collectStatus === item.collectStatus) return item;
                 return { ...mapWord(fresh), picked: item.picked };
-              }),
+              })
             );
           })
           .catch(() => {
@@ -228,11 +117,7 @@ export default function ExtractResultScreen() {
 
   /** 확인한 단어 목록에서 픽(체크) 여부 토글 */
   const toggleHistoryPicked = (index: number) => {
-    setHistory((h) =>
-      h.map((item, i) =>
-        i === index ? { ...item, picked: !item.picked } : item,
-      ),
-    );
+    setHistory((h) => h.map((item, i) => (i === index ? { ...item, picked: !item.picked } : item)));
   };
 
   const isDeckDone = cursor >= total;
@@ -301,11 +186,7 @@ export default function ExtractResultScreen() {
           accessibilityRole="button"
           accessibilityLabel="뒤로 가기"
         >
-          <MaterialCommunityIcons
-            name="chevron-left"
-            size={22}
-            color={Colors.text.secondary}
-          />
+          <MaterialCommunityIcons name="chevron-left" size={22} color={Colors.text.secondary} />
           <Text style={styles.backLabel}>뒤로</Text>
         </Pressable>
 
@@ -334,12 +215,7 @@ export default function ExtractResultScreen() {
         <View style={styles.topFixed}>
           <View style={styles.progressRow}>
             <View style={styles.progressTrack}>
-              <View
-                style={[
-                  styles.progressFill,
-                  { width: `${progressRatio * 100}%` },
-                ]}
-              />
+              <View style={[styles.progressFill, { width: `${progressRatio * 100}%` }]} />
             </View>
             <Text style={styles.progressText}>{progressLabel}</Text>
           </View>
@@ -350,15 +226,10 @@ export default function ExtractResultScreen() {
                 {nextWord ? (
                   <View style={styles.backCard} pointerEvents="none">
                     <Text style={styles.backCardLemma}>{nextWord.lemma}</Text>
-                    <Text style={styles.backCardMeaning}>
-                      {nextWord.meaningKo}
-                    </Text>
+                    <Text style={styles.backCardMeaning}>{nextWord.meaningKo}</Text>
                   </View>
                 ) : (
-                  <View
-                    style={[styles.backCard, styles.backCardSpacer]}
-                    pointerEvents="none"
-                  />
+                  <View style={[styles.backCard, styles.backCardSpacer]} pointerEvents="none" />
                 )}
                 <View style={styles.frontCard}>
                   <View style={styles.posPill}>
@@ -366,9 +237,7 @@ export default function ExtractResultScreen() {
                   </View>
                   <Text style={styles.lemma}>{current.lemma}</Text>
                   <Text style={styles.meaning}>{current.meaningKo}</Text>
-                  <Text style={styles.pronunciation}>
-                    {current.pronunciation}
-                  </Text>
+                  <Text style={styles.pronunciation}>{current.pronunciation}</Text>
                   <View style={styles.cardActions}>
                     <Pressable
                       style={({ pressed }) => [
@@ -400,8 +269,7 @@ export default function ExtractResultScreen() {
             {isDeckDone && (
               <View style={styles.deckDoneCard}>
                 <Text style={styles.deckDoneHint}>
-                  모든 단어를 확인했어요. 아래에서 픽한 단어만 단어장에 넣을 수
-                  있어요.
+                  모든 단어를 확인했어요. 아래에서 픽한 단어만 단어장에 넣을 수 있어요.
                 </Text>
               </View>
             )}
@@ -425,25 +293,17 @@ export default function ExtractResultScreen() {
                   <Pressable
                     style={({ pressed }) => [
                       styles.historyIcon,
-                      item.picked
-                        ? styles.historyIconPicked
-                        : styles.historyIconPass,
+                      item.picked ? styles.historyIconPicked : styles.historyIconPass,
                       pressed && styles.historyIconPressed,
                     ]}
                     onPress={() => toggleHistoryPicked(index)}
                     hitSlop={12}
                     accessibilityRole="checkbox"
                     accessibilityState={{ checked: item.picked }}
-                    accessibilityLabel={
-                      item.picked ? "픽 해제하기" : "픽하기"
-                    }
+                    accessibilityLabel={item.picked ? "픽 해제하기" : "픽하기"}
                   >
                     {item.picked ? (
-                      <MaterialCommunityIcons
-                        name="check"
-                        size={16}
-                        color={Colors.text.white}
-                      />
+                      <MaterialCommunityIcons name="check" size={16} color={Colors.text.white} />
                     ) : null}
                   </Pressable>
                 </View>
@@ -455,17 +315,9 @@ export default function ExtractResultScreen() {
         )}
       </View>
 
-      <View
-        style={[
-          styles.footer,
-          { paddingBottom: Math.max(insets.bottom, 12) },
-        ]}
-      >
+      <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
-          style={({ pressed }) => [
-            styles.cta,
-            pressed && styles.ctaPressed,
-          ]}
+          style={({ pressed }) => [styles.cta, pressed && styles.ctaPressed]}
           onPress={handleSaveWordbook}
           accessibilityRole="button"
           accessibilityLabel="단어장에 추가하기"
@@ -656,7 +508,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 18,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -722,7 +574,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingHorizontal: 20,
     paddingVertical: 24,
-    shadowColor: "#000",
+    shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
