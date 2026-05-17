@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -81,13 +81,18 @@ export default function WordCardScreen() {
   const hasFlushedRef = useRef(false);
   const { mutate: markAsStudied } = useMarkAsStudied();
 
+  const wordbookIdRef = useRef(wordbookId);
+  wordbookIdRef.current = wordbookId;
+  const markAsStudiedRef = useRef(markAsStudied);
+  markAsStudiedRef.current = markAsStudied;
+
   const flushStudy = useCallback(() => {
     if (hasFlushedRef.current) return;
     const ids = Array.from(viewedWordIdsRef.current);
-    if (ids.length === 0 || wordbookId === 0) return;
+    if (ids.length === 0 || wordbookIdRef.current === 0) return;
     hasFlushedRef.current = true;
-    markAsStudied({ wordbookId, data: { wordIds: ids } });
-  }, [wordbookId, markAsStudied]);
+    markAsStudiedRef.current({ wordbookId: wordbookIdRef.current, data: { wordIds: ids } });
+  }, []);
 
   // 앱 백그라운드 시 flush
   useEffect(() => {
@@ -102,13 +107,12 @@ export default function WordCardScreen() {
     return () => subscription.remove();
   }, [flushStudy]);
 
-  // 화면 이탈 시 flush (스와이프 백, 하드웨어 백 버튼 포함)
-  const navigation = useNavigation();
+  // 컴포넌트 unmount 시 flush (뒤로가기, 스와이프 백 등 모든 경로)
   useEffect(() => {
-    return navigation.addListener("beforeRemove", () => {
+    return () => {
       flushStudy();
-    });
-  }, [navigation, flushStudy]);
+    };
+  }, [flushStudy]);
 
   // 낙관적 UI: viewedWordIds에 있는 카드는 "학습 중"으로 표시
   const [viewedWordIds, setViewedWordIds] = useState<Set<number>>(new Set());
