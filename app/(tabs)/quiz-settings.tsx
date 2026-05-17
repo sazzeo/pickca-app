@@ -1,10 +1,11 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useGetWordbookSummary } from "@/api/generated/wordbooks/wordbooks";
 import { Colors } from "@/lib/colors";
 
 const LEARNING_STATUS_OPTIONS = [
@@ -28,10 +29,12 @@ type QuizModeKey = (typeof QUIZ_MODE_OPTIONS)[number]["key"];
 
 export default function QuizSettingsScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId, wordbookName } = useLocalSearchParams<{
+  const { wordbookId } = useLocalSearchParams<{
     wordbookId: string;
-    wordbookName: string;
   }>();
+
+  const { data: summaryData } = useGetWordbookSummary(Number(wordbookId));
+  const summary = summaryData?.data;
 
   const [selectedStatuses, setSelectedStatuses] = useState<Set<LearningStatusKey>>(
     new Set(["NOT_STARTED", "LEARNING", "RELEARNING"])
@@ -39,8 +42,14 @@ export default function QuizSettingsScreen() {
   const [selectedCount, setSelectedCount] = useState<number>(5);
   const [selectedMode, setSelectedMode] = useState<QuizModeKey>("MIXED");
 
-  // TODO: API 연동 후 실제 단어 수로 교체
-  const totalWordCount = 234;
+  const filteredWordCount = useMemo(() => {
+    if (!summary?.countByStatus) return 0;
+    const counts = summary.countByStatus;
+    return Array.from(selectedStatuses).reduce(
+      (sum, status) => sum + (counts[status] ?? 0),
+      0
+    );
+  }, [summary?.countByStatus, selectedStatuses]);
 
   const toggleStatus = (key: LearningStatusKey) => {
     setSelectedStatuses((prev) => {
@@ -110,7 +119,7 @@ export default function QuizSettingsScreen() {
           <View style={styles.wordbookRow}>
             <Text style={styles.wordbookLabel}>단어장</Text>
             <Text style={styles.wordbookName} numberOfLines={1}>
-              {wordbookName ?? "선택된 단어장"}
+              {summary?.name ?? "선택된 단어장"}
             </Text>
           </View>
         </View>
@@ -147,7 +156,7 @@ export default function QuizSettingsScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>단어 개수</Text>
-            <Text style={styles.totalCount}>총 {totalWordCount}개</Text>
+            <Text style={styles.totalCount}>총 {filteredWordCount}개</Text>
           </View>
           <View style={styles.chipRow}>
             {WORD_COUNT_OPTIONS.map((count) => {

@@ -254,6 +254,54 @@ export interface BatchStudyRequest {
   wordIds: number[];
 }
 
+/**
+ * 퀴즈 모드
+ */
+export type QuizGenerateRequestMode = typeof QuizGenerateRequestMode[keyof typeof QuizGenerateRequestMode];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const QuizGenerateRequestMode = {
+  EN_TO_KO: 'EN_TO_KO',
+  KO_TO_EN: 'KO_TO_EN',
+  MIXED: 'MIXED',
+} as const;
+
+export interface QuizGenerateRequest {
+  /** 필터링할 학습 상태 목록 */
+  statuses: string[];
+  /**
+   * 출제할 문제 수 (최대 100)
+   * @minimum 1
+   * @maximum 100
+   */
+  count: number;
+  /** 퀴즈 모드 */
+  mode: QuizGenerateRequestMode;
+}
+
+export interface ApiResponseQuizResponse {
+  success: boolean;
+  data?: QuizResponse;
+  error?: ApiError;
+}
+
+export interface Question {
+  /** 단어 ID (퀴즈 결과 기록용) */
+  wordId: number;
+  /** 문제 텍스트 */
+  question: string;
+  /** 정답 텍스트 */
+  answer: string;
+  /** 선택지 목록 (정답 포함, 셔플됨) */
+  options: string[];
+}
+
+export interface QuizResponse {
+  /** 퀴즈 문제 목록 */
+  questions: Question[];
+}
+
 export interface TokenRefreshRequest {
   /** 리프레시 토큰 */
   refreshToken: string;
