@@ -197,17 +197,17 @@ export default function WordbookScreen() {
         ) : (
           <View style={styles.cardList}>
             {filteredWordbooks.map((item) => {
-              // TODO: API 확장 후 memorizedRate/learningRate/notStartedRate 직접 사용
-              const memorizedRate = Math.round(item.progressRate);
-              const remainingRate = 100 - memorizedRate;
+              const memorizedRate = item.memorizedRate;
+              const learningRate = item.learningRate;
+              const notStartedRate = 100 - memorizedRate - learningRate;
               return (
                 <WordbookCard
                   key={String(item.id)}
                   title={item.name}
                   wordCount={item.wordCount}
                   memorizedRate={memorizedRate}
-                  learningRate={Math.round(remainingRate * 0.5)}
-                  notStartedRate={remainingRate - Math.round(remainingRate * 0.5)}
+                  learningRate={learningRate}
+                  notStartedRate={notStartedRate}
                   menuItems={createWordbookMenuItems(item.id)}
                   // TODO: 퀴즈 미구현 — 추후 연결
                   onQuizPress={() => {}}

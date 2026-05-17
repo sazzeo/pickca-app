@@ -12,18 +12,19 @@ export interface AdminMeaningReplaceRequest {
 /**
  * 품사
  */
-export type MeaningInputPartOfSpeech =
-  (typeof MeaningInputPartOfSpeech)[keyof typeof MeaningInputPartOfSpeech];
+export type MeaningInputPartOfSpeech = typeof MeaningInputPartOfSpeech[keyof typeof MeaningInputPartOfSpeech];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MeaningInputPartOfSpeech = {
-  NOUN: "NOUN",
-  VERB: "VERB",
-  ADJECTIVE: "ADJECTIVE",
-  ADVERB: "ADVERB",
-  PREPOSITION: "PREPOSITION",
-  CONJUNCTION: "CONJUNCTION",
-  INTERJECTION: "INTERJECTION",
-  PRONOUN: "PRONOUN",
+  NOUN: 'NOUN',
+  VERB: 'VERB',
+  ADJECTIVE: 'ADJECTIVE',
+  ADVERB: 'ADVERB',
+  PREPOSITION: 'PREPOSITION',
+  CONJUNCTION: 'CONJUNCTION',
+  INTERJECTION: 'INTERJECTION',
+  PRONOUN: 'PRONOUN',
 } as const;
 
 export interface MeaningInput {
@@ -38,41 +39,44 @@ export interface MeaningInput {
 /**
  * CEFR 난이도
  */
-export type AdminWordResponseCefr =
-  (typeof AdminWordResponseCefr)[keyof typeof AdminWordResponseCefr];
+export type AdminWordResponseCefr = typeof AdminWordResponseCefr[keyof typeof AdminWordResponseCefr];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordResponseCefr = {
-  A1: "A1",
-  A2: "A2",
-  B1: "B1",
-  B2: "B2",
-  C1: "C1",
-  C2: "C2",
+  A1: 'A1',
+  A2: 'A2',
+  B1: 'B1',
+  B2: 'B2',
+  C1: 'C1',
+  C2: 'C2',
 } as const;
 
 /**
  * 수집 상태
  */
-export type AdminWordResponseCollectStatus =
-  (typeof AdminWordResponseCollectStatus)[keyof typeof AdminWordResponseCollectStatus];
+export type AdminWordResponseCollectStatus = typeof AdminWordResponseCollectStatus[keyof typeof AdminWordResponseCollectStatus];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordResponseCollectStatus = {
-  PENDING: "PENDING",
-  PARTIAL: "PARTIAL",
-  DONE: "DONE",
-  FAILED: "FAILED",
+  PENDING: 'PENDING',
+  PARTIAL: 'PARTIAL',
+  DONE: 'DONE',
+  FAILED: 'FAILED',
 } as const;
 
 /**
  * 데이터 출처
  */
-export type AdminWordResponseSource =
-  (typeof AdminWordResponseSource)[keyof typeof AdminWordResponseSource];
+export type AdminWordResponseSource = typeof AdminWordResponseSource[keyof typeof AdminWordResponseSource];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordResponseSource = {
-  AI: "AI",
-  CSV: "CSV",
-  MANUAL: "MANUAL",
+  AI: 'AI',
+  CSV: 'CSV',
+  MANUAL: 'MANUAL',
 } as const;
 
 export interface AdminWordResponse {
@@ -134,18 +138,19 @@ export interface WordExtractResponse {
 /**
  * 품사
  */
-export type WordMeaningResponsePartOfSpeech =
-  (typeof WordMeaningResponsePartOfSpeech)[keyof typeof WordMeaningResponsePartOfSpeech];
+export type WordMeaningResponsePartOfSpeech = typeof WordMeaningResponsePartOfSpeech[keyof typeof WordMeaningResponsePartOfSpeech];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordMeaningResponsePartOfSpeech = {
-  NOUN: "NOUN",
-  VERB: "VERB",
-  ADJECTIVE: "ADJECTIVE",
-  ADVERB: "ADVERB",
-  PREPOSITION: "PREPOSITION",
-  CONJUNCTION: "CONJUNCTION",
-  INTERJECTION: "INTERJECTION",
-  PRONOUN: "PRONOUN",
+  NOUN: 'NOUN',
+  VERB: 'VERB',
+  ADJECTIVE: 'ADJECTIVE',
+  ADVERB: 'ADVERB',
+  PREPOSITION: 'PREPOSITION',
+  CONJUNCTION: 'CONJUNCTION',
+  INTERJECTION: 'INTERJECTION',
+  PRONOUN: 'PRONOUN',
 } as const;
 
 export interface WordMeaningResponse {
@@ -162,14 +167,15 @@ export interface WordMeaningResponse {
 /**
  * 수집 상태 (DONE/PENDING/FAILED)
  */
-export type WordResponseCollectStatus =
-  (typeof WordResponseCollectStatus)[keyof typeof WordResponseCollectStatus];
+export type WordResponseCollectStatus = typeof WordResponseCollectStatus[keyof typeof WordResponseCollectStatus];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordResponseCollectStatus = {
-  PENDING: "PENDING",
-  PARTIAL: "PARTIAL",
-  DONE: "DONE",
-  FAILED: "FAILED",
+  PENDING: 'PENDING',
+  PARTIAL: 'PARTIAL',
+  DONE: 'DONE',
+  FAILED: 'FAILED',
 } as const;
 
 export interface WordResponse {
@@ -213,8 +219,10 @@ export interface Item {
   wordCount: number;
   /** 단어장 생성일시 */
   createdAt: string;
-  /** 학습 진도율 (0~100). 현재 0 고정 */
-  progressRate: number;
+  /** 암기 완료 비율 (0~100) */
+  memorizedRate: number;
+  /** 학습중 비율 (0~100, LEARNING + RELEARNING) */
+  learningRate: number;
 }
 
 export interface WordbookAddWordsRequest {
@@ -312,16 +320,17 @@ export interface DevLoginRequest {
 /**
  * CEFR 난이도
  */
-export type AdminWordCreateRequestCefr =
-  (typeof AdminWordCreateRequestCefr)[keyof typeof AdminWordCreateRequestCefr];
+export type AdminWordCreateRequestCefr = typeof AdminWordCreateRequestCefr[keyof typeof AdminWordCreateRequestCefr];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordCreateRequestCefr = {
-  A1: "A1",
-  A2: "A2",
-  B1: "B1",
-  B2: "B2",
-  C1: "C1",
-  C2: "C2",
+  A1: 'A1',
+  A2: 'A2',
+  B1: 'B1',
+  B2: 'B2',
+  C1: 'C1',
+  C2: 'C2',
 } as const;
 
 export interface AdminWordCreateRequest {
@@ -367,7 +376,7 @@ export interface BatchVerifyRequest {
   ids: number[];
 }
 
-export type ApiResponseMapStringIntegerData = { [key: string]: number };
+export type ApiResponseMapStringIntegerData = {[key: string]: number};
 
 export interface ApiResponseMapStringInteger {
   success: boolean;
@@ -392,16 +401,17 @@ export interface UpdateNicknameRequest {
 /**
  * 최소 CEFR 레벨 (이 레벨 미만 단어 추출 제외)
  */
-export type UpdateCefrLevelRequestCefrLevel =
-  (typeof UpdateCefrLevelRequestCefrLevel)[keyof typeof UpdateCefrLevelRequestCefrLevel];
+export type UpdateCefrLevelRequestCefrLevel = typeof UpdateCefrLevelRequestCefrLevel[keyof typeof UpdateCefrLevelRequestCefrLevel];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UpdateCefrLevelRequestCefrLevel = {
-  A1: "A1",
-  A2: "A2",
-  B1: "B1",
-  B2: "B2",
-  C1: "C1",
-  C2: "C2",
+  A1: 'A1',
+  A2: 'A2',
+  B1: 'B1',
+  B2: 'B2',
+  C1: 'C1',
+  C2: 'C2',
 } as const;
 
 export interface UpdateCefrLevelRequest {
@@ -412,29 +422,31 @@ export interface UpdateCefrLevelRequest {
 /**
  * CEFR 난이도
  */
-export type AdminWordUpdateRequestCefr =
-  (typeof AdminWordUpdateRequestCefr)[keyof typeof AdminWordUpdateRequestCefr];
+export type AdminWordUpdateRequestCefr = typeof AdminWordUpdateRequestCefr[keyof typeof AdminWordUpdateRequestCefr];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordUpdateRequestCefr = {
-  A1: "A1",
-  A2: "A2",
-  B1: "B1",
-  B2: "B2",
-  C1: "C1",
-  C2: "C2",
+  A1: 'A1',
+  A2: 'A2',
+  B1: 'B1',
+  B2: 'B2',
+  C1: 'C1',
+  C2: 'C2',
 } as const;
 
 /**
  * 수집 상태
  */
-export type AdminWordUpdateRequestCollectStatus =
-  (typeof AdminWordUpdateRequestCollectStatus)[keyof typeof AdminWordUpdateRequestCollectStatus];
+export type AdminWordUpdateRequestCollectStatus = typeof AdminWordUpdateRequestCollectStatus[keyof typeof AdminWordUpdateRequestCollectStatus];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordUpdateRequestCollectStatus = {
-  PENDING: "PENDING",
-  PARTIAL: "PARTIAL",
-  DONE: "DONE",
-  FAILED: "FAILED",
+  PENDING: 'PENDING',
+  PARTIAL: 'PARTIAL',
+  DONE: 'DONE',
+  FAILED: 'FAILED',
 } as const;
 
 export interface AdminWordUpdateRequest {
@@ -486,18 +498,19 @@ export interface WordbookWordListResponse {
 /**
  * 품사
  */
-export type WordbookWordMeaningResponsePartOfSpeech =
-  (typeof WordbookWordMeaningResponsePartOfSpeech)[keyof typeof WordbookWordMeaningResponsePartOfSpeech];
+export type WordbookWordMeaningResponsePartOfSpeech = typeof WordbookWordMeaningResponsePartOfSpeech[keyof typeof WordbookWordMeaningResponsePartOfSpeech];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordbookWordMeaningResponsePartOfSpeech = {
-  NOUN: "NOUN",
-  VERB: "VERB",
-  ADJECTIVE: "ADJECTIVE",
-  ADVERB: "ADVERB",
-  PREPOSITION: "PREPOSITION",
-  CONJUNCTION: "CONJUNCTION",
-  INTERJECTION: "INTERJECTION",
-  PRONOUN: "PRONOUN",
+  NOUN: 'NOUN',
+  VERB: 'VERB',
+  ADJECTIVE: 'ADJECTIVE',
+  ADVERB: 'ADVERB',
+  PREPOSITION: 'PREPOSITION',
+  CONJUNCTION: 'CONJUNCTION',
+  INTERJECTION: 'INTERJECTION',
+  PRONOUN: 'PRONOUN',
 } as const;
 
 export interface WordbookWordMeaningResponse {
@@ -514,27 +527,29 @@ export interface WordbookWordMeaningResponse {
 /**
  * 수집 상태 (DONE/PENDING/FAILED)
  */
-export type WordbookWordResponseCollectStatus =
-  (typeof WordbookWordResponseCollectStatus)[keyof typeof WordbookWordResponseCollectStatus];
+export type WordbookWordResponseCollectStatus = typeof WordbookWordResponseCollectStatus[keyof typeof WordbookWordResponseCollectStatus];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordbookWordResponseCollectStatus = {
-  PENDING: "PENDING",
-  PARTIAL: "PARTIAL",
-  DONE: "DONE",
-  FAILED: "FAILED",
+  PENDING: 'PENDING',
+  PARTIAL: 'PARTIAL',
+  DONE: 'DONE',
+  FAILED: 'FAILED',
 } as const;
 
 /**
  * 학습 상태 (NOT_STARTED/LEARNING/MEMORIZED/RELEARNING)
  */
-export type WordbookWordResponseLearningStatus =
-  (typeof WordbookWordResponseLearningStatus)[keyof typeof WordbookWordResponseLearningStatus];
+export type WordbookWordResponseLearningStatus = typeof WordbookWordResponseLearningStatus[keyof typeof WordbookWordResponseLearningStatus];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordbookWordResponseLearningStatus = {
-  NOT_STARTED: "NOT_STARTED",
-  LEARNING: "LEARNING",
-  MEMORIZED: "MEMORIZED",
-  RELEARNING: "RELEARNING",
+  NOT_STARTED: 'NOT_STARTED',
+  LEARNING: 'LEARNING',
+  MEMORIZED: 'MEMORIZED',
+  RELEARNING: 'RELEARNING',
 } as const;
 
 export interface WordbookWordResponse {
@@ -558,6 +573,32 @@ export interface WordbookWordResponse {
   wrongCount: number;
 }
 
+export interface ApiResponseWordbookSummaryResponse {
+  success: boolean;
+  data?: WordbookSummaryResponse;
+  error?: ApiError;
+}
+
+export interface CountByStatus {
+  /** 학습 전 단어 수 */
+  NOT_STARTED: number;
+  /** 학습 중 단어 수 */
+  LEARNING: number;
+  /** 재학습 중 단어 수 */
+  RELEARNING: number;
+  /** 외운 단어 수 */
+  MEMORIZED: number;
+}
+
+export interface WordbookSummaryResponse {
+  /** 단어장 이름 */
+  name: string;
+  /** 전체 단어 수 */
+  totalCount: number;
+  /** 학습 상태별 단어 수 */
+  countByStatus: CountByStatus;
+}
+
 export interface ApiResponseWordbookSourceListResponse {
   success: boolean;
   data?: WordbookSourceListResponse;
@@ -574,41 +615,44 @@ export interface WordbookSourceListResponse {
 /**
  * 수집 상태 필터
  */
-export type AdminWordListRequestCollectStatus =
-  (typeof AdminWordListRequestCollectStatus)[keyof typeof AdminWordListRequestCollectStatus];
+export type AdminWordListRequestCollectStatus = typeof AdminWordListRequestCollectStatus[keyof typeof AdminWordListRequestCollectStatus];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordListRequestCollectStatus = {
-  PENDING: "PENDING",
-  PARTIAL: "PARTIAL",
-  DONE: "DONE",
-  FAILED: "FAILED",
+  PENDING: 'PENDING',
+  PARTIAL: 'PARTIAL',
+  DONE: 'DONE',
+  FAILED: 'FAILED',
 } as const;
 
 /**
  * 출처 필터 (AI / CSV / MANUAL)
  */
-export type AdminWordListRequestSource =
-  (typeof AdminWordListRequestSource)[keyof typeof AdminWordListRequestSource];
+export type AdminWordListRequestSource = typeof AdminWordListRequestSource[keyof typeof AdminWordListRequestSource];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordListRequestSource = {
-  AI: "AI",
-  CSV: "CSV",
-  MANUAL: "MANUAL",
+  AI: 'AI',
+  CSV: 'CSV',
+  MANUAL: 'MANUAL',
 } as const;
 
 /**
  * CEFR 난이도 필터
  */
-export type AdminWordListRequestCefr =
-  (typeof AdminWordListRequestCefr)[keyof typeof AdminWordListRequestCefr];
+export type AdminWordListRequestCefr = typeof AdminWordListRequestCefr[keyof typeof AdminWordListRequestCefr];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordListRequestCefr = {
-  A1: "A1",
-  A2: "A2",
-  B1: "B1",
-  B2: "B2",
-  C1: "C1",
-  C2: "C2",
+  A1: 'A1',
+  A2: 'A2',
+  B1: 'B1',
+  B2: 'B2',
+  C1: 'C1',
+  C2: 'C2',
 } as const;
 
 export interface AdminWordListRequest {
@@ -662,21 +706,22 @@ export interface PageResponseAdminWordResponse {
 }
 
 export type GetWordsParams = {
-  learningStatus?: GetWordsLearningStatus;
+learningStatus?: GetWordsLearningStatus;
 };
 
-export type GetWordsLearningStatus =
-  (typeof GetWordsLearningStatus)[keyof typeof GetWordsLearningStatus];
+export type GetWordsLearningStatus = typeof GetWordsLearningStatus[keyof typeof GetWordsLearningStatus];
 
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetWordsLearningStatus = {
-  NOT_STARTED: "NOT_STARTED",
-  LEARNING: "LEARNING",
-  MEMORIZED: "MEMORIZED",
-  RELEARNING: "RELEARNING",
+  NOT_STARTED: 'NOT_STARTED',
+  LEARNING: 'LEARNING',
+  MEMORIZED: 'MEMORIZED',
+  RELEARNING: 'RELEARNING',
 } as const;
 
 export type ListParams = {
-  request: AdminWordListRequest;
+request: AdminWordListRequest;
 };
 
 export type CefrImportBody = {
@@ -684,5 +729,6 @@ export type CefrImportBody = {
 };
 
 export type GetWords1Params = {
-  words: string[];
+words: string[];
 };
+

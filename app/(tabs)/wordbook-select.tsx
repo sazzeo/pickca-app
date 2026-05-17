@@ -43,7 +43,7 @@ export default function WordbookSelectScreen() {
   const handleSelectWordbook = (wordbook: Item) => {
     router.push({
       pathname: "/(tabs)/quiz-settings",
-      params: { wordbookId: String(wordbook.id), wordbookName: wordbook.name },
+      params: { wordbookId: String(wordbook.id) },
     });
   };
 
@@ -117,17 +117,17 @@ export default function WordbookSelectScreen() {
         ) : (
           <View style={styles.cardList}>
             {filteredWordbooks.map((item) => {
-              // TODO: API 확장 후 memorizedRate/learningRate/notStartedRate 직접 사용
-              const memorizedRate = Math.round(item.progressRate);
-              const remainingRate = 100 - memorizedRate;
+              const memorizedRate = item.memorizedRate;
+              const learningRate = item.learningRate;
+              const notStartedRate = 100 - memorizedRate - learningRate;
               return (
                 <WordbookSelectCard
                   key={String(item.id)}
                   title={item.name}
                   wordCount={item.wordCount}
                   memorizedRate={memorizedRate}
-                  learningRate={Math.round(remainingRate * 0.5)}
-                  notStartedRate={remainingRate - Math.round(remainingRate * 0.5)}
+                  learningRate={learningRate}
+                  notStartedRate={notStartedRate}
                   onPress={() => handleSelectWordbook(item)}
                 />
               );
