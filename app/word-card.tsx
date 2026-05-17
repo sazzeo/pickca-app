@@ -1,7 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -76,60 +76,25 @@ export default function WordCardScreen() {
 
   const words = (data?.data?.words ?? []) as WordbookWordResponse[];
 
-  // 본 카드 ID 추적 (batch study용)
-  const viewedWordIdsRef = useRef<Set<number>>(new Set());
-  const hasFlushedRef = useRef(false);
+  // 카드를 볼 때마다 즉시 학습 상태 전환 API 호출
+  const studiedIdsRef = useRef<Set<number>>(new Set());
   const { mutate: markAsStudied } = useMarkAsStudied();
 
-  const wordbookIdRef = useRef(wordbookId);
-  wordbookIdRef.current = wordbookId;
-  const markAsStudiedRef = useRef(markAsStudied);
-  markAsStudiedRef.current = markAsStudied;
-
-  const flushStudy = useCallback(() => {
-    if (hasFlushedRef.current) return;
-    const ids = Array.from(viewedWordIdsRef.current);
-    if (ids.length === 0 || wordbookIdRef.current === 0) return;
-    hasFlushedRef.current = true;
-    markAsStudiedRef.current({ wordbookId: wordbookIdRef.current, data: { wordIds: ids } });
-  }, []);
-
-  // 앱 백그라운드 시 flush
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (state) => {
-      if (state === "background" || state === "inactive") {
-        flushStudy();
-      }
-      if (state === "active") {
-        hasFlushedRef.current = false;
-      }
-    });
-    return () => subscription.remove();
-  }, [flushStudy]);
-
-  // 컴포넌트 unmount 시 flush (뒤로가기, 스와이프 백 등 모든 경로)
-  useEffect(() => {
-    return () => {
-      flushStudy();
-    };
-  }, [flushStudy]);
-
-  // 낙관적 UI: viewedWordIds에 있는 카드는 "학습 중"으로 표시
-  const [viewedWordIds, setViewedWordIds] = useState<Set<number>>(new Set());
+  const studyWord = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= words.length || wordbookId === 0) return;
+      const word = words[index];
+      if (studiedIdsRef.current.has(word.id)) return;
+      if (word.learningStatus !== WordbookWordResponseLearningStatus.NOT_STARTED) return;
+      studiedIdsRef.current.add(word.id);
+      markAsStudied({ wordbookId, data: { wordIds: [word.id] } });
+    },
+    [words, wordbookId, markAsStudied]
+  );
 
   const cards: WordCardItem[] = useMemo(
-    () =>
-      words.map((word, index) => {
-        const card = mapToCardItem(word, index);
-        if (
-          viewedWordIds.has(word.id) &&
-          word.learningStatus === WordbookWordResponseLearningStatus.NOT_STARTED
-        ) {
-          return { ...card, learningStatus: WordbookWordResponseLearningStatus.LEARNING };
-        }
-        return card;
-      }),
-    [words, viewedWordIds]
+    () => words.map((word, index) => mapToCardItem(word, index)),
+    [words]
   );
 
   const total = cards.length;
@@ -139,39 +104,19 @@ export default function WordCardScreen() {
   const currentIndexSV = useSharedValue(initialIndex);
   const translateX = useSharedValue(-initialIndex * SNAP_INTERVAL);
 
-  // 초기 카드 viewed 처리
+  // 초기 카드 학습 처리
   const wordsLoaded = words.length > 0;
   useEffect(() => {
     if (wordsLoaded && initialIndex < words.length) {
-      const wordId = words[initialIndex].id;
-      viewedWordIdsRef.current.add(wordId);
-      setViewedWordIds(new Set(viewedWordIdsRef.current));
+      studyWord(initialIndex);
     }
   }, [wordsLoaded]); // 단어 데이터 최초 로드 시 1회만 실행
-
-  const markAsViewed = useCallback(
-    (index: number) => {
-      if (index >= 0 && index < words.length) {
-        const wordId = words[index].id;
-        if (!viewedWordIdsRef.current.has(wordId)) {
-          viewedWordIdsRef.current.add(wordId);
-          setViewedWordIds(new Set(viewedWordIdsRef.current));
-        }
-      }
-    },
-    [words]
-  );
 
   const headerHeight = insets.top + 52 + 48;
   const footerHeight = Math.max(insets.bottom, 16);
   const cardHeight = SCREEN_HEIGHT - headerHeight - footerHeight - 48;
 
   const progressRatio = total > 0 ? (currentIndex + 1) / total : 0;
-
-  const handleBack = useCallback(() => {
-    flushStudy();
-    router.back();
-  }, [flushStudy]);
 
   // --- Pan Gesture ---
   const panGesture = Gesture.Pan()
@@ -200,7 +145,7 @@ export default function WordCardScreen() {
       if (next !== idx) {
         currentIndexSV.value = next;
         runOnJS(setCurrentIndex)(next);
-        runOnJS(markAsViewed)(next);
+        runOnJS(studyWord)(next);
       }
     });
 
@@ -251,7 +196,7 @@ export default function WordCardScreen() {
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
-      <Header onBack={handleBack} />
+      <Header onBack={() => router.back()} />
 
       {/* 진행률 바 */}
       <View style={styles.progressRow}>
