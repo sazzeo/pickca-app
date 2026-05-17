@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, AppState, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -101,6 +101,14 @@ export default function WordCardScreen() {
     });
     return () => subscription.remove();
   }, [flushStudy]);
+
+  // 화면 이탈 시 flush (스와이프 백, 하드웨어 백 버튼 포함)
+  const navigation = useNavigation();
+  useEffect(() => {
+    return navigation.addListener("beforeRemove", () => {
+      flushStudy();
+    });
+  }, [navigation, flushStudy]);
 
   // 낙관적 UI: viewedWordIds에 있는 카드는 "학습 중"으로 표시
   const [viewedWordIds, setViewedWordIds] = useState<Set<number>>(new Set());
