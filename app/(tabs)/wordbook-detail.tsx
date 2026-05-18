@@ -77,7 +77,7 @@ export default function WordbookDetailScreen() {
 
   const wordbookId = Number(wordbookIdParam ?? "0");
 
-  const { data, isPending, isError, refetch } = useGetWords(wordbookId, {
+  const { data, isPending, isError, refetch } = useGetWords(wordbookId, undefined, {
     query: { enabled: wordbookId > 0 },
   });
 

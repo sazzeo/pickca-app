@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -77,8 +78,16 @@ export default function WordCardScreen() {
   const words = (data?.data?.words ?? []) as WordbookWordResponse[];
 
   // 카드를 볼 때마다 즉시 학습 상태 전환 API 호출
+  const queryClient = useQueryClient();
   const studiedIdsRef = useRef<Set<number>>(new Set());
-  const { mutate: markAsStudied } = useMarkAsStudied();
+  const [localStatuses, setLocalStatuses] = useState<Record<number, WordbookWordResponseLearningStatus>>({});
+  const { mutate: markAsStudied } = useMarkAsStudied({
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [`/api/wordbooks/${wordbookId}/words`] });
+      },
+    },
+  });
 
   const studyWord = useCallback(
     (index: number) => {
@@ -87,14 +96,21 @@ export default function WordCardScreen() {
       if (studiedIdsRef.current.has(word.id)) return;
       if (word.learningStatus !== WordbookWordResponseLearningStatus.NOT_STARTED) return;
       studiedIdsRef.current.add(word.id);
+      setLocalStatuses((prev) => ({ ...prev, [word.id]: WordbookWordResponseLearningStatus.LEARNING }));
       markAsStudied({ wordbookId, data: { wordIds: [word.id] } });
     },
     [words, wordbookId, markAsStudied]
   );
 
   const cards: WordCardItem[] = useMemo(
-    () => words.map((word, index) => mapToCardItem(word, index)),
-    [words]
+    () =>
+      words.map((word, index) =>
+        mapToCardItem(
+          localStatuses[word.id] ? { ...word, learningStatus: localStatuses[word.id] } : word,
+          index,
+        ),
+      ),
+    [words, localStatuses]
   );
 
   const total = cards.length;
