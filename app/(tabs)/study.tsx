@@ -42,7 +42,7 @@ export default function StudyScreen() {
       title: "단어장 선택",
       subtitle: "특정 단어장으로 풀기",
       onPress: () => {
-        router.push("/(tabs)/wordbook-select");
+        router.push("/wordbook-select");
       },
     },
     {

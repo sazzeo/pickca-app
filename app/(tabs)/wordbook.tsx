@@ -211,7 +211,7 @@ export default function WordbookScreen() {
                   menuItems={createWordbookMenuItems(item.id)}
                   onQuizPress={() =>
                     router.push({
-                      pathname: "/(tabs)/quiz-settings",
+                      pathname: "/quiz-settings",
                       params: { wordbookId: String(item.id) },
                     })
                   }

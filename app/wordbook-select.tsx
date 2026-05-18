@@ -42,7 +42,7 @@ export default function WordbookSelectScreen() {
 
   const handleSelectWordbook = (wordbook: Item) => {
     router.push({
-      pathname: "/(tabs)/quiz-settings",
+      pathname: "/quiz-settings",
       params: { wordbookId: String(wordbook.id) },
     });
   };

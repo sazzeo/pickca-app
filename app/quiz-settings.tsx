@@ -84,7 +84,7 @@ export default function QuizSettingsScreen() {
 
   const handleStart = () => {
     router.push({
-      pathname: "/(tabs)/quiz",
+      pathname: "/quiz",
       params: {
         wordbookId,
         statuses: Array.from(selectedStatuses).join(","),
