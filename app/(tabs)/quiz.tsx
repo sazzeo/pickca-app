@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
@@ -62,33 +62,45 @@ export default function QuizScreen() {
   isAnsweredRef.current = isAnswered;
   currentIndexRef.current = currentIndex;
 
-  // 퀴즈 문제 생성
-  useEffect(() => {
-    generateQuiz.mutate(
-      {
-        wordbookId: Number(wordbookId),
-        data: {
-          statuses: statuses?.split(",") ?? [],
-          count: Number(count) || 10,
-          mode: (mode as QuizGenerateRequestMode) ?? "MIXED",
+  // 화면 포커스 시 전체 상태 리셋 + 퀴즈 새로 생성
+  useFocusEffect(
+    useCallback(() => {
+      setQuestions([]);
+      setIsLoaded(false);
+      setCurrentIndex(0);
+      setSelectedOption(null);
+      setIsAnswered(false);
+      setIsCurrentCorrect(false);
+      setCorrectCount(0);
+      setOriginalTotal(0);
+      setTimeLeft(TIME_LIMIT);
+
+      generateQuiz.mutate(
+        {
+          wordbookId: Number(wordbookId),
+          data: {
+            statuses: statuses?.split(",") ?? [],
+            count: Number(count) || 10,
+            mode: (mode as QuizGenerateRequestMode) ?? "MIXED",
+          },
         },
-      },
-      {
-        onSuccess: (response) => {
-          const q = response.data?.questions ?? [];
-          setQuestions(q);
-          setOriginalTotal(q.length);
-          setIsLoaded(true);
-        },
-        onError: (error) => {
-          setIsLoaded(true);
-          if (__DEV__) {
-            Alert.alert("퀴즈 로드 실패", String(error));
-          }
-        },
-      }
-    );
-  }, []);
+        {
+          onSuccess: (response) => {
+            const q = response.data?.questions ?? [];
+            setQuestions(q);
+            setOriginalTotal(q.length);
+            setIsLoaded(true);
+          },
+          onError: (error) => {
+            setIsLoaded(true);
+            if (__DEV__) {
+              Alert.alert("퀴즈 로드 실패", String(error));
+            }
+          },
+        }
+      );
+    }, [wordbookId, statuses, count, mode])
+  );
 
   const currentQuestion = questions[currentIndex];
 
