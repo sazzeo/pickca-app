@@ -41,6 +41,9 @@ export default function QuizScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
+  const [isCurrentCorrect, setIsCurrentCorrect] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [originalTotal, setOriginalTotal] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isAnsweredRef = useRef(false);
@@ -72,7 +75,9 @@ export default function QuizScreen() {
       },
       {
         onSuccess: (response) => {
-          setQuestions(response.data?.questions ?? []);
+          const q = response.data?.questions ?? [];
+          setQuestions(q);
+          setOriginalTotal(q.length);
           setIsLoaded(true);
         },
         onError: (error) => {
@@ -86,7 +91,6 @@ export default function QuizScreen() {
   }, []);
 
   const currentQuestion = questions[currentIndex];
-  const totalQuestions = questions.length;
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -117,6 +121,7 @@ export default function QuizScreen() {
           // 시간 초과 처리: ref로 최신 상태 참조
           if (!isAnsweredRef.current) {
             setIsAnswered(true);
+            setIsCurrentCorrect(false);
             const q = questions[currentIndexRef.current];
             if (q) {
               recordResult.mutate({
@@ -142,6 +147,7 @@ export default function QuizScreen() {
     const isCorrect = option === currentQuestion.answer;
     setSelectedOption(option);
     setIsAnswered(true);
+    setIsCurrentCorrect(isCorrect);
 
     recordResult.mutate({
       wordbookId: Number(wordbookId),
@@ -151,14 +157,23 @@ export default function QuizScreen() {
   };
 
   const handleNext = () => {
-    if (currentIndex < totalQuestions - 1) {
-      setCurrentIndex((prev) => prev + 1);
-      setSelectedOption(null);
-      setIsAnswered(false);
-      setTimeLeft(TIME_LIMIT);
+    if (isCurrentCorrect) {
+      const newCorrectCount = correctCount + 1;
+      setCorrectCount(newCorrectCount);
+      if (newCorrectCount >= originalTotal) {
+        router.back();
+        return;
+      }
     } else {
-      router.back();
+      // 오답: 현재 문제를 큐 맨 뒤에 재배치
+      setQuestions((prev) => [...prev, currentQuestion]);
     }
+
+    setCurrentIndex((prev) => prev + 1);
+    setSelectedOption(null);
+    setIsAnswered(false);
+    setIsCurrentCorrect(false);
+    setTimeLeft(TIME_LIMIT);
   };
 
   const getOptionStyle = (option: string) => {
@@ -234,7 +249,7 @@ export default function QuizScreen() {
     );
   }
 
-  const progressWidth = ((currentIndex + 1) / totalQuestions) * 100;
+  const progressWidth = originalTotal > 0 ? (correctCount / originalTotal) * 100 : 0;
 
   const timerColor = timeLeft <= 3 ? Colors.semantic.danger : Colors.brand.green;
 
@@ -254,7 +269,7 @@ export default function QuizScreen() {
         </Pressable>
         <Text style={styles.headerTitle}>단어 퀴즈</Text>
         <Text style={styles.headerCount}>
-          {currentIndex + 1} / {totalQuestions}
+          {correctCount} / {originalTotal}
         </Text>
       </View>
 
@@ -333,10 +348,10 @@ export default function QuizScreen() {
           onPress={handleNext}
           disabled={!isAnswered}
           accessibilityRole="button"
-          accessibilityLabel={currentIndex < totalQuestions - 1 ? "다음" : "완료"}
+          accessibilityLabel={correctCount >= originalTotal - 1 && isCurrentCorrect ? "완료" : "다음"}
         >
           <Text style={[styles.nextButtonText, !isAnswered && styles.nextButtonTextDisabled]}>
-            {currentIndex < totalQuestions - 1 ? "다음" : "완료"}
+            {correctCount >= originalTotal - 1 && isCurrentCorrect ? "완료" : "다음"}
           </Text>
         </Pressable>
       </View>
