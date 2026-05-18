@@ -19,6 +19,8 @@ import {
 import { Question, QuizGenerateRequestMode } from "@/api/generated/pickcaAPI.schemas";
 import { Colors } from "@/lib/colors";
 
+type QuizQuestion = Question & { isRetry?: boolean };
+
 const OPTION_LABELS = ["A", "B", "C", "D"] as const;
 const TIME_LIMIT = 10;
 const TIMER_SIZE = 36;
@@ -36,7 +38,7 @@ export default function QuizScreen() {
     mode: string;
   }>();
 
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -135,7 +137,7 @@ export default function QuizScreen() {
             setIsAnswered(true);
             setIsCurrentCorrect(false);
             const q = questions[currentIndexRef.current];
-            if (q) {
+            if (q && !q.isRetry) {
               recordResult.mutate({
                 wordbookId: Number(wordbookId),
                 wordId: q.wordId,
@@ -161,11 +163,14 @@ export default function QuizScreen() {
     setIsAnswered(true);
     setIsCurrentCorrect(isCorrect);
 
-    recordResult.mutate({
-      wordbookId: Number(wordbookId),
-      wordId: currentQuestion.wordId,
-      data: { correct: isCorrect },
-    });
+    // 재시도 문제는 API 미호출 (첫 번째 답만 기록)
+    if (!currentQuestion.isRetry) {
+      recordResult.mutate({
+        wordbookId: Number(wordbookId),
+        wordId: currentQuestion.wordId,
+        data: { correct: isCorrect },
+      });
+    }
   };
 
   const handleNext = () => {
@@ -177,8 +182,8 @@ export default function QuizScreen() {
         return;
       }
     } else {
-      // 오답: 현재 문제를 큐 맨 뒤에 재배치
-      setQuestions((prev) => [...prev, currentQuestion]);
+      // 오답: 현재 문제를 큐 맨 뒤에 재배치 (재시도 마킹)
+      setQuestions((prev) => [...prev, { ...currentQuestion, isRetry: true }]);
     }
 
     setCurrentIndex((prev) => prev + 1);

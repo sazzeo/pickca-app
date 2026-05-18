@@ -11,7 +11,6 @@ import { Colors } from "@/lib/colors";
 const LEARNING_STATUS_OPTIONS = [
   { key: "NOT_STARTED", label: "학습 전" },
   { key: "LEARNING", label: "학습 중" },
-  { key: "RELEARNING", label: "여러번 수집" },
   { key: "MEMORIZED_WRONG", label: "여러번 틀림" },
   { key: "MEMORIZED", label: "외움" },
 ] as const;
