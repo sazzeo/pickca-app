@@ -209,8 +209,12 @@ export default function WordbookScreen() {
                   learningRate={learningRate}
                   notStartedRate={notStartedRate}
                   menuItems={createWordbookMenuItems(item.id)}
-                  // TODO: 퀴즈 미구현 — 추후 연결
-                  onQuizPress={() => {}}
+                  onQuizPress={() =>
+                    router.push({
+                      pathname: "/(tabs)/quiz-settings",
+                      params: { wordbookId: String(item.id) },
+                    })
+                  }
                   onViewWordsPress={() =>
                     router.push({
                       pathname: "/(tabs)/wordbook-detail",
