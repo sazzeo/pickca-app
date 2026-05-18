@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -39,7 +39,7 @@ export default function QuizSettingsScreen() {
   const [selectedStatuses, setSelectedStatuses] = useState<Set<LearningStatusKey>>(
     new Set(["NOT_STARTED", "LEARNING", "RELEARNING"])
   );
-  const [selectedCount, setSelectedCount] = useState<number>(5);
+  const [selectedCount, setSelectedCount] = useState<number | "ALL">(5);
   const [selectedMode, setSelectedMode] = useState<QuizModeKey>("MIXED");
 
   const filteredWordCount = useMemo(() => {
@@ -50,6 +50,24 @@ export default function QuizSettingsScreen() {
       0
     );
   }, [summary?.countByStatus, selectedStatuses]);
+
+  const visibleCountOptions = useMemo(() => {
+    const filtered = WORD_COUNT_OPTIONS.filter((count) => count < filteredWordCount);
+    const showAll = filtered.length < WORD_COUNT_OPTIONS.length;
+    return { counts: filtered, showAll };
+  }, [filteredWordCount]);
+
+  // 선택된 숫자 칩이 사라지면 "전체"로 자동 전환
+  useEffect(() => {
+    if (
+      selectedCount !== "ALL" &&
+      !visibleCountOptions.counts.includes(selectedCount as (typeof WORD_COUNT_OPTIONS)[number])
+    ) {
+      setSelectedCount("ALL");
+    }
+  }, [visibleCountOptions.counts, selectedCount]);
+
+  const resolvedCount = selectedCount === "ALL" ? filteredWordCount : selectedCount;
 
   const toggleStatus = (key: LearningStatusKey) => {
     setSelectedStatuses((prev) => {
@@ -71,7 +89,7 @@ export default function QuizSettingsScreen() {
       params: {
         wordbookId,
         statuses: Array.from(selectedStatuses).join(","),
-        count: String(selectedCount),
+        count: String(resolvedCount),
         mode: selectedMode,
       },
     });
@@ -159,7 +177,7 @@ export default function QuizSettingsScreen() {
             <Text style={styles.totalCount}>총 {filteredWordCount}개</Text>
           </View>
           <View style={styles.chipRow}>
-            {WORD_COUNT_OPTIONS.map((count) => {
+            {visibleCountOptions.counts.map((count) => {
               const isSelected = selectedCount === count;
               return (
                 <Pressable
@@ -180,6 +198,28 @@ export default function QuizSettingsScreen() {
                 </Pressable>
               );
             })}
+            {visibleCountOptions.showAll && (
+              <Pressable
+                style={({ pressed }) => [
+                  styles.chip,
+                  selectedCount === "ALL" && styles.chipSelected,
+                  pressed && styles.chipPressed,
+                ]}
+                onPress={() => setSelectedCount("ALL")}
+                accessibilityRole="button"
+                accessibilityLabel={`전체 ${filteredWordCount}개`}
+                accessibilityState={{ selected: selectedCount === "ALL" }}
+              >
+                <Text
+                  style={[
+                    styles.chipText,
+                    selectedCount === "ALL" && styles.chipTextSelected,
+                  ]}
+                >
+                  전체
+                </Text>
+              </Pressable>
+            )}
           </View>
         </View>
 
