@@ -182,8 +182,9 @@ export default function QuizScreen() {
         return;
       }
     } else {
-      // 오답: 현재 문제를 큐 맨 뒤에 재배치 (재시도 마킹)
-      setQuestions((prev) => [...prev, { ...currentQuestion, isRetry: true }]);
+      // 오답: 선택지 셔플 후 큐 맨 뒤에 재배치 (위치 기억 방지 + 재시도 마킹)
+      const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+      setQuestions((prev) => [...prev, { ...currentQuestion, options: shuffledOptions, isRetry: true }]);
     }
 
     setCurrentIndex((prev) => prev + 1);
