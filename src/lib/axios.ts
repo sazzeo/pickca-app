@@ -51,6 +51,14 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const errorCode = error.response?.data?.error?.code;
+
+    // refresh token 만료/무효 → 재로그인 필요
+    if (errorCode === 401002 || errorCode === 401003) {
+      await clearTokens();
+      router.replace("/(auth)/sign-in");
+      return Promise.reject(error);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       const refreshToken = await getRefreshToken();
