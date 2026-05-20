@@ -55,11 +55,11 @@ export function ScreenHeader({
 
 const styles = StyleSheet.create({
   header: {
+    height: 44,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingBottom: 12,
     backgroundColor: Colors.bg.white,
   },
   headerBorder: {
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
   },
   title: {
-    fontSize: 17,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "600",
     color: Colors.text.primary,
   },
   rightSlot: {
