@@ -38,15 +38,76 @@ export default function ExtractResultScreen() {
     title: "",
   });
 
-  // 세션 내 재조회는 한 번만 — 중복 API 호출 방지
-  const hasFetched = useRef(false);
+  const cursorRef = useRef(0);
+  const sourceTextRef = useRef("");
+  const lastFetchTime = useRef(0);
+
+  /** 미조회(DONE/FAILED 아닌) 단어를 뒤로 밀어 뜻 있는 단어부터 보여준다 */
+  const reorderRemaining = (allWords: ExtractWordItem[], fromIndex: number): ExtractWordItem[] => {
+    const seen = allWords.slice(0, fromIndex);
+    const remaining = allWords.slice(fromIndex);
+    const ready = remaining.filter((w) => w.collectStatus === "DONE" || w.collectStatus === "FAILED");
+    const pending = remaining.filter(
+      (w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED"
+    );
+    return [...seen, ...ready, ...pending];
+  };
+
+  /** PENDING/PARTIAL 단어를 재조회하고, 응답 후 남은 카드를 재정렬한다 (쿨다운 3 초) */
+  const fetchPendingWords = (currentWords: ExtractWordItem[]) => {
+    const now = Date.now();
+    if (now - lastFetchTime.current < 3000) return;
+
+    const pendingLemmas = currentWords
+      .filter((w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED")
+      .map((w) => w.lemma);
+    if (pendingLemmas.length === 0) return;
+
+    lastFetchTime.current = now;
+
+    getWords1({ words: pendingLemmas })
+      .then((response) => {
+        const updated = response.data?.words ?? [];
+        if (updated.length === 0) return;
+        const updatedMap = new Map(updated.map((w) => [w.word, w]));
+
+        setWords((prev) => {
+          const merged = prev.map((item) => {
+            const fresh = updatedMap.get(item.lemma);
+            if (!fresh || fresh.collectStatus === item.collectStatus) return item;
+            return mapWord(fresh);
+          });
+          const reordered = reorderRemaining(merged, cursorRef.current);
+          void saveExtractDraft({ sourceText: sourceTextRef.current, words: reordered });
+          return reordered;
+        });
+
+        setHistory((prev) =>
+          prev.map((item) => {
+            const fresh = updatedMap.get(item.lemma);
+            if (!fresh || fresh.collectStatus === item.collectStatus) return item;
+            return { ...mapWord(fresh), picked: item.picked };
+          })
+        );
+      })
+      .catch(() => {});
+  };
 
   useEffect(() => {
     const hydrate = async () => {
       const draft = await getExtractDraft();
       if (draft) {
+        sourceTextRef.current = draft.sourceText;
         setSourceText(draft.sourceText);
-        setWords(draft.words);
+        const reordered = reorderRemaining(draft.words, 0);
+        setWords(reordered);
+        // PENDING 단어가 앞쪽에 있으면 즉시 재조회
+        const firstPending = reordered.findIndex(
+          (w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED"
+        );
+        if (firstPending >= 0 && firstPending <= 3) {
+          fetchPendingWords(reordered);
+        }
       } else {
         setWords([]);
       }
@@ -69,49 +130,14 @@ export default function ExtractResultScreen() {
     setHistory((h) => [{ ...current, picked }, ...h]);
     const nextCursor = cursor + 1;
     setCursor(nextCursor);
+    cursorRef.current = nextCursor;
 
-    // 첫 PENDING/PARTIAL 단어 직전에 도달했을 때 전체 미수집 단어를 한 번에 재조회
-    // 이미 재조회한 세션에서는 재호출 없음
-    if (!hasFetched.current) {
-      const firstPendingIdx = words.findIndex(
-        (w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED"
-      );
-      // firstPendingIdx === 0이면 화면 진입 직후부터 PENDING — 이 케이스는 미처리(TODO)
-      if (firstPendingIdx > 0 && nextCursor === firstPendingIdx - 1) {
-        hasFetched.current = true;
-        const pendingLemmas = words
-          .filter((w) => w.collectStatus !== "DONE" && w.collectStatus !== "FAILED")
-          .map((w) => w.lemma);
-
-        getWords1({ words: pendingLemmas })
-          .then((response) => {
-            const updated = response.data?.words ?? [];
-            if (updated.length === 0) return;
-            const updatedMap = new Map(updated.map((w) => [w.word, w]));
-            setWords((prev) => {
-              const nextWords = prev.map((item) => {
-                const fresh = updatedMap.get(item.lemma);
-                if (!fresh || fresh.collectStatus === item.collectStatus) return item;
-                return mapWord(fresh);
-              });
-              void saveExtractDraft({
-                sourceText,
-                words: nextWords,
-              });
-              return nextWords;
-            });
-            setHistory((prev) =>
-              prev.map((item) => {
-                const fresh = updatedMap.get(item.lemma);
-                if (!fresh || fresh.collectStatus === item.collectStatus) return item;
-                return { ...mapWord(fresh), picked: item.picked };
-              })
-            );
-          })
-          .catch(() => {
-            // 재조회 실패 시 기존 데이터 유지 (graceful degradation)
-          });
-      }
+    // 남은 카드 중 첫 PENDING 단어 3장 전에 재조회 시도 (쿨다운으로 중복 방지)
+    const firstPendingIdx = words.findIndex(
+      (w, i) => i >= nextCursor && w.collectStatus !== "DONE" && w.collectStatus !== "FAILED"
+    );
+    if (firstPendingIdx >= 0 && nextCursor >= firstPendingIdx - 3) {
+      fetchPendingWords(words);
     }
   };
 
