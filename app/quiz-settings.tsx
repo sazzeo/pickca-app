@@ -5,6 +5,7 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWordbookSummary } from "@/api/generated/wordbooks/wordbooks";
+import { useGetSummary } from "@/api/generated/wrong-quiz/wrong-quiz";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
@@ -36,8 +37,10 @@ export default function QuizSettingsScreen() {
 
   const isWrongMode = quizType === "wrong";
 
-  // TODO: orval 훅 생성 후 교체 (GET /api/me/wrong-quiz/summary)
-  const wrongQuizTotalCount = 0;
+  const { data: wrongSummaryData } = useGetSummary({
+    query: { enabled: isWrongMode },
+  });
+  const wrongQuizTotalCount = wrongSummaryData?.data?.totalCount ?? 0;
 
   const { data: summaryData } = useGetWordbookSummary(Number(wordbookId), {
     query: { enabled: !isWrongMode && !!wordbookId },

@@ -15,7 +15,7 @@ export interface AdminMeaningReplaceRequest {
 export type MeaningInputPartOfSpeech = typeof MeaningInputPartOfSpeech[keyof typeof MeaningInputPartOfSpeech];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const MeaningInputPartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -42,7 +42,7 @@ export interface MeaningInput {
 export type AdminWordResponseCefr = typeof AdminWordResponseCefr[keyof typeof AdminWordResponseCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordResponseCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -58,7 +58,7 @@ export const AdminWordResponseCefr = {
 export type AdminWordResponseCollectStatus = typeof AdminWordResponseCollectStatus[keyof typeof AdminWordResponseCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -72,7 +72,7 @@ export const AdminWordResponseCollectStatus = {
 export type AdminWordResponseSource = typeof AdminWordResponseSource[keyof typeof AdminWordResponseSource];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordResponseSource = {
   AI: 'AI',
   CSV: 'CSV',
@@ -141,7 +141,7 @@ export interface WordExtractResponse {
 export type WordMeaningResponsePartOfSpeech = typeof WordMeaningResponsePartOfSpeech[keyof typeof WordMeaningResponsePartOfSpeech];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordMeaningResponsePartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -170,7 +170,7 @@ export interface WordMeaningResponse {
 export type WordResponseCollectStatus = typeof WordResponseCollectStatus[keyof typeof WordResponseCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -221,7 +221,7 @@ export interface Item {
   createdAt: string;
   /** 암기 완료 비율 (0~100) */
   memorizedRate: number;
-  /** 학습중 비율 (0~100, LEARNING + RELEARNING) */
+  /** 학습중 비율 (0~100) */
   learningRate: number;
 }
 
@@ -260,7 +260,7 @@ export interface BatchStudyRequest {
 export type QuizGenerateRequestMode = typeof QuizGenerateRequestMode[keyof typeof QuizGenerateRequestMode];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const QuizGenerateRequestMode = {
   EN_TO_KO: 'EN_TO_KO',
   KO_TO_EN: 'KO_TO_EN',
@@ -300,6 +300,54 @@ export interface Question {
 export interface QuizResponse {
   /** 퀴즈 문제 목록 */
   questions: Question[];
+}
+
+/**
+ * 퀴즈 모드
+ */
+export type WrongQuizGenerateRequestMode = typeof WrongQuizGenerateRequestMode[keyof typeof WrongQuizGenerateRequestMode];
+
+
+ 
+export const WrongQuizGenerateRequestMode = {
+  EN_TO_KO: 'EN_TO_KO',
+  KO_TO_EN: 'KO_TO_EN',
+  MIXED: 'MIXED',
+} as const;
+
+export interface WrongQuizGenerateRequest {
+  /**
+   * 출제할 문제 수 (최대 100)
+   * @minimum 1
+   * @maximum 100
+   */
+  count: number;
+  /** 퀴즈 모드 */
+  mode: WrongQuizGenerateRequestMode;
+}
+
+export interface ApiResponseWrongQuizResponse {
+  success: boolean;
+  data?: WrongQuizResponse;
+  error?: ApiError;
+}
+
+export interface WrongQuizQuestion {
+  /** 단어 ID (퀴즈 결과 기록용) */
+  wordId: number;
+  /** 단어장 ID (퀴즈 결과 기록용) */
+  wordbookId: number;
+  /** 문제 텍스트 */
+  question: string;
+  /** 정답 텍스트 */
+  answer: string;
+  /** 선택지 목록 (정답 포함, 셔플됨) */
+  options: string[];
+}
+
+export interface WrongQuizResponse {
+  /** 퀴즈 문제 목록 */
+  questions: WrongQuizQuestion[];
 }
 
 export interface TokenRefreshRequest {
@@ -371,7 +419,7 @@ export interface DevLoginRequest {
 export type AdminWordCreateRequestCefr = typeof AdminWordCreateRequestCefr[keyof typeof AdminWordCreateRequestCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordCreateRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -452,7 +500,7 @@ export interface UpdateNicknameRequest {
 export type UpdateCefrLevelRequestCefrLevel = typeof UpdateCefrLevelRequestCefrLevel[keyof typeof UpdateCefrLevelRequestCefrLevel];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const UpdateCefrLevelRequestCefrLevel = {
   A1: 'A1',
   A2: 'A2',
@@ -473,7 +521,7 @@ export interface UpdateCefrLevelRequest {
 export type AdminWordUpdateRequestCefr = typeof AdminWordUpdateRequestCefr[keyof typeof AdminWordUpdateRequestCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordUpdateRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -489,7 +537,7 @@ export const AdminWordUpdateRequestCefr = {
 export type AdminWordUpdateRequestCollectStatus = typeof AdminWordUpdateRequestCollectStatus[keyof typeof AdminWordUpdateRequestCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordUpdateRequestCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -549,7 +597,7 @@ export interface WordbookWordListResponse {
 export type WordbookWordMeaningResponsePartOfSpeech = typeof WordbookWordMeaningResponsePartOfSpeech[keyof typeof WordbookWordMeaningResponsePartOfSpeech];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordbookWordMeaningResponsePartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -578,7 +626,7 @@ export interface WordbookWordMeaningResponse {
 export type WordbookWordResponseCollectStatus = typeof WordbookWordResponseCollectStatus[keyof typeof WordbookWordResponseCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordbookWordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -587,17 +635,16 @@ export const WordbookWordResponseCollectStatus = {
 } as const;
 
 /**
- * 학습 상태 (NOT_STARTED/LEARNING/MEMORIZED/RELEARNING)
+ * 학습 상태 (NOT_STARTED/LEARNING/MEMORIZED)
  */
 export type WordbookWordResponseLearningStatus = typeof WordbookWordResponseLearningStatus[keyof typeof WordbookWordResponseLearningStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const WordbookWordResponseLearningStatus = {
   NOT_STARTED: 'NOT_STARTED',
   LEARNING: 'LEARNING',
   MEMORIZED: 'MEMORIZED',
-  RELEARNING: 'RELEARNING',
 } as const;
 
 export interface WordbookWordResponse {
@@ -615,7 +662,7 @@ export interface WordbookWordResponse {
   primaryMeanings?: string;
   /** 품사별 의미 목록 */
   meanings: WordbookWordMeaningResponse[];
-  /** 학습 상태 (NOT_STARTED/LEARNING/MEMORIZED/RELEARNING) */
+  /** 학습 상태 (NOT_STARTED/LEARNING/MEMORIZED) */
   learningStatus: WordbookWordResponseLearningStatus;
   /** 누적 오답 횟수 */
   wrongCount: number;
@@ -632,8 +679,6 @@ export interface CountByStatus {
   NOT_STARTED: number;
   /** 학습 중 단어 수 */
   LEARNING: number;
-  /** 재학습 중 단어 수 */
-  RELEARNING: number;
   /** 외운 단어 수 */
   MEMORIZED: number;
 }
@@ -660,13 +705,24 @@ export interface WordbookSourceListResponse {
   total: number;
 }
 
+export interface ApiResponseWrongQuizSummaryResponse {
+  success: boolean;
+  data?: WrongQuizSummaryResponse;
+  error?: ApiError;
+}
+
+export interface WrongQuizSummaryResponse {
+  /** 오답 단어 총 수 (wrongCount >= 1, MEMORIZED 아닌 고유 단어) */
+  totalCount: number;
+}
+
 /**
  * 수집 상태 필터
  */
 export type AdminWordListRequestCollectStatus = typeof AdminWordListRequestCollectStatus[keyof typeof AdminWordListRequestCollectStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordListRequestCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -680,7 +736,7 @@ export const AdminWordListRequestCollectStatus = {
 export type AdminWordListRequestSource = typeof AdminWordListRequestSource[keyof typeof AdminWordListRequestSource];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordListRequestSource = {
   AI: 'AI',
   CSV: 'CSV',
@@ -693,7 +749,7 @@ export const AdminWordListRequestSource = {
 export type AdminWordListRequestCefr = typeof AdminWordListRequestCefr[keyof typeof AdminWordListRequestCefr];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const AdminWordListRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -760,12 +816,11 @@ learningStatus?: GetWordsLearningStatus;
 export type GetWordsLearningStatus = typeof GetWordsLearningStatus[keyof typeof GetWordsLearningStatus];
 
 
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const GetWordsLearningStatus = {
   NOT_STARTED: 'NOT_STARTED',
   LEARNING: 'LEARNING',
   MEMORIZED: 'MEMORIZED',
-  RELEARNING: 'RELEARNING',
 } as const;
 
 export type ListParams = {
