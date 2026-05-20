@@ -4,25 +4,26 @@ import { Text } from "react-native-paper";
 import { Colors } from "@/lib/colors";
 
 interface LearningStatPillsProps {
+  memorizedCount: number;
   learningCount: number;
-  notStartedCount: number;
-  wordbookCount: number;
+  streakDays: number;
 }
 
 interface PillConfig {
   label: string;
   value: number;
+  unit: string;
 }
 
 export function LearningStatPills({
+  memorizedCount,
   learningCount,
-  notStartedCount,
-  wordbookCount,
+  streakDays,
 }: LearningStatPillsProps) {
   const pills: PillConfig[] = [
-    { label: "학습 중", value: learningCount },
-    { label: "학습 전", value: notStartedCount },
-    { label: "단어장", value: wordbookCount },
+    { label: "외운 단어", value: memorizedCount, unit: "개" },
+    { label: "학습중", value: learningCount, unit: "개" },
+    { label: "연속 학습 🔥", value: streakDays, unit: "일" },
   ];
 
   return (
@@ -32,7 +33,7 @@ export function LearningStatPills({
           <Text style={styles.label}>{pill.label}</Text>
           <Text style={styles.value}>
             {pill.value.toLocaleString()}
-            <Text style={styles.unit}>개</Text>
+            <Text style={styles.unit}>{pill.unit}</Text>
           </Text>
         </View>
       ))}

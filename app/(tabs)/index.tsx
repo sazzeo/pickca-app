@@ -6,20 +6,66 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { AppHeader } from "@/components/common/AppHeader";
 import { EmptyWordbookGuide } from "@/components/home/EmptyWordbookGuide";
-import { GreetingSection } from "@/components/home/GreetingSection";
-import { WordbookCard } from "@/components/wordbook/WordbookCard";
 import { LearningStatPills } from "@/components/home/LearningStatPills";
-import { WrongAnswerBanner } from "@/components/home/WrongAnswerBanner";
+import { TodayLearningSection } from "@/components/home/TodayLearningSection";
+import { WordbookCard } from "@/components/wordbook/WordbookCard";
 import { Colors } from "@/lib/colors";
+import type { TodayWord } from "@/components/home/TodayLearningCard";
 
 // TODO: API 연동 시 제거
 const MOCK_SUMMARY = {
-  wordbookCount: 18,
-  learningCount: 322,
-  notStartedCount: 23,
-  memorizedCount: 150,
-  hasWrongWords: true,
+  memorizedCount: 322,
+  learningCount: 77,
+  streakDays: 7,
 };
+
+// TODO: API 연동 시 제거
+const MOCK_TODAY_WRONG_WORDS: TodayWord[] = [
+  {
+    wordId: 101,
+    lemma: "mesmerizing",
+    partOfSpeech: "adj",
+    meaning: "매혹적인",
+    tag: "헷갈렸던 단어예요",
+    tagType: "CONFUSED",
+  },
+  {
+    wordId: 102,
+    lemma: "ephemeral",
+    partOfSpeech: "adj",
+    meaning: "일시적인, 덧없는",
+    tag: "자주 틀린 단어예요",
+    tagType: "FREQUENTLY_WRONG",
+  },
+  {
+    wordId: 103,
+    lemma: "ubiquitous",
+    partOfSpeech: "adj",
+    meaning: "어디에나 있는",
+    tag: "헷갈렸던 단어예요",
+    tagType: "CONFUSED",
+  },
+];
+
+// TODO: API 연동 시 제거
+const MOCK_TODAY_MEMORIZED_WORDS: TodayWord[] = [
+  {
+    wordId: 201,
+    lemma: "serendipity",
+    partOfSpeech: "noun",
+    meaning: "뜻밖의 행운",
+    tag: "처음 외운 단어예요",
+    tagType: "FIRST_MEMORIZED",
+  },
+  {
+    wordId: 202,
+    lemma: "resilient",
+    partOfSpeech: "adj",
+    meaning: "회복력 있는",
+    tag: "처음 외운 단어예요",
+    tagType: "FIRST_MEMORIZED",
+  },
+];
 
 // TODO: API 연동 시 제거
 const MOCK_WORDBOOKS = [
@@ -70,6 +116,21 @@ export default function HomeScreen() {
   const summary = MOCK_SUMMARY;
   const hasWordbooks = wordbooks.length > 0;
 
+  const handleRetryPress = () => {
+    router.push({
+      pathname: "/quiz",
+      params: { quizType: "wrong", count: "5", mode: "MIXED" },
+    });
+  };
+
+  const handleStudyPress = () => {
+    // TODO: 단어 학습 화면 라우팅
+  };
+
+  const handleEmptyPress = () => {
+    router.push("/(tabs)/study");
+  };
+
   return (
     <View style={styles.container}>
       <AppHeader onSettingsPress={() => router.push("/(tabs)/profile")} />
@@ -79,25 +140,25 @@ export default function HomeScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: tabBarApproxHeight + 24 }]}
         showsVerticalScrollIndicator={false}
       >
-        <GreetingSection isReturningUser={hasWordbooks} />
-
         {hasWordbooks ? (
           <>
             {/* 학습 통계 필 */}
-            <LearningStatPills
-              learningCount={summary.learningCount}
-              notStartedCount={summary.notStartedCount}
-              wordbookCount={summary.wordbookCount}
-            />
-
-            {/* 오답 배너 */}
-            <View style={styles.bannerSection}>
-              <WrongAnswerBanner
-                hasWrongWords={summary.hasWrongWords}
-                // TODO: 복습 화면 라우팅 연결
-                onReviewPress={() => {}}
+            <View style={styles.pillsSection}>
+              <LearningStatPills
+                memorizedCount={summary.memorizedCount}
+                learningCount={summary.learningCount}
+                streakDays={summary.streakDays}
               />
             </View>
+
+            {/* 오늘의 학습 스와이프 카드 */}
+            <TodayLearningSection
+              todayWrongWords={MOCK_TODAY_WRONG_WORDS}
+              todayMemorizedWords={MOCK_TODAY_MEMORIZED_WORDS}
+              onRetryPress={handleRetryPress}
+              onStudyPress={handleStudyPress}
+              onEmptyPress={handleEmptyPress}
+            />
 
             {/* 최근 본 단어장 */}
             <View style={styles.sectionHeader}>
@@ -145,8 +206,8 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 24,
   },
-  bannerSection: {
-    marginTop: 16,
+  pillsSection: {
+    paddingTop: 12,
   },
   sectionHeader: {
     flexDirection: "row",
