@@ -503,13 +503,13 @@ const styles = StyleSheet.create({
 
   // 프로그레스 바
   progressBarContainer: {
-    height: 4,
+    height: 8,
     backgroundColor: Colors.divider,
     marginHorizontal: 20,
-    borderRadius: 2,
+    borderRadius: 4,
   },
   progressBar: {
-    height: 4,
+    height: 8,
     backgroundColor: Colors.brand.green,
     borderRadius: 2,
   },
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   questionCard: {
-    paddingVertical: 48,
+    height: 190,
     paddingHorizontal: 24,
     backgroundColor: Colors.bg.default,
     borderRadius: 16,
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     right: 10,
   },
   questionText: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: "700",
     color: Colors.text.primary,
     textAlign: "center",
@@ -581,8 +581,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    padding: 16,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.border.button,
@@ -592,8 +591,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    padding: 16,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: Colors.brand.green,
@@ -603,22 +601,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    padding: 17,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.brand.green,
     backgroundColor: Colors.brand.greenSurface,
   },
   optionWrong: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    padding: 17,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: Colors.semantic.danger,
     backgroundColor: Colors.semantic.dangerLight,
   },
   optionLabel: {
@@ -638,30 +630,27 @@ const styles = StyleSheet.create({
   },
   optionText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 18,
+    fontWeight: "500",
     color: Colors.text.primary,
   },
   optionTextCorrect: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "500",
     color: Colors.brand.green,
   },
   optionTextWrong: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: "600",
+    fontSize: 18,
+    fontWeight: "500",
     color: Colors.semantic.danger,
-  },
-
-  // 콘텐츠 영역
-  content: {
-    flex: 1,
-    justifyContent: "center",
   },
 
   // 하단 버튼
   footer: {
+    flex: 1,
+    justifyContent: "flex-end",
     paddingHorizontal: 20,
     paddingTop: 12,
   },
