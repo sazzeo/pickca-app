@@ -19,7 +19,8 @@ import {
   useGenerateQuiz,
   useRecordQuizResult,
 } from "@/api/generated/wordbooks/wordbooks";
-import { Question, QuizGenerateRequestMode } from "@/api/generated/pickcaAPI.schemas";
+import { useGenerateQuiz1 } from "@/api/generated/wrong-quiz/wrong-quiz";
+import { Question, QuizGenerateRequestMode, WrongQuizGenerateRequestMode, WrongQuizQuestion } from "@/api/generated/pickcaAPI.schemas";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
@@ -79,6 +80,7 @@ export default function QuizScreen() {
   }));
 
   const generateQuiz = useGenerateQuiz();
+  const generateWrongQuiz = useGenerateQuiz1();
   const recordResult = useRecordQuizResult();
 
   // ref 동기화
@@ -107,9 +109,35 @@ export default function QuizScreen() {
       setTimeLeft(TIME_LIMIT);
 
       if (isWrongMode) {
-        // TODO: orval 훅 생성 후 교체 (POST /api/me/wrong-quiz)
-        // 오답모음 퀴즈 생성 API 연동 필요
-        setIsLoaded(true);
+        generateWrongQuiz.mutate(
+          {
+            data: {
+              count: Number(count) || 20,
+              mode: (mode as WrongQuizGenerateRequestMode) ?? "MIXED",
+            },
+          },
+          {
+            onSuccess: (response) => {
+              const wrongQuestions = response.data?.questions ?? [];
+              const mapped: QuizQuestion[] = wrongQuestions.map((q: WrongQuizQuestion) => ({
+                wordId: q.wordId,
+                question: q.question,
+                answer: q.answer,
+                options: q.options,
+                wordbookId: q.wordbookId,
+              }));
+              setQuestions(mapped);
+              setOriginalTotal(mapped.length);
+              setIsLoaded(true);
+            },
+            onError: (error) => {
+              setIsLoaded(true);
+              if (__DEV__) {
+                Alert.alert("퀴즈 로드 실패", String(error));
+              }
+            },
+          }
+        );
       } else {
         generateQuiz.mutate(
           {
