@@ -20,7 +20,10 @@ import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
 
-type QuizQuestion = Question & { isRetry?: boolean };
+interface QuizQuestion extends Question {
+  isRetry?: boolean;
+  wordbookId?: number;
+}
 
 const OPTION_LABELS = ["A", "B", "C", "D"] as const;
 const TIME_LIMIT = 10;
@@ -32,12 +35,15 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function QuizScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId, statuses, count, mode } = useLocalSearchParams<{
-    wordbookId: string;
-    statuses: string;
+  const { wordbookId, statuses, count, mode, quizType } = useLocalSearchParams<{
+    wordbookId?: string;
+    statuses?: string;
     count: string;
     mode: string;
+    quizType?: string;
   }>();
+
+  const isWrongMode = quizType === "wrong";
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -65,6 +71,14 @@ export default function QuizScreen() {
   isAnsweredRef.current = isAnswered;
   currentIndexRef.current = currentIndex;
 
+  // 결과 기록 시 사용할 wordbookId 결정
+  const getWordbookIdForQuestion = useCallback(
+    (question: QuizQuestion): number => {
+      return question.wordbookId ?? Number(wordbookId);
+    },
+    [wordbookId]
+  );
+
   // 화면 포커스 시 전체 상태 리셋 + 퀴즈 새로 생성
   useFocusEffect(
     useCallback(() => {
@@ -78,31 +92,37 @@ export default function QuizScreen() {
       setOriginalTotal(0);
       setTimeLeft(TIME_LIMIT);
 
-      generateQuiz.mutate(
-        {
-          wordbookId: Number(wordbookId),
-          data: {
-            statuses: statuses?.split(",") ?? [],
-            count: Number(count) || 10,
-            mode: (mode as QuizGenerateRequestMode) ?? "MIXED",
+      if (isWrongMode) {
+        // TODO: orval 훅 생성 후 교체 (POST /api/me/wrong-quiz)
+        // 오답모음 퀴즈 생성 API 연동 필요
+        setIsLoaded(true);
+      } else {
+        generateQuiz.mutate(
+          {
+            wordbookId: Number(wordbookId),
+            data: {
+              statuses: statuses?.split(",") ?? [],
+              count: Number(count) || 10,
+              mode: (mode as QuizGenerateRequestMode) ?? "MIXED",
+            },
           },
-        },
-        {
-          onSuccess: (response) => {
-            const q = response.data?.questions ?? [];
-            setQuestions(q);
-            setOriginalTotal(q.length);
-            setIsLoaded(true);
-          },
-          onError: (error) => {
-            setIsLoaded(true);
-            if (__DEV__) {
-              Alert.alert("퀴즈 로드 실패", String(error));
-            }
-          },
-        }
-      );
-    }, [wordbookId, statuses, count, mode])
+          {
+            onSuccess: (response) => {
+              const q = response.data?.questions ?? [];
+              setQuestions(q);
+              setOriginalTotal(q.length);
+              setIsLoaded(true);
+            },
+            onError: (error) => {
+              setIsLoaded(true);
+              if (__DEV__) {
+                Alert.alert("퀴즈 로드 실패", String(error));
+              }
+            },
+          }
+        );
+      }
+    }, [isWrongMode, wordbookId, statuses, count, mode])
   );
 
   const currentQuestion = questions[currentIndex];
@@ -140,7 +160,7 @@ export default function QuizScreen() {
             const q = questions[currentIndexRef.current];
             if (q && !q.isRetry) {
               recordResult.mutate({
-                wordbookId: Number(wordbookId),
+                wordbookId: getWordbookIdForQuestion(q),
                 wordId: q.wordId,
                 data: { correct: false },
               });
@@ -167,7 +187,7 @@ export default function QuizScreen() {
     // 재시도 문제는 API 미호출 (첫 번째 답만 기록)
     if (!currentQuestion.isRetry) {
       recordResult.mutate({
-        wordbookId: Number(wordbookId),
+        wordbookId: getWordbookIdForQuestion(currentQuestion),
         wordId: currentQuestion.wordId,
         data: { correct: isCorrect },
       });

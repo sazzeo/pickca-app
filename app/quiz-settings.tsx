@@ -29,11 +29,19 @@ type QuizModeKey = (typeof QUIZ_MODE_OPTIONS)[number]["key"];
 
 export default function QuizSettingsScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId } = useLocalSearchParams<{
-    wordbookId: string;
+  const { wordbookId, quizType } = useLocalSearchParams<{
+    wordbookId?: string;
+    quizType?: string;
   }>();
 
-  const { data: summaryData } = useGetWordbookSummary(Number(wordbookId));
+  const isWrongMode = quizType === "wrong";
+
+  // TODO: orval 훅 생성 후 교체 (GET /api/me/wrong-quiz/summary)
+  const wrongQuizTotalCount = 0;
+
+  const { data: summaryData } = useGetWordbookSummary(Number(wordbookId), {
+    query: { enabled: !isWrongMode && !!wordbookId },
+  });
   const summary = summaryData?.data;
 
   const [selectedStatuses, setSelectedStatuses] = useState<Set<LearningStatusKey>>(
@@ -43,13 +51,14 @@ export default function QuizSettingsScreen() {
   const [selectedMode, setSelectedMode] = useState<QuizModeKey>("MIXED");
 
   const filteredWordCount = useMemo(() => {
+    if (isWrongMode) return wrongQuizTotalCount;
     if (!summary?.countByStatus) return 0;
     const counts = summary.countByStatus;
     return Array.from(selectedStatuses).reduce(
       (sum, status) => sum + (counts[status] ?? 0),
       0
     );
-  }, [summary?.countByStatus, selectedStatuses]);
+  }, [isWrongMode, wrongQuizTotalCount, summary?.countByStatus, selectedStatuses]);
 
   const visibleCountOptions = useMemo(() => {
     const filtered = WORD_COUNT_OPTIONS.filter((count) => count < filteredWordCount);
@@ -84,15 +93,26 @@ export default function QuizSettingsScreen() {
   };
 
   const handleStart = () => {
-    router.push({
-      pathname: "/quiz",
-      params: {
-        wordbookId,
-        statuses: Array.from(selectedStatuses).join(","),
-        count: String(resolvedCount),
-        mode: selectedMode,
-      },
-    });
+    if (isWrongMode) {
+      router.push({
+        pathname: "/quiz",
+        params: {
+          quizType: "wrong",
+          count: String(resolvedCount),
+          mode: selectedMode,
+        },
+      });
+    } else {
+      router.push({
+        pathname: "/quiz",
+        params: {
+          wordbookId,
+          statuses: Array.from(selectedStatuses).join(","),
+          count: String(resolvedCount),
+          mode: selectedMode,
+        },
+      });
+    }
   };
 
   const handleReset = () => {
@@ -125,43 +145,47 @@ export default function QuizSettingsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* 단어장 */}
-        <View style={styles.section}>
-          <View style={styles.wordbookRow}>
-            <Text style={styles.wordbookLabel}>단어장</Text>
-            <Text style={styles.wordbookName} numberOfLines={1}>
-              {summary?.name ?? "선택된 단어장"}
-            </Text>
+        {/* 단어장 (오답모음 모드에서 숨김) */}
+        {!isWrongMode && (
+          <View style={styles.section}>
+            <View style={styles.wordbookRow}>
+              <Text style={styles.wordbookLabel}>단어장</Text>
+              <Text style={styles.wordbookName} numberOfLines={1}>
+                {summary?.name ?? "선택된 단어장"}
+              </Text>
+            </View>
           </View>
-        </View>
+        )}
 
-        {/* 단어 상태 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>단어 상태</Text>
-          <View style={styles.chipRow}>
-            {LEARNING_STATUS_OPTIONS.map((option) => {
-              const isSelected = selectedStatuses.has(option.key);
-              return (
-                <Pressable
-                  key={option.key}
-                  style={({ pressed }) => [
-                    styles.chip,
-                    isSelected && styles.chipSelected,
-                    pressed && styles.chipPressed,
-                  ]}
-                  onPress={() => toggleStatus(option.key)}
-                  accessibilityRole="button"
-                  accessibilityLabel={option.label}
-                  accessibilityState={{ selected: isSelected }}
-                >
-                  <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-                    {option.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
+        {/* 단어 상태 (오답모음 모드에서 숨김) */}
+        {!isWrongMode && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>단어 상태</Text>
+            <View style={styles.chipRow}>
+              {LEARNING_STATUS_OPTIONS.map((option) => {
+                const isSelected = selectedStatuses.has(option.key);
+                return (
+                  <Pressable
+                    key={option.key}
+                    style={({ pressed }) => [
+                      styles.chip,
+                      isSelected && styles.chipSelected,
+                      pressed && styles.chipPressed,
+                    ]}
+                    onPress={() => toggleStatus(option.key)}
+                    accessibilityRole="button"
+                    accessibilityLabel={option.label}
+                    accessibilityState={{ selected: isSelected }}
+                  >
+                    <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                      {option.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* 단어 개수 */}
         <View style={styles.section}>
@@ -169,54 +193,58 @@ export default function QuizSettingsScreen() {
             <Text style={styles.sectionTitle}>단어 개수</Text>
             <Text style={styles.totalCount}>총 {filteredWordCount}개</Text>
           </View>
-          <View style={styles.chipRow}>
-            {visibleCountOptions.counts.map((count) => {
-              const isSelected = selectedCount === count;
-              return (
+          {isWrongMode && filteredWordCount === 0 ? (
+            <Text style={styles.emptyText}>틀린 단어가 없어요</Text>
+          ) : (
+            <View style={styles.chipRow}>
+              {visibleCountOptions.counts.map((count) => {
+                const isSelected = selectedCount === count;
+                return (
+                  <Pressable
+                    key={count}
+                    style={({ pressed }) => [
+                      styles.chip,
+                      isSelected && styles.chipSelected,
+                      pressed && styles.chipPressed,
+                    ]}
+                    onPress={() => setSelectedCount(count)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${count}개`}
+                    accessibilityState={{ selected: isSelected }}
+                  >
+                    <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+                      {count}개
+                    </Text>
+                  </Pressable>
+                );
+              })}
+              {visibleCountOptions.showAll && (
                 <Pressable
-                  key={count}
                   style={({ pressed }) => [
                     styles.chip,
-                    isSelected && styles.chipSelected,
-                    pressed && styles.chipPressed,
+                    filteredWordCount === 0 && styles.chipDisabled,
+                    selectedCount === "ALL" && filteredWordCount > 0 && styles.chipSelected,
+                    pressed && filteredWordCount > 0 && styles.chipPressed,
                   ]}
-                  onPress={() => setSelectedCount(count)}
+                  onPress={() => filteredWordCount > 0 && setSelectedCount("ALL")}
+                  disabled={filteredWordCount === 0}
                   accessibilityRole="button"
-                  accessibilityLabel={`${count}개`}
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityLabel={`전체 ${filteredWordCount}개`}
+                  accessibilityState={{ selected: selectedCount === "ALL", disabled: filteredWordCount === 0 }}
                 >
-                  <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
-                    {count}개
+                  <Text
+                    style={[
+                      styles.chipText,
+                      filteredWordCount === 0 && styles.chipTextDisabled,
+                      selectedCount === "ALL" && filteredWordCount > 0 && styles.chipTextSelected,
+                    ]}
+                  >
+                    전체
                   </Text>
                 </Pressable>
-              );
-            })}
-            {visibleCountOptions.showAll && (
-              <Pressable
-                style={({ pressed }) => [
-                  styles.chip,
-                  filteredWordCount === 0 && styles.chipDisabled,
-                  selectedCount === "ALL" && filteredWordCount > 0 && styles.chipSelected,
-                  pressed && filteredWordCount > 0 && styles.chipPressed,
-                ]}
-                onPress={() => filteredWordCount > 0 && setSelectedCount("ALL")}
-                disabled={filteredWordCount === 0}
-                accessibilityRole="button"
-                accessibilityLabel={`전체 ${filteredWordCount}개`}
-                accessibilityState={{ selected: selectedCount === "ALL", disabled: filteredWordCount === 0 }}
-              >
-                <Text
-                  style={[
-                    styles.chipText,
-                    filteredWordCount === 0 && styles.chipTextDisabled,
-                    selectedCount === "ALL" && filteredWordCount > 0 && styles.chipTextSelected,
-                  ]}
-                >
-                  전체
-                </Text>
-              </Pressable>
-            )}
-          </View>
+              )}
+            </View>
+          )}
         </View>
 
         {/* 퀴즈 방식 */}
@@ -356,6 +384,12 @@ const styles = StyleSheet.create({
   },
   chipTextDisabled: {
     color: Colors.disabled.text,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: Colors.text.secondary,
+    textAlign: "center",
+    paddingVertical: 8,
   },
   footer: {
     paddingHorizontal: 20,

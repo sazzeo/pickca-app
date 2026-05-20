@@ -53,7 +53,10 @@ export default function StudyScreen() {
       title: "오답 모음",
       subtitle: "틀렸던 단어만 모아서",
       onPress: () => {
-        // TODO: 오답 모음 퀴즈 화면으로 이동
+        router.push({
+          pathname: "/quiz-settings",
+          params: { quizType: "wrong" },
+        });
       },
     },
     {
