@@ -18,6 +18,7 @@ import type {
   GetWordsLearningStatus,
   WordbookWordResponse,
 } from "@/api/generated/pickcaAPI.schemas";
+import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { WordCard, type WordCardItem } from "@/components/study/WordCard";
 import { Colors } from "@/lib/colors";
@@ -211,14 +212,7 @@ export default function WordCardScreen() {
         />
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>단어를 불러오지 못했어요.</Text>
-          <Pressable
-            style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
-            onPress={() => refetch()}
-            accessibilityRole="button"
-            accessibilityLabel="다시 시도"
-          >
-            <Text style={styles.retryLabel}>다시 시도</Text>
-          </Pressable>
+          <Button label="다시 시도" onPress={() => refetch()} size="sm" fullWidth={false} />
         </View>
       </View>
     );
@@ -377,19 +371,5 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 15,
     color: Colors.text.secondary,
-  },
-  retryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: Colors.brand.green,
-  },
-  retryButtonPressed: {
-    opacity: 0.85,
-  },
-  retryLabel: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: Colors.text.white,
   },
 });

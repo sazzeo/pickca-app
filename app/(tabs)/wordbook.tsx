@@ -20,6 +20,7 @@ import {
 } from "@/api/generated/wordbooks/wordbooks";
 import type { Item } from "@/api/generated/pickcaAPI.schemas";
 import { AppHeader } from "@/components/common/AppHeader";
+import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
@@ -179,14 +180,7 @@ export default function WordbookScreen() {
             <Text style={styles.errorText}>
               {apiErrorMessage ?? "단어장 목록을 불러오지 못했어요."}
             </Text>
-            <Pressable
-              style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
-              onPress={() => refetch()}
-              accessibilityRole="button"
-              accessibilityLabel="다시 시도"
-            >
-              <Text style={styles.retryLabel}>다시 시도</Text>
-            </Pressable>
+            <Button label="다시 시도" onPress={() => refetch()} size="sm" fullWidth={false} />
           </View>
         ) : filteredWordbooks.length === 0 ? (
           <View style={styles.centerBlock}>
@@ -321,19 +315,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.secondary,
     textAlign: "center",
-  },
-  retryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: Colors.brand.green,
-  },
-  retryButtonPressed: {
-    opacity: 0.85,
-  },
-  retryLabel: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: Colors.text.white,
   },
 });

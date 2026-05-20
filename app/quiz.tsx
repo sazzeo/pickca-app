@@ -16,6 +16,7 @@ import {
   useRecordQuizResult,
 } from "@/api/generated/wordbooks/wordbooks";
 import { Question, QuizGenerateRequestMode } from "@/api/generated/pickcaAPI.schemas";
+import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
 
@@ -323,21 +324,11 @@ export default function QuizScreen() {
 
       {/* 다음 버튼 */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.nextButton,
-            !isAnswered && styles.nextButtonDisabled,
-            pressed && isAnswered && styles.pressed,
-          ]}
+        <Button
+          label={correctCount >= originalTotal - 1 && isCurrentCorrect ? "완료" : "다음"}
           onPress={handleNext}
           disabled={!isAnswered}
-          accessibilityRole="button"
-          accessibilityLabel={correctCount >= originalTotal - 1 && isCurrentCorrect ? "완료" : "다음"}
-        >
-          <Text style={[styles.nextButtonText, !isAnswered && styles.nextButtonTextDisabled]}>
-            {correctCount >= originalTotal - 1 && isCurrentCorrect ? "완료" : "다음"}
-          </Text>
-        </Pressable>
+        />
       </View>
     </View>
   );
@@ -510,24 +501,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingHorizontal: 20,
     paddingTop: 12,
-  },
-  nextButton: {
-    backgroundColor: Colors.brand.green,
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  nextButtonDisabled: {
-    backgroundColor: Colors.disabled.bg,
-  },
-  nextButtonText: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.text.white,
-  },
-  nextButtonTextDisabled: {
-    color: Colors.disabled.text,
   },
 
   // 로딩

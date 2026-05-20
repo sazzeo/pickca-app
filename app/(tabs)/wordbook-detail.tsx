@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { LearningStatusChip } from "@/components/common/LearningStatusChip";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
+import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
@@ -259,14 +260,7 @@ export default function WordbookDetailScreen() {
             <Text style={styles.messageText}>
               {apiErrorMessage ?? "단어 목록을 불러오지 못했어요."}
             </Text>
-            <Pressable
-              style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
-              onPress={() => refetch()}
-              accessibilityRole="button"
-              accessibilityLabel="다시 시도"
-            >
-              <Text style={styles.retryLabel}>다시 시도</Text>
-            </Pressable>
+            <Button label="다시 시도" onPress={() => refetch()} size="sm" fullWidth={false} />
           </View>
         ) : shownWords.length === 0 ? (
           <View style={styles.centerBlock}>
@@ -550,20 +544,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.secondary,
     textAlign: "center",
-  },
-  retryButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: Colors.brand.green,
-  },
-  retryButtonPressed: {
-    opacity: 0.85,
-  },
-  retryLabel: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: Colors.text.white,
   },
   cardList: {
     flexDirection: "column",

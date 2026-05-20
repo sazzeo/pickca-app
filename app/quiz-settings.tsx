@@ -5,6 +5,7 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWordbookSummary } from "@/api/generated/wordbooks/wordbooks";
+import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
 
@@ -249,21 +250,7 @@ export default function QuizSettingsScreen() {
 
       {/* 시작하기 버튼 */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.startButton,
-            resolvedCount === 0 && styles.startButtonDisabled,
-            pressed && resolvedCount > 0 && styles.startButtonPressed,
-          ]}
-          onPress={handleStart}
-          disabled={resolvedCount === 0}
-          accessibilityRole="button"
-          accessibilityLabel="시작하기"
-        >
-          <Text style={[styles.startButtonText, resolvedCount === 0 && styles.startButtonTextDisabled]}>
-            시작하기
-          </Text>
-        </Pressable>
+        <Button label="시작하기" onPress={handleStart} disabled={resolvedCount === 0} />
       </View>
     </View>
   );
@@ -374,26 +361,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 12,
     backgroundColor: Colors.bg.white,
-  },
-  startButton: {
-    backgroundColor: Colors.brand.green,
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  startButtonPressed: {
-    opacity: 0.85,
-  },
-  startButtonDisabled: {
-    backgroundColor: Colors.disabled.bg,
-  },
-  startButtonText: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.text.white,
-  },
-  startButtonTextDisabled: {
-    color: Colors.disabled.text,
   },
 });
