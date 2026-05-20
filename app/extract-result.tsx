@@ -77,7 +77,7 @@ export default function ExtractResultScreen() {
             if (!fresh || fresh.collectStatus === item.collectStatus) return item;
             return mapWord(fresh);
           });
-          const reordered = reorderRemaining(merged, cursorRef.current);
+          const reordered = reorderRemaining(merged, cursorRef.current + 1);
           void saveExtractDraft({ sourceText: sourceTextRef.current, words: reordered });
           return reordered;
         });
