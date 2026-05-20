@@ -201,18 +201,21 @@ export default function QuizSettingsScreen() {
               <Pressable
                 style={({ pressed }) => [
                   styles.chip,
-                  selectedCount === "ALL" && styles.chipSelected,
-                  pressed && styles.chipPressed,
+                  filteredWordCount === 0 && styles.chipDisabled,
+                  selectedCount === "ALL" && filteredWordCount > 0 && styles.chipSelected,
+                  pressed && filteredWordCount > 0 && styles.chipPressed,
                 ]}
-                onPress={() => setSelectedCount("ALL")}
+                onPress={() => filteredWordCount > 0 && setSelectedCount("ALL")}
+                disabled={filteredWordCount === 0}
                 accessibilityRole="button"
                 accessibilityLabel={`전체 ${filteredWordCount}개`}
-                accessibilityState={{ selected: selectedCount === "ALL" }}
+                accessibilityState={{ selected: selectedCount === "ALL", disabled: filteredWordCount === 0 }}
               >
                 <Text
                   style={[
                     styles.chipText,
-                    selectedCount === "ALL" && styles.chipTextSelected,
+                    filteredWordCount === 0 && styles.chipTextDisabled,
+                    selectedCount === "ALL" && filteredWordCount > 0 && styles.chipTextSelected,
                   ]}
                 >
                   전체
@@ -254,12 +257,19 @@ export default function QuizSettingsScreen() {
       {/* 시작하기 버튼 */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
         <Pressable
-          style={({ pressed }) => [styles.startButton, pressed && styles.startButtonPressed]}
+          style={({ pressed }) => [
+            styles.startButton,
+            resolvedCount === 0 && styles.startButtonDisabled,
+            pressed && resolvedCount > 0 && styles.startButtonPressed,
+          ]}
           onPress={handleStart}
+          disabled={resolvedCount === 0}
           accessibilityRole="button"
           accessibilityLabel="시작하기"
         >
-          <Text style={styles.startButtonText}>시작하기</Text>
+          <Text style={[styles.startButtonText, resolvedCount === 0 && styles.startButtonTextDisabled]}>
+            시작하기
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -387,6 +397,13 @@ const styles = StyleSheet.create({
     color: Colors.brand.green,
     fontWeight: "600",
   },
+  chipDisabled: {
+    backgroundColor: Colors.disabled.bg,
+    borderColor: Colors.disabled.bg,
+  },
+  chipTextDisabled: {
+    color: Colors.disabled.text,
+  },
   footer: {
     paddingHorizontal: 20,
     paddingTop: 12,
@@ -402,9 +419,15 @@ const styles = StyleSheet.create({
   startButtonPressed: {
     opacity: 0.85,
   },
+  startButtonDisabled: {
+    backgroundColor: Colors.disabled.bg,
+  },
   startButtonText: {
     fontSize: 17,
     fontWeight: "700",
     color: Colors.text.white,
+  },
+  startButtonTextDisabled: {
+    color: Colors.disabled.text,
   },
 });
