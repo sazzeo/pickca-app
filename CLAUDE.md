@@ -52,6 +52,7 @@ pnpm start / pnpm ios / pnpm android / pnpm generate
 
 | 컴포넌트 | 위치 | 용도 |
 |----------|------|------|
+| Button | components/common/Button.tsx | variant(primary/secondary/danger/ghost) × size(lg/md/sm) 버튼 |
 | AppHeader | components/common/AppHeader.tsx | 메인 탭 화면 헤더 (로고 + 설정) |
 | ScreenHeader | components/common/ScreenHeader.tsx | 서브 화면 헤더 (뒤로가기 + 타이틀 + 우측 슬롯) |
 | AlertDialog | components/common/AlertDialog.tsx | 알림 다이얼로그 |
