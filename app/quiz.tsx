@@ -68,12 +68,13 @@ export default function QuizScreen() {
     strokeDashoffset: timerAnimProgress.value,
   }));
 
-  // 정답 체크마크 애니메이션
-  const checkOpacity = useSharedValue(0);
-  const checkScale = useSharedValue(0);
-  const checkAnimStyle = useAnimatedStyle(() => ({
-    opacity: checkOpacity.value,
-    transform: [{ scale: checkScale.value }],
+  // 정답/오답 피드백 애니메이션
+  const feedbackOpacity = useSharedValue(0);
+  const feedbackScale = useSharedValue(0);
+  const [feedbackType, setFeedbackType] = useState<"correct" | "wrong">("correct");
+  const feedbackAnimStyle = useAnimatedStyle(() => ({
+    opacity: feedbackOpacity.value,
+    transform: [{ scale: feedbackScale.value }],
   }));
 
   const generateQuiz = useGenerateQuiz();
@@ -169,6 +170,15 @@ export default function QuizScreen() {
           if (!isAnsweredRef.current) {
             setIsAnswered(true);
             setIsCurrentCorrect(false);
+            setFeedbackType("wrong");
+            feedbackOpacity.value = withSequence(
+              withTiming(1, { duration: 150 }),
+              withDelay(400, withTiming(0, { duration: 300 })),
+            );
+            feedbackScale.value = withSequence(
+              withSpring(1.1, { damping: 10, stiffness: 300 }),
+              withSpring(1, { damping: 15, stiffness: 200 }),
+            );
             const q = questions[currentIndexRef.current];
             if (q && !q.isRetry) {
               recordResult.mutate({
@@ -196,16 +206,20 @@ export default function QuizScreen() {
     setIsAnswered(true);
     setIsCurrentCorrect(isCorrect);
 
-    if (isCorrect) {
-      checkOpacity.value = withSequence(
-        withTiming(1, { duration: 150 }),
-        withDelay(400, withTiming(0, { duration: 300 })),
-      );
-      checkScale.value = withSequence(
-        withSpring(1.15, { damping: 12, stiffness: 200 }),
-        withSpring(1, { damping: 15, stiffness: 200 }),
-      );
-    }
+    setFeedbackType(isCorrect ? "correct" : "wrong");
+    feedbackOpacity.value = withSequence(
+      withTiming(1, { duration: 150 }),
+      withDelay(400, withTiming(0, { duration: 300 })),
+    );
+    feedbackScale.value = isCorrect
+      ? withSequence(
+          withSpring(1.15, { damping: 12, stiffness: 200 }),
+          withSpring(1, { damping: 15, stiffness: 200 }),
+        )
+      : withSequence(
+          withSpring(1.1, { damping: 10, stiffness: 300 }),
+          withSpring(1, { damping: 15, stiffness: 200 }),
+        );
 
     // 재시도 문제는 API 미호출 (첫 번째 답만 기록)
     if (!currentQuestion.isRetry) {
@@ -236,8 +250,8 @@ export default function QuizScreen() {
     setIsAnswered(false);
     setIsCurrentCorrect(false);
     setTimeLeft(TIME_LIMIT);
-    checkOpacity.value = 0;
-    checkScale.value = 0;
+    feedbackOpacity.value = 0;
+    feedbackScale.value = 0;
   };
 
   const getOptionStyle = (option: string) => {
@@ -313,19 +327,33 @@ export default function QuizScreen() {
         <View style={styles.questionCard}>
           <Text style={styles.questionText}>{currentQuestion.question}</Text>
         </View>
-        <Animated.View style={[styles.checkOverlay, checkAnimStyle]} pointerEvents="none">
-          <Svg width={72} height={72} viewBox="0 0 72 72">
-            <Circle cx={36} cy={36} r={34} fill={Colors.brand.green} opacity={0.12} />
-            <Circle cx={36} cy={36} r={34} stroke={Colors.brand.green} strokeWidth={2.5} fill="none" />
-            <Path
-              d="M22 36 L32 46 L50 26"
-              stroke={Colors.brand.green}
-              strokeWidth={4}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-            />
-          </Svg>
+        <Animated.View style={[styles.feedbackOverlay, feedbackAnimStyle]} pointerEvents="none">
+          {feedbackType === "correct" ? (
+            <Svg width={72} height={72} viewBox="0 0 72 72">
+              <Circle cx={36} cy={36} r={34} fill={Colors.brand.green} opacity={0.12} />
+              <Circle cx={36} cy={36} r={34} stroke={Colors.brand.green} strokeWidth={2.5} fill="none" />
+              <Path
+                d="M22 36 L32 46 L50 26"
+                stroke={Colors.brand.green}
+                strokeWidth={4}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </Svg>
+          ) : (
+            <Svg width={72} height={72} viewBox="0 0 72 72">
+              <Circle cx={36} cy={36} r={34} fill={Colors.semantic.danger} opacity={0.12} />
+              <Circle cx={36} cy={36} r={34} stroke={Colors.semantic.danger} strokeWidth={2.5} fill="none" />
+              <Path
+                d="M26 26 L46 46 M46 26 L26 46"
+                stroke={Colors.semantic.danger}
+                strokeWidth={4}
+                strokeLinecap="round"
+                fill="none"
+              />
+            </Svg>
+          )}
         </Animated.View>
       </View>
 
@@ -436,7 +464,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  checkOverlay: {
+  feedbackOverlay: {
     position: "absolute",
     top: 0,
     left: 0,
