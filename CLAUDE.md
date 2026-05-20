@@ -45,6 +45,22 @@ pnpm start / pnpm ios / pnpm android / pnpm generate
 - View/Text/style={styles.xxx}. div/span/className 없음.
 - 탭바: 커스텀 BottomTabBar.tsx. DevTools: 시뮬레이터 기준.
 
+## 공통 컴포넌트
+
+새 화면을 만들 때 아래 컴포넌트를 먼저 확인한다. 인라인으로 중복 구현하지 않는다.
+2곳 이상에서 동일한 UI가 쓰이면 공통 컴포넌트로 분리한다. 기준: "이 컴포넌트가 바뀔 때 다른 곳도 같이 바뀌어야 하는가?" — 그렇다면 공통화.
+
+| 컴포넌트 | 위치 | 용도 |
+|----------|------|------|
+| AppHeader | components/common/AppHeader.tsx | 메인 탭 화면 헤더 (로고 + 설정) |
+| ScreenHeader | components/common/ScreenHeader.tsx | 서브 화면 헤더 (뒤로가기 + 타이틀 + 우측 슬롯) |
+| AlertDialog | components/common/AlertDialog.tsx | 알림 다이얼로그 |
+| ConfirmDialog | components/common/ConfirmDialog.tsx | 확인/취소 다이얼로그 |
+| LearningStatusChip | components/common/LearningStatusChip.tsx | 학습 상태 칩 |
+| EllipsisDropdownMenu | components/common/EllipsisDropdownMenu.tsx | 더보기(⋯) 드롭다운 |
+| WordbookSelectModal | components/common/WordbookSelectModal.tsx | 단어장 선택 바텀시트 |
+| BottomTabBar | components/common/BottomTabBar.tsx | 커스텀 탭바 |
+
 ## 컨벤션
 
 ### 패키지·스타일
