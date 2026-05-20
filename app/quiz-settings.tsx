@@ -1,14 +1,18 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useGenerateQuiz } from "@/api/generated/wordbooks/wordbooks";
 import { useGetWordbookSummary } from "@/api/generated/wordbooks/wordbooks";
-import { useGetSummary } from "@/api/generated/wrong-quiz/wrong-quiz";
+import { useGenerateQuiz1, useGetSummary } from "@/api/generated/wrong-quiz/wrong-quiz";
+import { QuizGenerateRequestMode, WrongQuizGenerateRequestMode } from "@/api/generated/pickcaAPI.schemas";
 import { Button } from "@/components/common/Button";
+import { LoadingProgressBar } from "@/components/common/LoadingProgressBar";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
+import { setQuizQuestions } from "@/lib/quizStore";
 
 const LEARNING_STATUS_OPTIONS = [
   { key: "NOT_STARTED", label: "학습 전" },
@@ -81,6 +85,10 @@ export default function QuizSettingsScreen() {
 
   const resolvedCount = selectedCount === "ALL" ? filteredWordCount : selectedCount;
 
+  const generateQuiz = useGenerateQuiz();
+  const generateWrongQuiz = useGenerateQuiz1();
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const toggleStatus = (key: LearningStatusKey) => {
     setSelectedStatuses((prev) => {
       const next = new Set(prev);
@@ -96,25 +104,59 @@ export default function QuizSettingsScreen() {
   };
 
   const handleStart = () => {
+    if (isGenerating) return;
+    setIsGenerating(true);
+
+    const navigateToQuiz = (params: Record<string, string>) => {
+      router.push({ pathname: "/quiz", params });
+    };
+
+    const onError = (error: unknown) => {
+      setIsGenerating(false);
+      if (__DEV__) {
+        Alert.alert("퀴즈 생성 실패", String(error));
+      }
+    };
+
     if (isWrongMode) {
-      router.push({
-        pathname: "/quiz",
-        params: {
-          quizType: "wrong",
-          count: String(resolvedCount),
-          mode: selectedMode,
+      generateWrongQuiz.mutate(
+        {
+          data: {
+            count: resolvedCount,
+            mode: selectedMode as WrongQuizGenerateRequestMode,
+          },
         },
-      });
+        {
+          onSuccess: (response) => {
+            setQuizQuestions(response.data?.questions ?? []);
+            setIsGenerating(false);
+            navigateToQuiz({ quizType: "wrong" });
+          },
+          onError,
+        }
+      );
     } else {
-      router.push({
-        pathname: "/quiz",
-        params: {
-          wordbookId,
-          statuses: Array.from(selectedStatuses).join(","),
-          count: String(resolvedCount),
-          mode: selectedMode,
+      generateQuiz.mutate(
+        {
+          wordbookId: Number(wordbookId),
+          data: {
+            statuses: Array.from(selectedStatuses).join(",").split(","),
+            count: resolvedCount,
+            mode: selectedMode as QuizGenerateRequestMode,
+          },
         },
-      });
+        {
+          onSuccess: (response) => {
+            setQuizQuestions(response.data?.questions ?? []);
+            setIsGenerating(false);
+            navigateToQuiz({
+              wordbookId: wordbookId!,
+              quizType: "normal",
+            });
+          },
+          onError,
+        }
+      );
     }
   };
 
@@ -142,6 +184,7 @@ export default function QuizSettingsScreen() {
           </Pressable>
         }
       />
+      <LoadingProgressBar visible={isGenerating} />
 
       <ScrollView
         style={styles.scrollView}
@@ -281,7 +324,7 @@ export default function QuizSettingsScreen() {
 
       {/* 시작하기 버튼 */}
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-        <Button label="시작하기" onPress={handleStart} disabled={resolvedCount === 0} />
+        <Button label={isGenerating ? "준비 중..." : "시작하기"} onPress={handleStart} disabled={resolvedCount === 0 || isGenerating} />
       </View>
     </View>
   );
