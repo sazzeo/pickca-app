@@ -5,11 +5,15 @@ import { Text } from "react-native-paper";
 import Animated, {
   Easing,
   useAnimatedProps,
+  useAnimatedStyle,
   useSharedValue,
+  withDelay,
+  withSequence,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Circle } from "react-native-svg";
+import Svg, { Circle, Path } from "react-native-svg";
 
 import {
   useGenerateQuiz,
@@ -62,6 +66,14 @@ export default function QuizScreen() {
   const timerAnimProgress = useSharedValue(0);
   const animatedCircleProps = useAnimatedProps(() => ({
     strokeDashoffset: timerAnimProgress.value,
+  }));
+
+  // 정답 체크마크 애니메이션
+  const checkOpacity = useSharedValue(0);
+  const checkScale = useSharedValue(0);
+  const checkAnimStyle = useAnimatedStyle(() => ({
+    opacity: checkOpacity.value,
+    transform: [{ scale: checkScale.value }],
   }));
 
   const generateQuiz = useGenerateQuiz();
@@ -184,6 +196,17 @@ export default function QuizScreen() {
     setIsAnswered(true);
     setIsCurrentCorrect(isCorrect);
 
+    if (isCorrect) {
+      checkOpacity.value = withSequence(
+        withTiming(1, { duration: 150 }),
+        withDelay(400, withTiming(0, { duration: 300 })),
+      );
+      checkScale.value = withSequence(
+        withSpring(1.15, { damping: 12, stiffness: 200 }),
+        withSpring(1, { damping: 15, stiffness: 200 }),
+      );
+    }
+
     // 재시도 문제는 API 미호출 (첫 번째 답만 기록)
     if (!currentQuestion.isRetry) {
       recordResult.mutate({
@@ -213,6 +236,8 @@ export default function QuizScreen() {
     setIsAnswered(false);
     setIsCurrentCorrect(false);
     setTimeLeft(TIME_LIMIT);
+    checkOpacity.value = 0;
+    checkScale.value = 0;
   };
 
   const getOptionStyle = (option: string) => {
@@ -284,8 +309,24 @@ export default function QuizScreen() {
       </View>
 
       {/* 문제 카드 */}
-      <View style={styles.questionCard}>
-        <Text style={styles.questionText}>{currentQuestion.question}</Text>
+      <View style={styles.questionCardWrapper}>
+        <View style={styles.questionCard}>
+          <Text style={styles.questionText}>{currentQuestion.question}</Text>
+        </View>
+        <Animated.View style={[styles.checkOverlay, checkAnimStyle]} pointerEvents="none">
+          <Svg width={72} height={72} viewBox="0 0 72 72">
+            <Circle cx={36} cy={36} r={34} fill={Colors.brand.green} opacity={0.12} />
+            <Circle cx={36} cy={36} r={34} stroke={Colors.brand.green} strokeWidth={2.5} fill="none" />
+            <Path
+              d="M22 36 L32 46 L50 26"
+              stroke={Colors.brand.green}
+              strokeWidth={4}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+          </Svg>
+        </Animated.View>
       </View>
 
       {/* 안내 + 타이머 */}
@@ -383,13 +424,24 @@ const styles = StyleSheet.create({
   },
 
   // 문제 카드
-  questionCard: {
+  questionCardWrapper: {
     marginHorizontal: 20,
     marginTop: 24,
+  },
+  questionCard: {
     paddingVertical: 48,
     paddingHorizontal: 24,
     backgroundColor: Colors.bg.default,
     borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     alignItems: "center",
     justifyContent: "center",
   },
