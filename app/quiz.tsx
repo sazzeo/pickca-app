@@ -329,26 +329,26 @@ export default function QuizScreen() {
         </View>
         <Animated.View style={[styles.feedbackOverlay, feedbackAnimStyle]} pointerEvents="none">
           {feedbackType === "correct" ? (
-            <Svg width={72} height={72} viewBox="0 0 72 72">
+            <Svg width={44} height={44} viewBox="0 0 72 72">
               <Circle cx={36} cy={36} r={34} fill={Colors.brand.green} opacity={0.12} />
-              <Circle cx={36} cy={36} r={34} stroke={Colors.brand.green} strokeWidth={2.5} fill="none" />
+              <Circle cx={36} cy={36} r={34} stroke={Colors.brand.green} strokeWidth={3} fill="none" />
               <Path
                 d="M22 36 L32 46 L50 26"
                 stroke={Colors.brand.green}
-                strokeWidth={4}
+                strokeWidth={5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
               />
             </Svg>
           ) : (
-            <Svg width={72} height={72} viewBox="0 0 72 72">
+            <Svg width={44} height={44} viewBox="0 0 72 72">
               <Circle cx={36} cy={36} r={34} fill={Colors.semantic.danger} opacity={0.12} />
-              <Circle cx={36} cy={36} r={34} stroke={Colors.semantic.danger} strokeWidth={2.5} fill="none" />
+              <Circle cx={36} cy={36} r={34} stroke={Colors.semantic.danger} strokeWidth={3} fill="none" />
               <Path
                 d="M26 26 L46 46 M46 26 L26 46"
                 stroke={Colors.semantic.danger}
-                strokeWidth={4}
+                strokeWidth={5}
                 strokeLinecap="round"
                 fill="none"
               />
@@ -466,12 +466,8 @@ const styles = StyleSheet.create({
   },
   feedbackOverlay: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: "center",
-    justifyContent: "center",
+    top: 10,
+    right: 10,
   },
   questionText: {
     fontSize: 24,
