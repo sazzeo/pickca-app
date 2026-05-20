@@ -15,12 +15,16 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Path } from "react-native-svg";
 
-import { useRecordQuizResult } from "@/api/generated/wordbooks/wordbooks";
-import { Question } from "@/api/generated/pickcaAPI.schemas";
+import {
+  useGenerateQuiz,
+  useRecordQuizResult,
+} from "@/api/generated/wordbooks/wordbooks";
+import { useGenerateQuiz1 } from "@/api/generated/wrong-quiz/wrong-quiz";
+import { Question, QuizGenerateRequestMode, WrongQuizGenerateRequestMode, WrongQuizQuestion } from "@/api/generated/pickcaAPI.schemas";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
+import { Skeleton } from "@/components/common/Skeleton";
 import { Colors } from "@/lib/colors";
-import { clearQuizQuestions, getQuizQuestions } from "@/lib/quizStore";
 
 interface QuizQuestion extends Question {
   isRetry?: boolean;
@@ -37,14 +41,18 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function QuizScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId, quizType } = useLocalSearchParams<{
+  const { wordbookId, statuses, count, mode, quizType } = useLocalSearchParams<{
     wordbookId?: string;
+    statuses?: string;
+    count: string;
+    mode: string;
     quizType?: string;
   }>();
 
   const isWrongMode = quizType === "wrong";
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -72,6 +80,8 @@ export default function QuizScreen() {
     transform: [{ scale: feedbackScale.value }],
   }));
 
+  const generateQuiz = useGenerateQuiz();
+  const generateWrongQuiz = useGenerateQuiz1();
   const recordResult = useRecordQuizResult();
 
   // ref 동기화
@@ -86,20 +96,70 @@ export default function QuizScreen() {
     [wordbookId]
   );
 
-  // 화면 포커스 시 store에서 questions 로드 + 상태 리셋
+  // 화면 포커스 시 전체 상태 리셋 + 퀴즈 새로 생성
   useFocusEffect(
     useCallback(() => {
-      const q = getQuizQuestions() as QuizQuestion[];
-      setQuestions(q);
-      setOriginalTotal(q.length);
+      setQuestions([]);
+      setIsLoaded(false);
       setCurrentIndex(0);
       setSelectedOption(null);
       setIsAnswered(false);
       setIsCurrentCorrect(false);
       setCorrectCount(0);
+      setOriginalTotal(0);
       setTimeLeft(TIME_LIMIT);
-      clearQuizQuestions();
-    }, [])
+
+      if (isWrongMode) {
+        generateWrongQuiz.mutate(
+          {
+            data: {
+              count: Number(count) || 20,
+              mode: (mode as WrongQuizGenerateRequestMode) ?? "MIXED",
+            },
+          },
+          {
+            onSuccess: (response) => {
+              const wrongQuestions = response.data?.questions ?? [];
+              const mapped: QuizQuestion[] = wrongQuestions.map((q: WrongQuizQuestion) => ({
+                wordId: q.wordId,
+                question: q.question,
+                answer: q.answer,
+                options: q.options,
+                wordbookId: q.wordbookId,
+              }));
+              setQuestions(mapped);
+              setOriginalTotal(mapped.length);
+              setIsLoaded(true);
+            },
+            onError: () => {
+              setIsLoaded(true);
+            },
+          }
+        );
+      } else {
+        generateQuiz.mutate(
+          {
+            wordbookId: Number(wordbookId),
+            data: {
+              statuses: statuses?.split(",") ?? [],
+              count: Number(count) || 10,
+              mode: (mode as QuizGenerateRequestMode) ?? "MIXED",
+            },
+          },
+          {
+            onSuccess: (response) => {
+              const q = response.data?.questions ?? [];
+              setQuestions(q);
+              setOriginalTotal(q.length);
+              setIsLoaded(true);
+            },
+            onError: () => {
+              setIsLoaded(true);
+            },
+          }
+        );
+      }
+    }, [isWrongMode, wordbookId, statuses, count, mode])
   );
 
   const currentQuestion = questions[currentIndex];
@@ -251,6 +311,43 @@ export default function QuizScreen() {
   };
 
 
+  // 스켈레톤 로딩
+  if (!isLoaded) {
+    return (
+      <View style={styles.container}>
+        <ScreenHeader title="단어 퀴즈" />
+        <View style={styles.progressBarContainer}>
+          <View style={styles.progressBar} />
+        </View>
+        <View style={styles.content}>
+          {/* 문제 카드 스켈레톤 */}
+          <View style={styles.questionCardWrapper}>
+            <View style={styles.questionCard}>
+              <Skeleton width="60%" height={28} borderRadius={6} />
+            </View>
+          </View>
+          {/* 안내 영역 스켈레톤 */}
+          <View style={[styles.guideRow, { marginTop: 24, marginBottom: 16 }]}>
+            <Skeleton width={100} height={16} borderRadius={4} />
+            <Skeleton width={TIMER_SIZE} height={TIMER_SIZE} borderRadius={TIMER_SIZE / 2} />
+          </View>
+          {/* 선택지 스켈레톤 */}
+          <View style={styles.optionsContainer}>
+            {[0, 1, 2, 3].map((i) => (
+              <View key={i} style={styles.option}>
+                <Skeleton width={20} height={16} borderRadius={4} />
+                <Skeleton width="70%" height={16} borderRadius={4} />
+              </View>
+            ))}
+          </View>
+        </View>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+          <Button label="다음" onPress={() => {}} disabled />
+        </View>
+      </View>
+    );
+  }
+
   // 문제 없음
   if (questions.length === 0) {
     return (
@@ -284,6 +381,8 @@ export default function QuizScreen() {
         <View style={[styles.progressBar, { width: `${progressWidth}%` }]} />
       </View>
 
+      {/* 콘텐츠 영역 */}
+      <View style={styles.content}>
       {/* 문제 카드 */}
       <View style={styles.questionCardWrapper}>
         <View style={styles.questionCard}>
@@ -371,6 +470,8 @@ export default function QuizScreen() {
             </Text>
           </Pressable>
         ))}
+      </View>
+
       </View>
 
       {/* 다음 버튼 */}
@@ -553,10 +654,14 @@ const styles = StyleSheet.create({
     color: Colors.semantic.danger,
   },
 
+  // 콘텐츠 영역
+  content: {
+    flex: 1,
+    justifyContent: "center",
+  },
+
   // 하단 버튼
   footer: {
-    flex: 1,
-    justifyContent: "flex-end",
     paddingHorizontal: 20,
     paddingTop: 12,
   },
