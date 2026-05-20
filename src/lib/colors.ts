@@ -6,6 +6,8 @@ export const Colors = {
     greenDark: "#3A6218",
     greenLight: "#7BA05B",
     greenMid: "#C8DDA8",
+    /** 프라이머리 라이트 — 정답 배경 등 */
+    greenLight2: "#E6EDDB",
     /** 입력 카드·업로드 버튼 등 연한 그린 서페이스 */
     greenSurface: "#DDE6D1",
   },
