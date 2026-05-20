@@ -1,6 +1,6 @@
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import Animated, {
   Easing,
@@ -15,15 +15,12 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Path } from "react-native-svg";
 
-import {
-  useGenerateQuiz,
-  useRecordQuizResult,
-} from "@/api/generated/wordbooks/wordbooks";
-import { useGenerateQuiz1 } from "@/api/generated/wrong-quiz/wrong-quiz";
-import { Question, QuizGenerateRequestMode, WrongQuizGenerateRequestMode, WrongQuizQuestion } from "@/api/generated/pickcaAPI.schemas";
+import { useRecordQuizResult } from "@/api/generated/wordbooks/wordbooks";
+import { Question } from "@/api/generated/pickcaAPI.schemas";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
+import { clearQuizQuestions, getQuizQuestions } from "@/lib/quizStore";
 
 interface QuizQuestion extends Question {
   isRetry?: boolean;
@@ -40,18 +37,14 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function QuizScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId, statuses, count, mode, quizType } = useLocalSearchParams<{
+  const { wordbookId, quizType } = useLocalSearchParams<{
     wordbookId?: string;
-    statuses?: string;
-    count: string;
-    mode: string;
     quizType?: string;
   }>();
 
   const isWrongMode = quizType === "wrong";
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -79,8 +72,6 @@ export default function QuizScreen() {
     transform: [{ scale: feedbackScale.value }],
   }));
 
-  const generateQuiz = useGenerateQuiz();
-  const generateWrongQuiz = useGenerateQuiz1();
   const recordResult = useRecordQuizResult();
 
   // ref 동기화
@@ -95,76 +86,20 @@ export default function QuizScreen() {
     [wordbookId]
   );
 
-  // 화면 포커스 시 전체 상태 리셋 + 퀴즈 새로 생성
+  // 화면 포커스 시 store에서 questions 로드 + 상태 리셋
   useFocusEffect(
     useCallback(() => {
-      setQuestions([]);
-      setIsLoaded(false);
+      const q = getQuizQuestions() as QuizQuestion[];
+      setQuestions(q);
+      setOriginalTotal(q.length);
       setCurrentIndex(0);
       setSelectedOption(null);
       setIsAnswered(false);
       setIsCurrentCorrect(false);
       setCorrectCount(0);
-      setOriginalTotal(0);
       setTimeLeft(TIME_LIMIT);
-
-      if (isWrongMode) {
-        generateWrongQuiz.mutate(
-          {
-            data: {
-              count: Number(count) || 20,
-              mode: (mode as WrongQuizGenerateRequestMode) ?? "MIXED",
-            },
-          },
-          {
-            onSuccess: (response) => {
-              const wrongQuestions = response.data?.questions ?? [];
-              const mapped: QuizQuestion[] = wrongQuestions.map((q: WrongQuizQuestion) => ({
-                wordId: q.wordId,
-                question: q.question,
-                answer: q.answer,
-                options: q.options,
-                wordbookId: q.wordbookId,
-              }));
-              setQuestions(mapped);
-              setOriginalTotal(mapped.length);
-              setIsLoaded(true);
-            },
-            onError: (error) => {
-              setIsLoaded(true);
-              if (__DEV__) {
-                Alert.alert("퀴즈 로드 실패", String(error));
-              }
-            },
-          }
-        );
-      } else {
-        generateQuiz.mutate(
-          {
-            wordbookId: Number(wordbookId),
-            data: {
-              statuses: statuses?.split(",") ?? [],
-              count: Number(count) || 10,
-              mode: (mode as QuizGenerateRequestMode) ?? "MIXED",
-            },
-          },
-          {
-            onSuccess: (response) => {
-              const q = response.data?.questions ?? [];
-              setQuestions(q);
-              setOriginalTotal(q.length);
-              setIsLoaded(true);
-            },
-            onError: (error) => {
-              setIsLoaded(true);
-              if (__DEV__) {
-                Alert.alert("퀴즈 로드 실패", String(error));
-              }
-            },
-          }
-        );
-      }
-    }, [isWrongMode, wordbookId, statuses, count, mode])
+      clearQuizQuestions();
+    }, [])
   );
 
   const currentQuestion = questions[currentIndex];
@@ -315,25 +250,14 @@ export default function QuizScreen() {
     return styles.optionLabel;
   };
 
-  // 로딩 상태
-  if (!isLoaded) {
-    return (
-      <View style={styles.container}>
-        <ScreenHeader title="단어 퀴즈" />
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>퀴즈를 준비하고 있어요...</Text>
-        </View>
-      </View>
-    );
-  }
 
   // 문제 없음
   if (questions.length === 0) {
     return (
       <View style={styles.container}>
         <ScreenHeader title="단어 퀴즈" />
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>출제할 단어가 없어요.</Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>출제할 단어가 없어요.</Text>
         </View>
       </View>
     );
@@ -637,13 +561,13 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
 
-  // 로딩
-  loadingContainer: {
+  // 빈 상태
+  emptyContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  loadingText: {
+  emptyText: {
     fontSize: 16,
     color: Colors.text.secondary,
   },
