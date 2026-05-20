@@ -1,4 +1,3 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
@@ -17,6 +16,7 @@ import {
   useRecordQuizResult,
 } from "@/api/generated/wordbooks/wordbooks";
 import { Question, QuizGenerateRequestMode } from "@/api/generated/pickcaAPI.schemas";
+import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
 
 type QuizQuestion = Question & { isRetry?: boolean };
@@ -221,20 +221,7 @@ export default function QuizScreen() {
   if (!isLoaded) {
     return (
       <View style={styles.container}>
-        <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-          <Pressable
-            style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel="뒤로"
-            hitSlop={12}
-          >
-            <MaterialCommunityIcons name="chevron-left" size={24} color={Colors.text.primary} />
-            <Text style={styles.backText}>뒤로</Text>
-          </Pressable>
-          <Text style={styles.headerTitle}>단어 퀴즈</Text>
-          <View style={styles.headerRight} />
-        </View>
+        <ScreenHeader title="단어 퀴즈" />
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>퀴즈를 준비하고 있어요...</Text>
         </View>
@@ -246,20 +233,7 @@ export default function QuizScreen() {
   if (questions.length === 0) {
     return (
       <View style={styles.container}>
-        <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-          <Pressable
-            style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel="뒤로"
-            hitSlop={12}
-          >
-            <MaterialCommunityIcons name="chevron-left" size={24} color={Colors.text.primary} />
-            <Text style={styles.backText}>뒤로</Text>
-          </Pressable>
-          <Text style={styles.headerTitle}>단어 퀴즈</Text>
-          <View style={styles.headerRight} />
-        </View>
+        <ScreenHeader title="단어 퀴즈" />
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>출제할 단어가 없어요.</Text>
         </View>
@@ -274,22 +248,14 @@ export default function QuizScreen() {
   return (
     <View style={styles.container}>
       {/* 헤더 */}
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-        <Pressable
-          style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel="뒤로"
-          hitSlop={12}
-        >
-          <MaterialCommunityIcons name="chevron-left" size={24} color={Colors.text.primary} />
-          <Text style={styles.backText}>뒤로</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>단어 퀴즈</Text>
-        <Text style={styles.headerCount}>
-          {correctCount} / {originalTotal}
-        </Text>
-      </View>
+      <ScreenHeader
+        title="단어 퀴즈"
+        right={
+          <Text style={styles.headerCount}>
+            {correctCount} / {originalTotal}
+          </Text>
+        }
+      />
 
       {/* 프로그레스 바 */}
       <View style={styles.progressBarContainer}>
@@ -382,37 +348,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.bg.white,
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: Colors.bg.white,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-    minWidth: 60,
-  },
-  backText: {
-    fontSize: 15,
-    color: Colors.text.primary,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.text.primary,
-  },
   headerCount: {
     fontSize: 15,
     color: Colors.text.secondary,
     minWidth: 60,
     textAlign: "right",
-  },
-  headerRight: {
-    minWidth: 60,
   },
   pressed: {
     opacity: 0.85,

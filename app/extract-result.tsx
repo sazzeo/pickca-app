@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { getWords1 } from "@/api/generated/word/word";
 import { AlertDialog } from "@/components/common/AlertDialog";
+import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { WordbookSelectModal } from "@/components/common/WordbookSelectModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { mapWord } from "@/lib/wordExtraction";
@@ -204,38 +205,24 @@ export default function ExtractResultScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-        <Pressable
-          onPress={() => router.back()}
-          style={styles.backButton}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel="뒤로 가기"
-        >
-          <MaterialCommunityIcons name="chevron-left" size={22} color={Colors.text.secondary} />
-          <Text style={styles.backLabel}>뒤로</Text>
-        </Pressable>
-
-        <View style={styles.headerTitleWrapper} pointerEvents="none">
-          <Text style={styles.headerTitle} numberOfLines={1}>
-            추출 결과
-          </Text>
-        </View>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.selectAllButton,
-            pressed && styles.selectAllButtonPressed,
-          ]}
-          onPress={() => {
-            /* TODO: 전체 선택 기능 구현 */
-          }}
-          accessibilityRole="button"
-          accessibilityLabel="전체 선택"
-        >
-          <Text style={styles.selectAllLabel}>전체 선택</Text>
-        </Pressable>
-      </View>
+      <ScreenHeader
+        title="추출 결과"
+        right={
+          <Pressable
+            style={({ pressed }) => [
+              styles.selectAllButton,
+              pressed && styles.selectAllButtonPressed,
+            ]}
+            onPress={() => {
+              /* TODO: 전체 선택 기능 구현 */
+            }}
+            accessibilityRole="button"
+            accessibilityLabel="전체 선택"
+          >
+            <Text style={styles.selectAllLabel}>전체 선택</Text>
+          </Pressable>
+        }
+      />
 
       <View style={styles.body}>
         <View style={styles.topFixed}>
@@ -389,41 +376,6 @@ const styles = StyleSheet.create({
   loadingContainer: {
     alignItems: "center",
     justifyContent: "center",
-  },
-  header: {
-    position: "relative",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-    minHeight: 44,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    zIndex: 1,
-    gap: 2,
-    paddingVertical: 4,
-    paddingHorizontal: 4,
-  },
-  backLabel: {
-    fontSize: 15,
-    fontWeight: "500",
-    color: Colors.text.secondary,
-  },
-  headerTitleWrapper: {
-    position: "absolute",
-    left: 72,
-    right: 72,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.text.primary,
-    textAlign: "center",
   },
   selectAllButton: {
     zIndex: 1,

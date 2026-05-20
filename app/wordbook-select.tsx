@@ -14,6 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { Item } from "@/api/generated/pickcaAPI.schemas";
 import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
+import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { WordbookSelectCard } from "@/components/wordbook/WordbookSelectCard";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
@@ -50,20 +51,7 @@ export default function WordbookSelectScreen() {
   return (
     <View style={styles.container}>
       {/* 헤더 */}
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-        <Pressable
-          style={({ pressed }) => [styles.backButton, pressed && styles.backButtonPressed]}
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel="뒤로"
-          hitSlop={12}
-        >
-          <MaterialCommunityIcons name="chevron-left" size={24} color={Colors.text.primary} />
-          <Text style={styles.backText}>뒤로</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>단어장 선택</Text>
-        <View style={styles.headerSpacer} />
-      </View>
+      <ScreenHeader title="단어장 선택" showBorder />
 
       <ScrollView
         style={styles.scrollView}
@@ -142,36 +130,6 @@ export default function WordbookSelectScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: Colors.bg.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  backButtonPressed: {
-    opacity: 0.85,
-  },
-  backText: {
-    fontSize: 15,
-    color: Colors.text.primary,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.text.primary,
-  },
-  headerSpacer: {
-    width: 52,
   },
   scrollView: {
     flex: 1,

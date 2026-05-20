@@ -1,4 +1,3 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
@@ -6,6 +5,7 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWordbookSummary } from "@/api/generated/wordbooks/wordbooks";
+import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
 
 const LEARNING_STATUS_OPTIONS = [
@@ -103,28 +103,21 @@ export default function QuizSettingsScreen() {
   return (
     <View style={styles.container}>
       {/* 헤더 */}
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-        <Pressable
-          style={({ pressed }) => [styles.backButton, pressed && styles.backButtonPressed]}
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel="뒤로"
-          hitSlop={12}
-        >
-          <MaterialCommunityIcons name="chevron-left" size={24} color={Colors.text.primary} />
-          <Text style={styles.backText}>뒤로</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>퀴즈 설정</Text>
-        <Pressable
-          style={({ pressed }) => [styles.resetButton, pressed && styles.resetButtonPressed]}
-          onPress={handleReset}
-          accessibilityRole="button"
-          accessibilityLabel="초기화"
-          hitSlop={12}
-        >
-          <Text style={styles.resetText}>초기화</Text>
-        </Pressable>
-      </View>
+      <ScreenHeader
+        title="퀴즈 설정"
+        showBorder
+        right={
+          <Pressable
+            style={({ pressed }) => [styles.resetButton, pressed && styles.resetButtonPressed]}
+            onPress={handleReset}
+            accessibilityRole="button"
+            accessibilityLabel="초기화"
+            hitSlop={12}
+          >
+            <Text style={styles.resetText}>초기화</Text>
+          </Pressable>
+        }
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -280,33 +273,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.bg.white,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: Colors.bg.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  backButtonPressed: {
-    opacity: 0.85,
-  },
-  backText: {
-    fontSize: 15,
-    color: Colors.text.primary,
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.text.primary,
   },
   resetButton: {
     paddingHorizontal: 4,

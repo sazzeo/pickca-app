@@ -18,6 +18,7 @@ import type {
   GetWordsLearningStatus,
   WordbookWordResponse,
 } from "@/api/generated/pickcaAPI.schemas";
+import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { WordCard, type WordCardItem } from "@/components/study/WordCard";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
@@ -172,7 +173,19 @@ export default function WordCardScreen() {
   if (isPending) {
     return (
       <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <Header onBack={() => router.back()} />
+        <ScreenHeader
+          title="단어 카드"
+          right={
+            <Pressable
+              style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
+              onPress={() => {}}
+              accessibilityRole="button"
+              accessibilityLabel="설정"
+            >
+              <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
+            </Pressable>
+          }
+        />
         <View style={styles.emptyState}>
           <ActivityIndicator size="large" color={Colors.brand.green} />
         </View>
@@ -183,7 +196,19 @@ export default function WordCardScreen() {
   if (isError) {
     return (
       <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <Header onBack={() => router.back()} />
+        <ScreenHeader
+          title="단어 카드"
+          right={
+            <Pressable
+              style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
+              onPress={() => {}}
+              accessibilityRole="button"
+              accessibilityLabel="설정"
+            >
+              <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
+            </Pressable>
+          }
+        />
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>단어를 불러오지 못했어요.</Text>
           <Pressable
@@ -202,7 +227,19 @@ export default function WordCardScreen() {
   if (total === 0) {
     return (
       <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <Header onBack={() => router.back()} />
+        <ScreenHeader
+          title="단어 카드"
+          right={
+            <Pressable
+              style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
+              onPress={() => {}}
+              accessibilityRole="button"
+              accessibilityLabel="설정"
+            >
+              <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
+            </Pressable>
+          }
+        />
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>표시할 단어가 없어요.</Text>
         </View>
@@ -212,7 +249,19 @@ export default function WordCardScreen() {
 
   return (
     <View style={[styles.screen, { paddingTop: insets.top }]}>
-      <Header onBack={() => router.back()} />
+      <ScreenHeader
+        title="단어 카드"
+        right={
+          <Pressable
+            style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
+            onPress={() => {}}
+            accessibilityRole="button"
+            accessibilityLabel="설정"
+          >
+            <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
+          </Pressable>
+        }
+      />
 
       {/* 진행률 바 */}
       <View style={styles.progressRow}>
@@ -250,34 +299,6 @@ export default function WordCardScreen() {
   );
 }
 
-// 헤더 분리 (불필요한 리렌더 방지)
-function Header({ onBack }: { onBack: () => void }) {
-  return (
-    <View style={styles.header}>
-      <Pressable
-        style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}
-        onPress={onBack}
-        accessibilityRole="button"
-        accessibilityLabel="뒤로"
-        hitSlop={8}
-      >
-        <MaterialCommunityIcons name="chevron-left" size={22} color={Colors.text.primary} />
-        <Text style={styles.backLabel}>뒤로</Text>
-      </Pressable>
-
-      <Text style={styles.title}>단어 카드</Text>
-
-      <Pressable
-        style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
-        onPress={() => {}}
-        accessibilityRole="button"
-        accessibilityLabel="설정"
-      >
-        <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
-      </Pressable>
-    </View>
-  );
-}
 
 const styles = StyleSheet.create({
   screen: {
@@ -286,31 +307,6 @@ const styles = StyleSheet.create({
   },
 
   // 헤더
-  header: {
-    height: 52,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    backgroundColor: Colors.bg.white,
-  },
-  backBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-    paddingVertical: 6,
-    paddingHorizontal: 4,
-  },
-  backLabel: {
-    fontSize: 15,
-    color: Colors.text.primary,
-    fontWeight: "500",
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.text.primary,
-  },
   settingsBtn: {
     width: 36,
     height: 36,

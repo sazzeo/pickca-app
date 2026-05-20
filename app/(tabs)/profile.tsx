@@ -4,17 +4,16 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useUpdateNickname } from "@/api/generated/member/member";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 
 const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
 
 export default function ProfileScreen() {
-  const insets = useSafeAreaInsets();
   const { user, updateUser, signOut } = useAuth();
 
   const [isNicknameDialogVisible, setIsNicknameDialogVisible] = useState(false);
@@ -49,22 +48,9 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={styles.container}>
       {/* 헤더 */}
-      <View style={styles.header}>
-        <Pressable
-          style={({ pressed }) => [styles.backButton, pressed && styles.pressed]}
-          onPress={() => router.back()}
-          hitSlop={12}
-          accessibilityRole="button"
-          accessibilityLabel="뒤로"
-        >
-          <MaterialCommunityIcons name="chevron-left" size={20} color={Colors.text.secondary} />
-          <Text style={styles.backText}>뒤로</Text>
-        </Pressable>
-        <Text style={styles.headerTitle}>설정</Text>
-        <View style={styles.headerSpacer} />
-      </View>
+      <ScreenHeader title="설정" />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* 프로필 */}
@@ -180,37 +166,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    height: 48,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    backgroundColor: Colors.bg.white,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-    minWidth: 60,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-  backText: {
-    fontSize: 14,
-    color: Colors.text.secondary,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.text.primary,
-  },
-  headerSpacer: {
-    minWidth: 60,
   },
   scrollView: {
     flex: 1,

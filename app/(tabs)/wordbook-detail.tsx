@@ -12,6 +12,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { LearningStatusChip } from "@/components/common/LearningStatusChip";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
+import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
@@ -167,21 +168,10 @@ export default function WordbookDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
-        <Pressable
-          style={({ pressed }) => [styles.backButton, pressed && styles.backButtonPressed]}
-          onPress={() => router.navigate("/(tabs)/wordbook")}
-          accessibilityRole="button"
-          accessibilityLabel="뒤로"
-        >
-          <MaterialCommunityIcons name="chevron-left" size={22} color={Colors.text.secondary} />
-          <Text style={styles.backText}>뒤로</Text>
-        </Pressable>
-
-        <Text style={styles.headerTitle}>단어 카드</Text>
-
-        <View style={styles.headerRight} />
-      </View>
+      <ScreenHeader
+        title="단어 카드"
+        onBack={() => router.navigate("/(tabs)/wordbook")}
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -451,36 +441,6 @@ export default function WordbookDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  header: {
-    height: 56,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: Colors.bg.white,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-    width: 72,
-  },
-  backButtonPressed: {
-    opacity: 0.8,
-  },
-  backText: {
-    fontSize: 16,
-    color: Colors.text.secondary,
-    fontWeight: "500",
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "700",
-    color: Colors.text.primary,
-  },
-  headerRight: {
-    width: 72,
   },
   sourceButton: {
     height: 32,
