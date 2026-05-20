@@ -7,7 +7,7 @@ import { Colors } from "@/lib/colors";
 const LEARNING_STATUS_LABEL: Record<WordbookWordResponseLearningStatus, string> = {
   NOT_STARTED: "학습 전",
   LEARNING: "학습 중",
-  MEMORIZED: "외웠음",
+  MEMORIZED: "외움",
   RELEARNING: "재학습 중",
 };
 
