@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 17,
     borderRadius: 12,
-    backgroundColor: Colors.brand.greenSurface,
+    backgroundColor: Colors.brand.greenLight2,
   },
   optionWrong: {
     flexDirection: "row",
