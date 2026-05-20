@@ -61,6 +61,7 @@ export default function QuizScreen() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const isAnsweredRef = useRef(false);
   const currentIndexRef = useRef(0);
+  const autoAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 부드러운 원형 프로그레스 애니메이션
   const timerAnimProgress = useSharedValue(0);
@@ -197,6 +198,33 @@ export default function QuizScreen() {
     return () => stopTimer();
   }, [currentIndex, questions, isAnswered]);
 
+  const handleNext = () => {
+    if (autoAdvanceRef.current) {
+      clearTimeout(autoAdvanceRef.current);
+      autoAdvanceRef.current = null;
+    }
+    if (isCurrentCorrect) {
+      const newCorrectCount = correctCount + 1;
+      setCorrectCount(newCorrectCount);
+      if (newCorrectCount >= originalTotal) {
+        router.back();
+        return;
+      }
+    } else {
+      // 오답: 선택지 셔플 후 큐 맨 뒤에 재배치 (위치 기억 방지 + 재시도 마킹)
+      const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
+      setQuestions((prev) => [...prev, { ...currentQuestion, options: shuffledOptions, isRetry: true }]);
+    }
+
+    setCurrentIndex((prev) => prev + 1);
+    setSelectedOption(null);
+    setIsAnswered(false);
+    setIsCurrentCorrect(false);
+    setTimeLeft(TIME_LIMIT);
+    feedbackOpacity.value = 0;
+    feedbackScale.value = 0;
+  };
+
   const handleSelectOption = (option: string) => {
     if (isAnswered) return;
     stopTimer();
@@ -221,6 +249,11 @@ export default function QuizScreen() {
           withSpring(1, { damping: 15, stiffness: 200 }),
         );
 
+    // 정답이면 애니메이션 후 자동으로 다음 문제
+    if (isCorrect) {
+      autoAdvanceRef.current = setTimeout(() => handleNext(), 850);
+    }
+
     // 재시도 문제는 API 미호출 (첫 번째 답만 기록)
     if (!currentQuestion.isRetry) {
       recordResult.mutate({
@@ -229,29 +262,6 @@ export default function QuizScreen() {
         data: { correct: isCorrect },
       });
     }
-  };
-
-  const handleNext = () => {
-    if (isCurrentCorrect) {
-      const newCorrectCount = correctCount + 1;
-      setCorrectCount(newCorrectCount);
-      if (newCorrectCount >= originalTotal) {
-        router.back();
-        return;
-      }
-    } else {
-      // 오답: 선택지 셔플 후 큐 맨 뒤에 재배치 (위치 기억 방지 + 재시도 마킹)
-      const shuffledOptions = [...currentQuestion.options].sort(() => Math.random() - 0.5);
-      setQuestions((prev) => [...prev, { ...currentQuestion, options: shuffledOptions, isRetry: true }]);
-    }
-
-    setCurrentIndex((prev) => prev + 1);
-    setSelectedOption(null);
-    setIsAnswered(false);
-    setIsCurrentCorrect(false);
-    setTimeLeft(TIME_LIMIT);
-    feedbackOpacity.value = 0;
-    feedbackScale.value = 0;
   };
 
   const getOptionStyle = (option: string) => {
