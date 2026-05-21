@@ -42,7 +42,7 @@ export function ScreenHeader({
         <MaterialCommunityIcons
           name="chevron-left"
           size={24}
-          color={Colors.text.primary}
+          color={Colors.text.secondary}
         />
         <Text style={styles.backText}>뒤로</Text>
       </Pressable>
@@ -77,8 +77,8 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   backText: {
-    fontSize: FontSize.bodyMd,
-    color: Colors.text.primary,
+    fontSize: FontSize.body,
+    color: Colors.text.secondary,
   },
   title: {
     fontSize: FontSize.bodyLg,
