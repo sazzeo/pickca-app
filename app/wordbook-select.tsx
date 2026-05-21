@@ -16,13 +16,10 @@ import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { WordbookSelectCard } from "@/components/wordbook/WordbookSelectCard";
-import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 
 export default function WordbookSelectScreen() {
-  const { user } = useAuth();
   const insets = useSafeAreaInsets();
-  const memberId = user?.memberId ?? 0;
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: wordbooksData, isPending, isError, refetch } = useGetWordbooks();

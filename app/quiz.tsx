@@ -57,6 +57,7 @@ export default function QuizScreen() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCurrentCorrect, setIsCurrentCorrect] = useState(false);
+  const isCurrentCorrectRef = useRef(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [originalTotal, setOriginalTotal] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TIME_LIMIT);
@@ -87,6 +88,7 @@ export default function QuizScreen() {
   // ref 동기화
   isAnsweredRef.current = isAnswered;
   currentIndexRef.current = currentIndex;
+  isCurrentCorrectRef.current = isCurrentCorrect;
 
   // 결과 기록 시 사용할 wordbookId 결정
   const getWordbookIdForQuestion = useCallback(
@@ -99,6 +101,10 @@ export default function QuizScreen() {
   // 화면 포커스 시 전체 상태 리셋 + 퀴즈 새로 생성
   useFocusEffect(
     useCallback(() => {
+      if (autoAdvanceRef.current) {
+        clearTimeout(autoAdvanceRef.current);
+        autoAdvanceRef.current = null;
+      }
       setQuestions([]);
       setIsLoaded(false);
       setCurrentIndex(0);
@@ -159,6 +165,12 @@ export default function QuizScreen() {
           }
         );
       }
+      return () => {
+        if (autoAdvanceRef.current) {
+          clearTimeout(autoAdvanceRef.current);
+          autoAdvanceRef.current = null;
+        }
+      };
     }, [isWrongMode, wordbookId, statuses, count, mode])
   );
 
@@ -226,7 +238,7 @@ export default function QuizScreen() {
       clearTimeout(autoAdvanceRef.current);
       autoAdvanceRef.current = null;
     }
-    if (isCurrentCorrect) {
+    if (isCurrentCorrectRef.current) {
       const newCorrectCount = correctCount + 1;
       setCorrectCount(newCorrectCount);
       if (newCorrectCount >= originalTotal) {
@@ -327,7 +339,7 @@ export default function QuizScreen() {
             </View>
           </View>
           {/* 안내 영역 스켈레톤 */}
-          <View style={[styles.guideRow, { marginTop: 24, marginBottom: 16 }]}>
+          <View style={styles.skeletonGuideRow}>
             <Skeleton width={100} height={16} borderRadius={4} />
             <Skeleton width={TIMER_SIZE} height={TIMER_SIZE} borderRadius={TIMER_SIZE / 2} />
           </View>
@@ -501,6 +513,10 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
 
+  content: {
+    flex: 1,
+  },
+
   // 프로그레스 바
   progressBarContainer: {
     height: 8,
@@ -541,6 +557,14 @@ const styles = StyleSheet.create({
 
   // 안내 + 타이머
   guideRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 20,
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  skeletonGuideRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -601,7 +625,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    padding: 17,
+    padding: 16,
     borderRadius: 12,
     backgroundColor: Colors.brand.greenLight,
   },
@@ -609,7 +633,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    padding: 17,
+    padding: 16,
     borderRadius: 12,
     backgroundColor: Colors.semantic.dangerLight,
   },

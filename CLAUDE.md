@@ -85,7 +85,7 @@ pressed: `opacity: 0.85` 또는 backgroundColor 변경.
 ### 색상
 `src/lib/colors.ts`의 Colors 토큰만. 하드코딩 금지. 없는 색은 colors.ts에 추가 후 사용.
 - `Colors.brand.*` — green, greenDark, greenLight, greenMid, greenSurface
-- `Colors.action.*` — yellow, yellowLight, yellowDark, yellowDeep
+- `Colors.action.*` — orange, orangeLight, orangeDark, orangeDeep
 - `Colors.text.*` — primary, secondary, tertiary, white
 - `Colors.bg.*` — default, white, card, muted
 - `Colors.border.*` — input, button

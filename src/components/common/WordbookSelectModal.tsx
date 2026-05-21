@@ -24,7 +24,6 @@ interface WordbookSelectModalProps {
   onDismiss: () => void;
   wordIds: number[];
   sourceText: string;
-  memberId: number;
   onSuccess: (count: number, wordbookId: number) => void;
   onError: (message: string) => void;
 }
@@ -34,7 +33,6 @@ export function WordbookSelectModal({
   onDismiss,
   wordIds,
   sourceText,
-  memberId,
   onSuccess,
   onError,
 }: WordbookSelectModalProps) {
@@ -118,6 +116,7 @@ export function WordbookSelectModal({
               style={({ pressed }) => [styles.optionButton, pressed && styles.optionButtonPressed]}
               onPress={() => setView("existing")}
               accessibilityRole="button"
+              accessibilityLabel="기존 단어장에 추가하기"
             >
               <View style={styles.optionIcon}>
                 <MaterialCommunityIcons
@@ -137,6 +136,7 @@ export function WordbookSelectModal({
               style={({ pressed }) => [styles.optionButton, pressed && styles.optionButtonPressed]}
               onPress={() => setView("new")}
               accessibilityRole="button"
+              accessibilityLabel="새 단어장 만들기"
             >
               <View style={styles.optionIcon}>
                 <MaterialCommunityIcons name="book-plus" size={22} color={Colors.brand.greenDark} />
@@ -152,6 +152,7 @@ export function WordbookSelectModal({
               style={({ pressed }) => [styles.cancelButton, pressed && styles.cancelButtonPressed]}
               onPress={handleDismiss}
               accessibilityRole="button"
+              accessibilityLabel="취소"
             >
               <Text style={styles.cancelLabel}>취소</Text>
             </Pressable>
@@ -193,6 +194,7 @@ export function WordbookSelectModal({
                     onPress={() => void handleAddToWordbook(wb.id)}
                     disabled={isSubmitting}
                     accessibilityRole="button"
+                    accessibilityLabel={`${wb.name}에 추가`}
                   >
                     <View style={styles.wordbookTextCol}>
                       <Text style={styles.wordbookName}>{wb.name}</Text>
@@ -250,6 +252,7 @@ export function WordbookSelectModal({
               onPress={() => void handleCreateAndAdd()}
               disabled={!newName.trim() || isSubmitting}
               accessibilityRole="button"
+              accessibilityLabel="만들고 저장하기"
             >
               {isSubmitting ? (
                 <ActivityIndicator color={Colors.text.white} />

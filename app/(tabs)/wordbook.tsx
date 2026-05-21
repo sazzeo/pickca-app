@@ -24,11 +24,9 @@ import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
-import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 
 export default function WordbookScreen() {
-  const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,8 +35,6 @@ export default function WordbookScreen() {
   const [editInput, setEditInput] = useState("");
   const [isUpdatingName, setIsUpdatingName] = useState(false);
   const [isDeletingWordbook, setIsDeletingWordbook] = useState(false);
-
-  const memberId = user?.memberId ?? 0;
 
   const { data: wordbooksData, isPending, isError, refetch } = useGetWordbooks();
   const { mutateAsync: updateWordbookName } = useUpdateWordbookName();

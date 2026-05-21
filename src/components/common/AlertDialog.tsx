@@ -36,6 +36,8 @@ export function AlertDialog({
           <Pressable
             onPress={onAction}
             style={({ pressed }) => [styles.actionButton, pressed && styles.pressedButton]}
+            accessibilityRole="button"
+            accessibilityLabel={actionLabel}
           >
             <Text style={styles.actionButtonText}>{actionLabel}</Text>
           </Pressable>

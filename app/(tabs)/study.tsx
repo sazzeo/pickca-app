@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
 import { AppHeader } from "@/components/common/AppHeader";
-import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 
 interface QuizMenuItem {
@@ -21,10 +20,8 @@ interface QuizMenuItem {
 }
 
 export default function StudyScreen() {
-  const { user } = useAuth();
   const insets = useSafeAreaInsets();
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
-  const memberId = user?.memberId ?? 0;
 
   const { data: wordbooksData } = useGetWordbooks();
 

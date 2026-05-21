@@ -270,7 +270,7 @@ export default function WordCardScreen() {
 
       {/* 카드 덱 */}
       <GestureDetector gesture={panGesture}>
-        <View style={[styles.deckViewport, { marginTop: 20 }]}>
+        <View style={styles.deckViewport}>
           <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
             {cards.map((card, index) => (
               <View key={card.id} style={styles.cardWrapper}>
@@ -350,6 +350,7 @@ const styles = StyleSheet.create({
   deckViewport: {
     flex: 1,
     overflow: "hidden",
+    marginTop: 20,
   },
   cardsRow: {
     flexDirection: "row",

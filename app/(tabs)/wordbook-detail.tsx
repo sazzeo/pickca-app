@@ -50,11 +50,11 @@ function HighlightedText({ text, highlightWords }: { text: string; highlightWord
   // \b 기준으로 분리해 단어·비단어 구간을 교대로 생성
   const parts = text.split(/\b/);
   return (
-    <Text style={sourceStyles.sourceText}>
+    <Text style={styles.sourceText}>
       {parts.map((part, i) => {
         if (highlightWords.has(part.toLowerCase())) {
           return (
-            <Text key={i} style={sourceStyles.highlightedWord}>
+            <Text key={i} style={styles.highlightedWord}>
               {part}
             </Text>
           );
@@ -352,42 +352,42 @@ export default function WordbookDetailScreen() {
           visible={sourceSheetVisible}
           onDismiss={() => setSourceSheetVisible(false)}
           contentContainerStyle={[
-            sourceStyles.sheet,
+            styles.sourceSheet,
             { paddingBottom: Math.max(insets.bottom, 16) },
           ]}
         >
-          <View style={sourceStyles.dragHandle} />
+          <View style={styles.dragHandle} />
 
-          <View style={sourceStyles.sheetHeader}>
-            <Text style={sourceStyles.sheetTitle}>원문 보기</Text>
-            {sourceDate ? <Text style={sourceStyles.sheetDate}>{sourceDate}</Text> : null}
+          <View style={styles.sheetHeader}>
+            <Text style={styles.sheetTitle}>원문 보기</Text>
+            {sourceDate ? <Text style={styles.sheetDate}>{sourceDate}</Text> : null}
           </View>
 
           {isSourcesPending ? (
-            <View style={sourceStyles.centerBlock}>
+            <View style={styles.sheetCenterBlock}>
               <ActivityIndicator size="large" color={Colors.brand.green} />
             </View>
           ) : sources.length === 0 ? (
-            <View style={sourceStyles.centerBlock}>
-              <Text style={sourceStyles.emptyText}>저장된 원문이 없어요.</Text>
+            <View style={styles.sheetCenterBlock}>
+              <Text style={styles.sheetEmptyText}>저장된 원문이 없어요.</Text>
             </View>
           ) : (
             <ScrollView
-              style={sourceStyles.textScroll}
+              style={styles.textScroll}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={sourceStyles.textScrollContent}
+              contentContainerStyle={styles.textScrollContent}
             >
               <HighlightedText text={sourceText} highlightWords={highlightWords} />
             </ScrollView>
           )}
 
           {sources.length > 0 ? (
-            <View style={sourceStyles.pagination}>
+            <View style={styles.pagination}>
               <Pressable
                 style={({ pressed }) => [
-                  sourceStyles.pageButton,
-                  sourceIndex === 0 && sourceStyles.pageButtonDisabled,
-                  pressed && sourceIndex > 0 && sourceStyles.pageButtonPressed,
+                  styles.pageButton,
+                  sourceIndex === 0 && styles.pageButtonDisabled,
+                  pressed && sourceIndex > 0 && styles.pageButtonPressed,
                 ]}
                 onPress={() => setSourceIndex((i) => Math.max(0, i - 1))}
                 disabled={sourceIndex === 0}
@@ -401,15 +401,15 @@ export default function WordbookDetailScreen() {
                 />
               </Pressable>
 
-              <Text style={sourceStyles.pageLabel}>
+              <Text style={styles.pageLabel}>
                 {sourceIndex + 1} / {sources.length}
               </Text>
 
               <Pressable
                 style={({ pressed }) => [
-                  sourceStyles.pageButton,
-                  sourceIndex === sources.length - 1 && sourceStyles.pageButtonDisabled,
-                  pressed && sourceIndex < sources.length - 1 && sourceStyles.pageButtonPressed,
+                  styles.pageButton,
+                  sourceIndex === sources.length - 1 && styles.pageButtonDisabled,
+                  pressed && sourceIndex < sources.length - 1 && styles.pageButtonPressed,
                 ]}
                 onPress={() => setSourceIndex((i) => Math.min(sources.length - 1, i + 1))}
                 disabled={sourceIndex === sources.length - 1}
@@ -604,10 +604,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginLeft: 8,
   },
-});
-
-const sourceStyles = StyleSheet.create({
-  sheet: {
+  // 원문 보기 시트
+  sourceSheet: {
     position: "absolute",
     bottom: 0,
     left: 0,
@@ -658,12 +656,12 @@ const sourceStyles = StyleSheet.create({
     backgroundColor: Colors.brand.greenMid,
     color: Colors.text.primary,
   },
-  centerBlock: {
+  sheetCenterBlock: {
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 40,
   },
-  emptyText: {
+  sheetEmptyText: {
     fontSize: 14,
     color: Colors.text.tertiary,
   },
