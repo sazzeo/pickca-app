@@ -135,7 +135,8 @@ export default function WordCardScreen() {
 
   // --- Pan Gesture ---
   const panGesture = Gesture.Pan()
-    .activeOffsetX([-8, 8])
+    .activeOffsetX([-10, 10])
+    .failOffsetY([-20, 20])
     .onUpdate((e) => {
       const idx = currentIndexSV.value;
       const isAtStart = idx === 0 && e.translationX > 0;
@@ -297,7 +298,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: "column",
-    overflow: "hidden",
   },
 
   // 헤더
