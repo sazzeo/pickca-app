@@ -41,10 +41,10 @@ export const Colors = {
 
   /** 탭바 */
   tab: {
-    active: "#3A6218",
-    inactive: "#999999",
+    active: "#3D6420",
+    inactive: "#A8A49C",
     bg: "#FFFFFF",
-    border: "#EEEEEE",
+    border: "#E2DED6",
   },
 
   /** 구분선 */
