@@ -6,9 +6,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { AppHeader } from "@/components/common/AppHeader";
 import { EmptyWordbookGuide } from "@/components/home/EmptyWordbookGuide";
-import { LearningStatPills } from "@/components/home/LearningStatPills";
 import { TodayLearningSection } from "@/components/home/TodayLearningSection";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
+import { WordbookStatsCard } from "@/components/wordbook/WordbookStatsCard";
 import { Colors } from "@/lib/colors";
 import type { TodayWord } from "@/components/home/TodayLearningCard";
 
@@ -142,9 +142,9 @@ export default function HomeScreen() {
       >
         {hasWordbooks ? (
           <>
-            {/* 학습 통계 필 */}
+            {/* 학습 통계 카드 */}
             <View style={styles.pillsSection}>
-              <LearningStatPills
+              <WordbookStatsCard
                 memorizedCount={summary.memorizedCount}
                 learningCount={summary.learningCount}
                 streakDays={summary.streakDays}
@@ -212,24 +212,25 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   pillsSection: {
+    paddingHorizontal: 16,
     paddingTop: 12,
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
-    marginTop: 24,
-    marginBottom: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginTop: 8,
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: "700",
-    color: Colors.text.primary,
+    fontWeight: "400",
+    color: Colors.text.secondary,
   },
   sectionLink: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.text.secondary,
+    fontSize: 16,
+    fontWeight: "500",
+    color: Colors.brand.green,
   },
 });
