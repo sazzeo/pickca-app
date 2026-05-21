@@ -1,18 +1,20 @@
+const brand = {
+  green: "#3D6420",
+  greenDark: "#3A6218",
+  greenLight: "#E6EDDB",
+  greenMid: "#C8DDA8",
+  /** 입력 카드·업로드 버튼 등 연한 그린 서페이스 */
+  greenSurface: "#DDE6D1",
+  /** 단어 카드 배경 */
+  greenCard: "#E6F1DE",
+  /** 단어 카드 카운터 텍스트 */
+  counterText: "rgba(51,79,43,0.6)",
+} as const;
+
 /** 픽카 브랜드 컬러 시스템 — 모든 스타일 값은 이 파일에서만 참조한다 */
 export const Colors = {
   /** 브랜드 그린 계열 */
-  brand: {
-    green: "#3D6420",
-    greenDark: "#3A6218",
-    greenLight: "#E6EDDB",
-    greenMid: "#C8DDA8",
-    /** 입력 카드·업로드 버튼 등 연한 그린 서페이스 */
-    greenSurface: "#DDE6D1",
-    /** 단어 카드 배경 */
-    greenCard: "#E6F1DE",
-    /** 단어 카드 카운터 텍스트 */
-    counterText: "rgba(51,79,43,0.6)",
-  },
+  brand,
 
   /** 액션 컬러 */
   action: {
@@ -95,8 +97,8 @@ export const Colors = {
     learningBg: "#FFE6BD",
     learningText: "#CF7215",
     /** 외움 */
-    memorizedBg: "#3D6420",
-    memorizedText: "#FFFFFF",
+    memorizedBg: brand.greenCard,
+    memorizedText: brand.green,
     /** 여러번 수집 */
     relearningBg: "#FFF3CD",
     relearningText: "#856404",
