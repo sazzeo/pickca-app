@@ -21,6 +21,7 @@ import {
 import type { Item } from "@/api/generated/pickcaAPI.schemas";
 import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { Button } from "@/components/common/Button";
+import { ScreenTitleBlock } from "@/components/common/ScreenTitleBlock";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
@@ -149,8 +150,7 @@ export default function WordbookScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.titleBlock}>
-          <Text style={styles.screenTitle}>내 단어장</Text>
-          <Text style={styles.screenSubtitle}>총 {totalPickedWords}개의 단어를 Pick했어요</Text>
+          <ScreenTitleBlock title="내 단어장" subtitle={`총 ${totalPickedWords}개의 단어를 Pick했어요`} />
         </View>
 
         <View style={styles.searchRow}>
@@ -266,16 +266,6 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     marginBottom: 16,
-  },
-  screenTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: Colors.text.primary,
-    marginBottom: 6,
-  },
-  screenSubtitle: {
-    fontSize: 14,
-    color: Colors.text.secondary,
   },
   searchRow: {
     flexDirection: "row",

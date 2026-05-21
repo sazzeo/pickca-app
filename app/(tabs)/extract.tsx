@@ -7,6 +7,7 @@ import { Text } from "react-native-paper";
 import { useExtract } from "@/api/generated/word/word";
 import { AlertDialog } from "@/components/common/AlertDialog";
 import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
+import { ScreenTitleBlock } from "@/components/common/ScreenTitleBlock";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 import { saveExtractDraft } from "@/lib/extractDraftStorage";
@@ -109,12 +110,16 @@ export default function ExtractScreen() {
       <LogoHeaderWithSettings />
       <View style={styles.body}>
         <View>
-          <Text style={styles.title}>
-            단어를 <Text style={styles.titleHighlight}>Pick</Text>할게요
-          </Text>
-          <Text style={styles.description}>텍스트를 붙여넣거나 이미지를 올려보세요</Text>
+          <ScreenTitleBlock
+            title={
+              <>
+                단어를 <Text style={styles.titleHighlight}>Pick</Text>할게요
+              </>
+            }
+            subtitle="텍스트를 붙여넣거나 이미지를 올려보세요"
+          />
 
-          <View style={styles.inputCard}>
+          <View style={[styles.inputCard, styles.inputCardSpaced]}>
             <View style={styles.inputHeader}>
               <Text style={styles.inputLabel}>텍스트 입력</Text>
               <Text style={styles.counter}>
@@ -196,21 +201,8 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 12,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "400",
-    color: Colors.text.primary,
-    letterSpacing: -1,
-    lineHeight: 34,
-  },
   titleHighlight: {
     color: Colors.brand.green,
-  },
-  description: {
-    marginTop: 4,
-    marginBottom: 8,
-    fontSize: 14,
-    color: Colors.text.secondary,
   },
   inputCard: {
     borderWidth: 1,
@@ -218,6 +210,9 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: Colors.bg.white,
     overflow: "hidden",
+  },
+  inputCardSpaced: {
+    marginTop: 12,
   },
   inputHeader: {
     flexDirection: "row",

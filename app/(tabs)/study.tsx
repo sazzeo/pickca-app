@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
 import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
+import { ScreenTitleBlock } from "@/components/common/ScreenTitleBlock";
 import { Colors } from "@/lib/colors";
 
 interface QuizMenuItem {
@@ -79,8 +80,7 @@ export default function StudyScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.titleBlock}>
-          <Text style={styles.screenTitle}>학습해봐요</Text>
-          <Text style={styles.screenSubtitle}>어떤 단어로 시작할까요?</Text>
+          <ScreenTitleBlock title="학습해봐요" subtitle="어떤 단어로 시작할까요?" />
         </View>
 
         <Text style={styles.sectionLabel}>퀴즈 시작</Text>
@@ -129,16 +129,6 @@ const styles = StyleSheet.create({
   },
   titleBlock: {
     marginBottom: 20,
-  },
-  screenTitle: {
-    fontSize: 28,
-    fontWeight: "400",
-    color: Colors.text.primary,
-    marginBottom: 4,
-  },
-  screenSubtitle: {
-    fontSize: 14,
-    color: Colors.text.secondary,
   },
   sectionLabel: {
     fontSize: 16,
