@@ -265,12 +265,13 @@ export default function WordCardScreen() {
         </Text>
       </View>
 
-      {/* 카드 덱 */}
-      <GestureDetector gesture={panGesture}>
-        <View
-          style={styles.deckViewport}
-          onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}
-        >
+      {/* 카드 덱 — deckViewport의 overflow:hidden 안에 GestureDetector를 배치해
+           gesture 감지 영역이 viewport 밖으로 새지 않도록 한다 */}
+      <View
+        style={styles.deckViewport}
+        onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}
+      >
+        <GestureDetector gesture={panGesture}>
           <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
             {cards.map((card, index) => (
               <View key={card.id} style={styles.cardWrapper}>
@@ -285,8 +286,8 @@ export default function WordCardScreen() {
               </View>
             ))}
           </Animated.View>
-        </View>
-      </GestureDetector>
+        </GestureDetector>
+      </View>
     </View>
   );
 }
@@ -296,6 +297,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: "column",
+    overflow: "hidden",
   },
 
   // 헤더
