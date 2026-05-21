@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -163,9 +163,14 @@ export default function HomeScreen() {
             {/* 최근 본 단어장 */}
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>최근 본 단어장</Text>
-              <Text style={styles.sectionLink} onPress={() => router.push("/(tabs)/wordbook")}>
-                전체보기
-              </Text>
+              <Pressable
+                onPress={() => router.push("/(tabs)/wordbook")}
+                hitSlop={8}
+                accessibilityRole="link"
+                accessibilityLabel="전체보기"
+              >
+                <Text style={styles.sectionLink}>전체보기</Text>
+              </Pressable>
             </View>
 
             {wordbooks.map((wb) => (

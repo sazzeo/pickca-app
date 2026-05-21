@@ -16,7 +16,6 @@ function resolveChipStyle(status: WordbookWordResponseLearningStatus) {
     case WordbookWordResponseLearningStatus.MEMORIZED:
       return { bg: Colors.brand.green, text: Colors.text.white };
     case WordbookWordResponseLearningStatus.LEARNING:
-      return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
     case WordbookWordResponseLearningStatus.RELEARNING:
       return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
     default:

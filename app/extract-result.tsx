@@ -91,7 +91,7 @@ export default function ExtractResultScreen() {
           })
         );
       })
-      .catch(() => {});
+      .catch((e) => { if (__DEV__) console.error("[fetchPendingWords]", e); });
   };
 
   useEffect(() => {
@@ -350,7 +350,6 @@ export default function ExtractResultScreen() {
         onDismiss={() => setWordbookModalVisible(false)}
         wordIds={pickedWordIds}
         sourceText={sourceText}
-        memberId={user?.memberId ?? 0}
         onSuccess={(_count, wordbookId) => {
           void clearExtractDraft();
           router.replace({

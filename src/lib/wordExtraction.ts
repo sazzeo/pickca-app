@@ -1,18 +1,8 @@
 import axios from "axios";
 
 import type { WordResponse } from "@/api/generated/pickcaAPI.schemas";
+import { POS_LABEL_MAP } from "@/lib/wordHelpers";
 import type { ExtractWordItem } from "@/types/word";
-
-const POS_SHORT: Record<string, string> = {
-  NOUN: "n",
-  VERB: "v",
-  ADJECTIVE: "adj",
-  ADVERB: "adv",
-  PREPOSITION: "prep",
-  CONJUNCTION: "conj",
-  INTERJECTION: "interj",
-  PRONOUN: "pron",
-};
 
 /** WordResponse → ExtractWordItem 변환 */
 export function mapWord(w: WordResponse): ExtractWordItem {
@@ -22,7 +12,7 @@ export function mapWord(w: WordResponse): ExtractWordItem {
     wordId: typeof w.id === "number" ? w.id : undefined,
     lemma: w.word,
     meaningKo: w.primaryMeanings ?? first?.koreanPrimary ?? "—",
-    pos: POS_SHORT[first?.partOfSpeech ?? ""] ?? "?",
+    pos: POS_LABEL_MAP[first?.partOfSpeech as keyof typeof POS_LABEL_MAP] ?? "?",
     pronunciation: w.phonetic ? `[ ${w.phonetic} ]` : "",
     collectStatus: w.collectStatus,
   };

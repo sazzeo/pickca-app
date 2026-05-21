@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
 import {
-  Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
   Pressable,
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { Text } from "react-native-paper";
@@ -14,9 +14,7 @@ import { TodayLearningCard, type TodayWord } from "./TodayLearningCard";
 import { Colors } from "@/lib/colors";
 
 const MAX_CARDS = 5;
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_H_MARGIN = 20;
-const CARD_WIDTH = SCREEN_WIDTH - CARD_H_MARGIN * 2;
 
 interface TodayLearningSectionProps {
   todayWrongWords: TodayWord[];
@@ -43,6 +41,9 @@ export function TodayLearningSection({
   onStudyPress,
   onEmptyPress,
 }: TodayLearningSectionProps) {
+  const { width: screenWidth } = useWindowDimensions();
+  const cardWidth = screenWidth - CARD_H_MARGIN * 2;
+
   const cards = buildCards(todayWrongWords, todayMemorizedWords);
   const hasWrong = todayWrongWords.length > 0;
   const isEmpty = cards.length === 0;
@@ -52,7 +53,7 @@ export function TodayLearningSection({
 
   const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = e.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / CARD_WIDTH);
+    const index = Math.round(offsetX / cardWidth);
     setActiveIndex(index);
   };
 
@@ -66,7 +67,12 @@ export function TodayLearningSection({
       <View style={styles.header}>
         <Text style={styles.title}>{title}</Text>
         {!isEmpty && (
-          <Pressable onPress={ctaAction} hitSlop={8}>
+          <Pressable
+            onPress={ctaAction}
+            hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel={ctaText}
+          >
             <Text style={styles.cta}>{ctaText}</Text>
           </Pressable>
         )}
@@ -77,7 +83,12 @@ export function TodayLearningSection({
         <View style={styles.emptyCard}>
           <Text style={styles.emptyText}>아직 외운 단어가 없어요</Text>
           <Text style={styles.emptySubText}>오늘 첫 단어를 외워볼까요?</Text>
-          <Pressable style={styles.emptyButton} onPress={onEmptyPress}>
+          <Pressable
+            style={({ pressed }) => [styles.emptyButton, pressed && styles.emptyButtonPressed]}
+            onPress={onEmptyPress}
+            accessibilityRole="button"
+            accessibilityLabel="단어 학습하러 가기"
+          >
             <Text style={styles.emptyButtonText}>단어 학습하러 가기</Text>
           </Pressable>
         </View>
@@ -92,13 +103,13 @@ export function TodayLearningSection({
             onScroll={handleScroll}
             scrollEventThrottle={16}
             decelerationRate="fast"
-            snapToInterval={CARD_WIDTH}
+            snapToInterval={cardWidth}
             snapToAlignment="start"
             contentContainerStyle={styles.scrollContent}
             style={styles.scrollView}
           >
             {cards.map((word, index) => (
-              <View key={`${word.wordId}-${index}`} style={{ width: CARD_WIDTH }}>
+              <View key={`${word.wordId}-${index}`} style={{ width: cardWidth }}>
                 <TodayLearningCard word={word} />
               </View>
             ))}
@@ -197,5 +208,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: Colors.brand.green,
+  },
+  emptyButtonPressed: {
+    opacity: 0.85,
   },
 });

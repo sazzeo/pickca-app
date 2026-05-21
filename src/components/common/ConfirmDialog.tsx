@@ -72,6 +72,8 @@ export function ConfirmDialog({
                 styles.cancelButton,
                 pressed && styles.pressedButton,
               ]}
+              accessibilityRole="button"
+              accessibilityLabel={cancelLabel}
             >
               <Text style={styles.cancelButtonText}>{cancelLabel}</Text>
             </Pressable>
@@ -85,6 +87,8 @@ export function ConfirmDialog({
                 confirmDisabled && styles.disabledButton,
                 pressed && !confirmDisabled && styles.pressedButton,
               ]}
+              accessibilityRole="button"
+              accessibilityLabel={confirmLabel}
             >
               <Text style={styles.confirmButtonText}>{confirmLabel}</Text>
             </Pressable>

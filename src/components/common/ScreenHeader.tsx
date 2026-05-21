@@ -55,7 +55,7 @@ export function ScreenHeader({
 
 const styles = StyleSheet.create({
   header: {
-    height: 44,
+    minHeight: 44,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

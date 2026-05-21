@@ -66,6 +66,7 @@ export function BottomTabBar({ state, descriptors, navigation }: BottomTabBarPro
               style={styles.tabItem}
               accessibilityRole="tab"
               accessibilityState={{ selected: isFocused }}
+              accessibilityLabel={config.label}
             >
               {isFocused ? (
                 <View style={styles.iconPill}>

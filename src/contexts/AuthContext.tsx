@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import {
   clearTokens,
@@ -55,17 +55,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(updated);
   }, []);
 
+  const value = useMemo(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      isLoading,
+      signIn,
+      signOut,
+      updateUser,
+    }),
+    [user, isLoading, signIn, signOut, updateUser]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        signIn,
-        signOut,
-        updateUser,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

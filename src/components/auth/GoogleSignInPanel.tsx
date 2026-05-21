@@ -52,10 +52,9 @@ export function GoogleSignInPanel() {
       const accessToken = payload?.accessToken;
       const refreshToken = payload?.refreshToken;
       const nickname = payload?.nickname;
+      const payloadWithId = payload as { memberId?: number; id?: number; userId?: number } | undefined;
       const responseMemberId =
-        (payload as { memberId?: number; id?: number; userId?: number } | undefined)?.memberId ??
-        (payload as { memberId?: number; id?: number; userId?: number } | undefined)?.id ??
-        (payload as { memberId?: number; id?: number; userId?: number } | undefined)?.userId;
+        payloadWithId?.memberId ?? payloadWithId?.id ?? payloadWithId?.userId;
 
       if (!accessToken || !refreshToken || !nickname) {
         Alert.alert("오류", "로그인 응답 형식이 올바르지 않습니다.");
