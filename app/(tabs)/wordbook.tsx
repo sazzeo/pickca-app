@@ -19,7 +19,7 @@ import {
   useUpdateWordbookName,
 } from "@/api/generated/wordbooks/wordbooks";
 import type { Item } from "@/api/generated/pickcaAPI.schemas";
-import { AppHeader } from "@/components/common/AppHeader";
+import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
@@ -140,7 +140,7 @@ export default function WordbookScreen() {
 
   return (
     <View style={styles.container}>
-      <AppHeader onSettingsPress={() => router.push("/(tabs)/profile")} />
+      <LogoHeaderWithSettings />
 
       <ScrollView
         style={styles.scrollView}

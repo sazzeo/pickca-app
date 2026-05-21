@@ -6,7 +6,7 @@ import { Text } from "react-native-paper";
 
 import { useExtract } from "@/api/generated/word/word";
 import { AlertDialog } from "@/components/common/AlertDialog";
-import { AppHeader } from "@/components/common/AppHeader";
+import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
 import { saveExtractDraft } from "@/lib/extractDraftStorage";
@@ -106,7 +106,7 @@ export default function ExtractScreen() {
 
   return (
     <View style={styles.container}>
-      <AppHeader onSettingsPress={() => router.push("/(tabs)/profile")} />
+      <LogoHeaderWithSettings />
       <View style={styles.body}>
         <View>
           <Text style={styles.title}>

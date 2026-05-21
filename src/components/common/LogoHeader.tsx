@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
@@ -38,12 +39,13 @@ interface LogoHeaderWithSettingsProps {
 }
 
 export function LogoHeaderWithSettings({ onSettings }: LogoHeaderWithSettingsProps) {
+  const handleSettings = onSettings ?? (() => router.push("/(tabs)/profile"));
   return (
     <LogoHeader
       right={
         <Pressable
           style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
-          onPress={onSettings}
+          onPress={handleSettings}
           accessibilityRole="button"
           accessibilityLabel="설정"
         >

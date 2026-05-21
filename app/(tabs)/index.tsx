@@ -4,7 +4,7 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
-import { AppHeader } from "@/components/common/AppHeader";
+import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { EmptyWordbookGuide } from "@/components/home/EmptyWordbookGuide";
 import { TodayLearningSection } from "@/components/home/TodayLearningSection";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
@@ -133,7 +133,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <AppHeader onSettingsPress={() => router.push("/(tabs)/profile")} />
+      <LogoHeaderWithSettings />
 
       <ScrollView
         style={styles.scrollView}

@@ -6,7 +6,7 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
-import { AppHeader } from "@/components/common/AppHeader";
+import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { Colors } from "@/lib/colors";
 
 interface QuizMenuItem {
@@ -71,7 +71,7 @@ export default function StudyScreen() {
 
   return (
     <View style={styles.container}>
-      <AppHeader onSettingsPress={() => router.push("/(tabs)/profile")} />
+      <LogoHeaderWithSettings />
 
       <ScrollView
         style={styles.scrollView}
