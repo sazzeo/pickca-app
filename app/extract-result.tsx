@@ -206,7 +206,7 @@ export default function ExtractResultScreen() {
   return (
     <View style={styles.screen}>
       <ScreenHeader
-        title="추출 결과"
+        title="단어 Pick"
         right={
           <Pressable
             style={({ pressed }) => [
@@ -249,7 +249,10 @@ export default function ExtractResultScreen() {
                     <Text style={styles.posText}>{current.pos}</Text>
                   </View>
                   <Text style={styles.lemma}>{current.lemma}</Text>
-                  <Text style={styles.meaning}>{current.meaningKo}</Text>
+                  <View style={styles.meaningRow}>
+                    <Text style={styles.posInMeaning}>{current.pos}</Text>
+                    <Text style={styles.meaning}>{current.meaningKo}</Text>
+                  </View>
                   <Text style={styles.pronunciation}>{current.pronunciation}</Text>
                   <View style={styles.cardActions}>
                     <Pressable
@@ -380,16 +383,16 @@ const styles = StyleSheet.create({
     zIndex: 1,
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: Colors.brand.greenMid,
+    borderRadius: 9,
+    backgroundColor: Colors.brand.greenLight,
   },
   selectAllButtonPressed: {
     opacity: 0.85,
   },
   selectAllLabel: {
     fontSize: 13,
-    fontWeight: "700",
-    color: Colors.brand.greenDark,
+    fontWeight: "500",
+    color: Colors.text.secondary,
   },
   /** 진행·덱은 고정, 확인한 단어만 아래 영역에서 스크롤 */
   body: {
@@ -431,12 +434,12 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: "100%",
-    backgroundColor: Colors.brand.greenDark,
+    backgroundColor: Colors.brand.green,
     borderRadius: 4,
   },
   progressText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: "500",
     color: Colors.text.secondary,
     minWidth: 48,
     textAlign: "right",
@@ -460,101 +463,114 @@ const styles = StyleSheet.create({
     width: "92%",
     paddingVertical: 14,
     paddingHorizontal: 16,
-    marginBottom: -28,
-    borderRadius: 16,
+    marginBottom: -40,
+    borderRadius: 8,
     backgroundColor: Colors.bg.muted,
     opacity: 0.95,
   },
   backCardLemma: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.text.tertiary,
+    fontSize: 20,
+    fontWeight: "600",
+    color: Colors.text.primary,
     textAlign: "center",
   },
   backCardMeaning: {
     marginTop: 4,
-    fontSize: 13,
-    color: Colors.text.tertiary,
+    fontSize: 16,
+    fontWeight: "300",
+    color: Colors.text.secondary,
     textAlign: "center",
   },
   frontCard: {
     backgroundColor: Colors.bg.white,
-    borderRadius: 16,
+    borderRadius: 8,
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 18,
     alignItems: "center",
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 7.5,
+    elevation: 5,
   },
   posPill: {
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 8,
-    backgroundColor: Colors.action.orangeLight,
+    borderRadius: 4,
+    backgroundColor: Colors.brand.greenLight,
     marginBottom: 12,
   },
   posText: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: "500",
     color: Colors.text.secondary,
   },
   lemma: {
-    fontSize: 26,
-    fontWeight: "700",
+    fontSize: 32,
+    fontWeight: "800",
     color: Colors.text.primary,
     textAlign: "center",
   },
-  meaning: {
+  meaningRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
     marginTop: 8,
+  },
+  posInMeaning: {
     fontSize: 16,
+    fontWeight: "500",
     color: Colors.text.secondary,
-    textAlign: "center",
+  },
+  meaning: {
+    fontSize: 20,
+    fontWeight: "400",
+    color: Colors.text.secondary,
   },
   pronunciation: {
     marginTop: 14,
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: "300",
     color: Colors.text.tertiary,
     textAlign: "center",
   },
   cardActions: {
     flexDirection: "row",
-    gap: 10,
+    gap: 16,
     marginTop: 22,
     width: "100%",
   },
   actionBtn: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
+    height: 44,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: Colors.border.button,
+    borderColor: Colors.border.inputOutline,
     backgroundColor: Colors.bg.white,
     alignItems: "center",
+    justifyContent: "center",
   },
   actionBtnPressed: {
     opacity: 0.85,
   },
   actionBtnLabel: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: Colors.text.secondary,
+    fontSize: 16,
+    fontWeight: "500",
+    color: Colors.text.primary,
   },
   deckDoneCard: {
     flex: 1,
     justifyContent: "center",
     backgroundColor: Colors.bg.white,
-    borderRadius: 16,
+    borderRadius: 8,
     paddingHorizontal: 20,
     paddingVertical: 24,
     shadowColor: Colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 7.5,
+    elevation: 5,
   },
   deckDoneHint: {
     fontSize: 15,
@@ -563,19 +579,18 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   historyTitle: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: Colors.text.tertiary,
+    fontSize: 16,
+    fontWeight: "400",
+    color: Colors.text.secondary,
     marginBottom: 10,
   },
   historyRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    paddingRight: 12,
-    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
     backgroundColor: Colors.brand.greenLight,
     marginBottom: 8,
   },
@@ -584,19 +599,20 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   historyLemma: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.brand.greenDark,
+    fontSize: 20,
+    fontWeight: "600",
+    color: Colors.brand.green,
   },
   historyMeaning: {
     marginTop: 2,
-    fontSize: 13,
+    fontSize: 16,
+    fontWeight: "300",
     color: Colors.text.secondary,
   },
   historyIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
@@ -614,17 +630,18 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: Colors.divider,
+    borderTopColor: Colors.tab.border,
     backgroundColor: Colors.bg.white,
   },
   cta: {
-    height: 48,
-    borderRadius: 10,
-    backgroundColor: Colors.brand.greenDark,
+    height: 44,
+    borderRadius: 8,
+    backgroundColor: Colors.brand.green,
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 12,
   },
   ctaPressed: {
     opacity: 0.9,
@@ -633,8 +650,8 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   ctaLabel: {
-    fontSize: 15,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "600",
     color: Colors.text.white,
   },
 });
