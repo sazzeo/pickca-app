@@ -8,8 +8,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "@/lib/colors";
 
-const BOOKMARK_SVG = `<svg viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M0 0H19V24L9.5 19L0 24V0Z" fill="${Colors.brand.green}"/>
+const LOGO_SVG = `<svg viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lg" gradientUnits="userSpaceOnUse" x1="-0.894" y1="12.125" x2="6.918" y2="-0.209">
+      <stop offset="0" stop-color="#7BCA41"/>
+      <stop offset="1" stop-color="#F5C800"/>
+    </linearGradient>
+  </defs>
+  <path d="M17.068 11.358L17.068 5.096C17.068 3.371 15.698 1.973 14.008 1.973L4.992 1.973C3.302 1.973 1.932 3.371 1.932 5.096L1.932 18.904C1.932 20.629 3.302 22.027 4.992 22.027L5.656 22.027C6.189 22.027 6.622 22.469 6.622 23.014C6.622 23.558 6.189 24 5.656 24L4.992 24C2.235 24 0 21.719 0 18.904L0 5.096C0 2.282 2.235 0 4.992 0L14.008 0C16.765 0 19 2.282 19 5.096L19 11.358C19 12.745 18.445 14.073 17.465 15.034L9.231 23.100C8.426 23.931 7.024 23.353 7.024 22.170L7.024 15.082C7.024 13.153 8.556 11.589 10.446 11.589L14.512 11.589C15.045 11.589 15.478 12.031 15.478 12.575C15.478 13.120 15.045 13.562 14.512 13.562L10.446 13.562C9.623 13.562 8.957 14.242 8.957 15.082L8.957 20.636L16.127 13.611C16.728 13.022 17.068 12.208 17.068 11.358Z" fill="url(#lg)"/>
 </svg>`;
 
 interface LogoHeaderProps {
@@ -22,7 +28,7 @@ export function LogoHeader({ right }: LogoHeaderProps) {
   return (
     <View style={[styles.header, { paddingTop: insets.top + 4 }]}>
       <View style={styles.logoGroup}>
-        <SvgXml xml={BOOKMARK_SVG} width={19} height={24} />
+        <SvgXml xml={LOGO_SVG} width={19} height={24} />
         <Text style={styles.logoText}>
           <Text style={styles.logoPick}>Pick</Text>
           <Text style={styles.logoCa}>Ca</Text>
