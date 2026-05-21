@@ -19,7 +19,7 @@ interface WordbookCardProps {
 }
 
 const SEGMENT_COLORS = {
-  memorized: Colors.brand.greenLight,
+  memorized: Colors.brand.greenMid,
   learning: Colors.action.orangeLight,
   notStarted: Colors.bg.muted,
 } as const;
@@ -38,7 +38,7 @@ export function WordbookCard({
     <View style={styles.card}>
       {/* 헤더: 타이틀 + 메뉴 */}
       <View style={styles.header}>
-        <Text style={styles.title} numberOfLines={2}>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           {title}
         </Text>
         <EllipsisDropdownMenu triggerAccessibilityLabel={`${title} 메뉴 열기`} items={menuItems} />
@@ -54,8 +54,8 @@ export function WordbookCard({
                 {
                   flex: memorizedRate,
                   backgroundColor: SEGMENT_COLORS.memorized,
-                  borderTopLeftRadius: 3,
-                  borderBottomLeftRadius: 3,
+                  borderTopLeftRadius: 9999,
+                  borderBottomLeftRadius: 9999,
                 },
               ]}
             />
@@ -75,8 +75,8 @@ export function WordbookCard({
                 {
                   flex: notStartedRate,
                   backgroundColor: SEGMENT_COLORS.notStarted,
-                  borderTopRightRadius: 3,
-                  borderBottomRightRadius: 3,
+                  borderTopRightRadius: 9999,
+                  borderBottomRightRadius: 9999,
                 },
               ]}
             />
@@ -102,7 +102,10 @@ export function WordbookCard({
 
       {/* 하단: 단어 수 + 액션 버튼 */}
       <View style={styles.footer}>
-        <Text style={styles.wordCount}>{wordCount}단어</Text>
+        <View style={styles.wordCountRow}>
+          <Text style={styles.wordCountNumber}>{wordCount} </Text>
+          <Text style={styles.wordCountLabel}>단어</Text>
+        </View>
         <View style={styles.actionRow}>
           <Pressable
             style={({ pressed }) => [
@@ -139,11 +142,16 @@ export function WordbookCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.bg.white,
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 16,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: Colors.divider,
+    gap: 4,
+    shadowColor: Colors.shadow,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 3,
   },
   header: {
     position: "relative",
@@ -153,23 +161,22 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between",
     gap: 8,
-    marginBottom: 12,
   },
   title: {
     flex: 1,
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "600",
     color: Colors.text.primary,
-    lineHeight: 22,
+    lineHeight: 24,
   },
   progressSection: {
-    marginBottom: 14,
     gap: 8,
+    paddingVertical: 4,
   },
   progressBar: {
     flexDirection: "row",
-    height: 8,
-    borderRadius: 3,
+    height: 6,
+    borderRadius: 9999,
     overflow: "hidden",
   },
   progressSegment: {
@@ -177,7 +184,7 @@ const styles = StyleSheet.create({
   },
   legendRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: 8,
   },
   legendItem: {
     flexDirection: "row",
@@ -187,51 +194,61 @@ const styles = StyleSheet.create({
   legendDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
+    borderRadius: 1,
   },
   legendText: {
-    fontSize: 11,
+    fontSize: 10,
     color: Colors.text.secondary,
-    fontWeight: "500",
+    fontWeight: "300",
   },
   footer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
-  wordCount: {
-    fontSize: 13,
-    fontWeight: "600",
+  wordCountRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    paddingVertical: 4,
+  },
+  wordCountNumber: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: Colors.text.secondary,
+  },
+  wordCountLabel: {
+    fontSize: 12,
+    fontWeight: "300",
     color: Colors.text.secondary,
   },
   actionRow: {
     flexDirection: "row",
-    gap: 8,
   },
   actionButton: {
     borderRadius: 8,
     paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingHorizontal: 16,
+    margin: 4,
   },
   actionButtonPressed: {
-    opacity: 0.85,
+    opacity: 0.8,
   },
   quizButton: {
     borderWidth: 1,
-    borderColor: Colors.border.button,
+    borderColor: Colors.border.inputOutline,
     backgroundColor: Colors.bg.white,
   },
   quizButtonText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.text.primary,
+    fontSize: 14,
+    fontWeight: "400",
+    color: Colors.text.secondary,
   },
   viewButton: {
     backgroundColor: Colors.brand.green,
   },
   viewButtonText: {
-    fontSize: 13,
-    fontWeight: "600",
+    fontSize: 14,
+    fontWeight: "400",
     color: Colors.text.white,
   },
 });
