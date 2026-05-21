@@ -28,8 +28,11 @@ export const Colors = {
 
   /** 텍스트 */
   text: {
+    /** Figma: Black / 900 */
     primary: "#1A1A1A",
     secondary: "#666666",
+    /** Figma: Black/Sub text — 캡션·서브타이틀 */
+    sub: "#777777",
     subtitle: "#5E6B63",
     tertiary: "#999999",
     /** 단어 카드 뜻·품사 텍스트 */

@@ -24,12 +24,15 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   title: {
-    fontSize: FontSize.display,
-    fontWeight: "700",
+    fontSize: FontSize.displayLg,
+    fontWeight: "400",
     color: Colors.text.primary,
+    letterSpacing: -1,
+    lineHeight: 34,
   },
   subtitle: {
     fontSize: FontSize.body,
-    color: Colors.text.secondary,
+    color: Colors.text.sub,
+    lineHeight: 21,
   },
 });
