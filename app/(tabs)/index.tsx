@@ -8,8 +8,16 @@ import { AppHeader } from "@/components/common/AppHeader";
 import { EmptyWordbookGuide } from "@/components/home/EmptyWordbookGuide";
 import { TodayLearningSection } from "@/components/home/TodayLearningSection";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
+import { WordbookStatsCard } from "@/components/wordbook/WordbookStatsCard";
 import { Colors } from "@/lib/colors";
 import type { TodayWord } from "@/components/home/TodayLearningCard";
+
+// TODO: API 연동 시 제거
+const MOCK_SUMMARY = {
+  memorizedCount: 322,
+  learningCount: 77,
+  streakDays: 7,
+};
 
 // TODO: API 연동 시 제거
 const MOCK_TODAY_WRONG_WORDS: TodayWord[] = [
@@ -103,8 +111,9 @@ export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
 
-  // TODO: API 연동 시 useGetWordbooks로 교체
+  // TODO: API 연동 시 useGetWordbooks + useHomeSummary로 교체
   const wordbooks = MOCK_WORDBOOKS;
+  const summary = MOCK_SUMMARY;
   const hasWordbooks = wordbooks.length > 0;
 
   const handleRetryPress = () => {
@@ -133,6 +142,15 @@ export default function HomeScreen() {
       >
         {hasWordbooks ? (
           <>
+            {/* 학습 통계 카드 */}
+            <View style={styles.pillsSection}>
+              <WordbookStatsCard
+                memorizedCount={summary.memorizedCount}
+                learningCount={summary.learningCount}
+                streakDays={summary.streakDays}
+              />
+            </View>
+
             {/* 오늘의 학습 스와이프 카드 */}
             <TodayLearningSection
               todayWrongWords={MOCK_TODAY_WRONG_WORDS}
@@ -192,6 +210,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 24,
+  },
+  pillsSection: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
   },
   sectionHeader: {
     flexDirection: "row",
