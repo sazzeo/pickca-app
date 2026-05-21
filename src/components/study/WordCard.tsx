@@ -39,24 +39,23 @@ export function WordCard({ item, index, total, width, height, showSwipeHint }: W
         </View>
       )}
 
-      {/* 학습 상태 뱃지 */}
       <View style={styles.body}>
         <LearningStatusChip status={item.learningStatus} />
 
-        {/* 단어 */}
-        <Text style={styles.lemma}>{item.lemma}</Text>
-
-        {/* 발음기호 */}
-        {(item.pronunciation || item.pronunciationKo) && (
-          <View style={styles.pronunciationGroup}>
-            {item.pronunciation && (
-              <Text style={styles.pronunciation}>[ {item.pronunciation} ]</Text>
-            )}
-            {item.pronunciationKo && (
-              <Text style={styles.pronunciation}>[ {item.pronunciationKo} ]</Text>
-            )}
-          </View>
-        )}
+        {/* 단어 + 발음기호 */}
+        <View style={styles.wordGroup}>
+          <Text style={styles.lemma}>{item.lemma}</Text>
+          {(item.pronunciation || item.pronunciationKo) && (
+            <View style={styles.pronunciationGroup}>
+              {item.pronunciation && (
+                <Text style={styles.pronunciation}>[ {item.pronunciation} ]</Text>
+              )}
+              {item.pronunciationKo && (
+                <Text style={styles.pronunciation}>[ {item.pronunciationKo} ]</Text>
+              )}
+            </View>
+          )}
+        </View>
 
         {/* 뜻 */}
         <Text style={styles.meaning}>
@@ -75,10 +74,10 @@ export function WordCard({ item, index, total, width, height, showSwipeHint }: W
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.brand.greenSurface,
-    borderRadius: 20,
+    backgroundColor: Colors.brand.greenCard,
+    borderRadius: 8,
     paddingVertical: 24,
-    paddingHorizontal: 28,
+    paddingHorizontal: 16,
     justifyContent: "space-between",
   },
   swipeHint: {
@@ -91,40 +90,43 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: 24,
+  },
+  wordGroup: {
+    alignItems: "center",
+    gap: 4,
   },
   lemma: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: "800",
     color: Colors.text.primary,
     textAlign: "center",
-    letterSpacing: -0.5,
-    marginTop: 8,
   },
   pronunciationGroup: {
-    gap: 2,
+    gap: 8,
     alignItems: "center",
   },
   pronunciation: {
-    fontSize: 14,
-    color: Colors.text.secondary,
+    fontSize: 16,
+    fontWeight: "300",
+    color: Colors.brand.green,
     textAlign: "center",
   },
   meaning: {
-    fontSize: 20,
-    color: Colors.text.primary,
+    fontSize: 24,
+    fontWeight: "500",
+    color: Colors.text.label,
     textAlign: "center",
-    marginTop: 8,
   },
   pos: {
-    fontSize: 14,
-    color: Colors.text.tertiary,
+    fontSize: 16,
     fontWeight: "500",
+    color: Colors.text.label,
   },
   counter: {
-    fontSize: 13,
-    color: Colors.text.tertiary,
+    fontSize: 14,
+    fontWeight: "300",
+    color: Colors.brand.counterText,
     textAlign: "center",
-    paddingBottom: 4,
   },
 });

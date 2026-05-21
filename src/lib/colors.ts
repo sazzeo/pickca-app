@@ -8,6 +8,10 @@ export const Colors = {
     greenMid: "#C8DDA8",
     /** 입력 카드·업로드 버튼 등 연한 그린 서페이스 */
     greenSurface: "#DDE6D1",
+    /** 단어 카드 배경 */
+    greenCard: "#E6F1DE",
+    /** 단어 카드 카운터 텍스트 */
+    counterText: "rgba(51,79,43,0.6)",
   },
 
   /** 액션 컬러 */
@@ -26,6 +30,8 @@ export const Colors = {
     secondary: "#666666",
     subtitle: "#5E6B63",
     tertiary: "#999999",
+    /** 단어 카드 뜻·품사 텍스트 */
+    label: "#2E3A2F",
     white: "#FFFFFF",
   },
 
@@ -78,5 +84,21 @@ export const Colors = {
   disabled: {
     bg: "#DDDDDD",
     text: "#A3A3A3",
+  },
+
+  /** 학습 상태 칩 — LearningStatusChip 전용 */
+  chip: {
+    /** 학습 전 */
+    notStartedBg: "#F5F4ED",
+    notStartedText: "#777777",
+    /** 학습 중 */
+    learningBg: "#FFE6BD",
+    learningText: "#CF7215",
+    /** 외움 */
+    memorizedBg: "#3D6420",
+    memorizedText: "#FFFFFF",
+    /** 여러번 수집 */
+    relearningBg: "#FFF3CD",
+    relearningText: "#856404",
   },
 } as const;

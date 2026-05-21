@@ -8,18 +8,19 @@ const LEARNING_STATUS_LABEL: Record<WordbookWordResponseLearningStatus, string> 
   NOT_STARTED: "학습 전",
   LEARNING: "학습 중",
   MEMORIZED: "외움",
-  RELEARNING: "재학습 중",
+  RELEARNING: "여러번 수집",
 };
 
 function resolveChipStyle(status: WordbookWordResponseLearningStatus) {
   switch (status) {
     case WordbookWordResponseLearningStatus.MEMORIZED:
-      return { bg: Colors.brand.green, text: Colors.text.white };
+      return { bg: Colors.chip.memorizedBg, text: Colors.chip.memorizedText };
     case WordbookWordResponseLearningStatus.LEARNING:
+      return { bg: Colors.chip.learningBg, text: Colors.chip.learningText };
     case WordbookWordResponseLearningStatus.RELEARNING:
-      return { bg: Colors.action.orangeLight, text: Colors.action.orangeDeep };
+      return { bg: Colors.chip.relearningBg, text: Colors.chip.relearningText };
     default:
-      return { bg: Colors.bg.cancelButton, text: Colors.text.secondary };
+      return { bg: Colors.chip.notStartedBg, text: Colors.chip.notStartedText };
   }
 }
 
@@ -41,14 +42,14 @@ export function LearningStatusChip({ status }: LearningStatusChipProps) {
 
 const styles = StyleSheet.create({
   chip: {
-    height: 28,
-    borderRadius: 6,
+    borderRadius: 4,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   chipText: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: "500",
   },
 });
