@@ -1,8 +1,7 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
@@ -11,7 +10,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Text } from "react-native-paper";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useGetWords, useMarkAsStudied } from "@/api/generated/wordbooks/wordbooks";
 import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
 import type {
@@ -19,7 +17,7 @@ import type {
   WordbookWordResponse,
 } from "@/api/generated/pickcaAPI.schemas";
 import { Button } from "@/components/common/Button";
-import { ScreenHeader } from "@/components/common/ScreenHeader";
+import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { WordCard, type WordCardItem } from "@/components/study/WordCard";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
@@ -54,7 +52,6 @@ function mapToCardItem(word: WordbookWordResponse, index: number): WordCardItem 
 }
 
 export default function WordCardScreen() {
-  const insets = useSafeAreaInsets();
   const {
     wordbookId: wordbookIdParam,
     initialIndex: initialIndexParam,
@@ -171,20 +168,8 @@ export default function WordCardScreen() {
 
   if (isPending) {
     return (
-      <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <ScreenHeader
-          title="단어 카드"
-          right={
-            <Pressable
-              style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
-              onPress={() => {}}
-              accessibilityRole="button"
-              accessibilityLabel="설정"
-            >
-              <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
-            </Pressable>
-          }
-        />
+      <View style={styles.screen}>
+        <LogoHeaderWithSettings />
         <View style={styles.emptyState}>
           <ActivityIndicator size="large" color={Colors.brand.green} />
         </View>
@@ -194,20 +179,8 @@ export default function WordCardScreen() {
 
   if (isError) {
     return (
-      <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <ScreenHeader
-          title="단어 카드"
-          right={
-            <Pressable
-              style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
-              onPress={() => {}}
-              accessibilityRole="button"
-              accessibilityLabel="설정"
-            >
-              <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
-            </Pressable>
-          }
-        />
+      <View style={styles.screen}>
+        <LogoHeaderWithSettings />
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>단어를 불러오지 못했어요.</Text>
           <Button label="다시 시도" onPress={() => refetch()} size="sm" fullWidth={false} />
@@ -218,20 +191,8 @@ export default function WordCardScreen() {
 
   if (total === 0) {
     return (
-      <View style={[styles.screen, { paddingTop: insets.top }]}>
-        <ScreenHeader
-          title="단어 카드"
-          right={
-            <Pressable
-              style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
-              onPress={() => {}}
-              accessibilityRole="button"
-              accessibilityLabel="설정"
-            >
-              <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
-            </Pressable>
-          }
-        />
+      <View style={styles.screen}>
+        <LogoHeaderWithSettings />
         <View style={styles.emptyState}>
           <Text style={styles.emptyText}>표시할 단어가 없어요.</Text>
         </View>
@@ -240,20 +201,8 @@ export default function WordCardScreen() {
   }
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top }]}>
-      <ScreenHeader
-        title="단어 카드"
-        right={
-          <Pressable
-            style={({ pressed }) => [styles.settingsBtn, pressed && styles.pressed]}
-            onPress={() => {}}
-            accessibilityRole="button"
-            accessibilityLabel="설정"
-          >
-            <MaterialCommunityIcons name="cog-outline" size={22} color={Colors.text.secondary} />
-          </Pressable>
-        }
-      />
+    <View style={styles.screen}>
+      <LogoHeaderWithSettings />
 
       {/* 진행률 바 */}
       <View style={styles.progressRow}>
@@ -300,21 +249,6 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     flexDirection: "column",
-  },
-
-  // 헤더
-  settingsBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.divider,
-    backgroundColor: Colors.bg.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pressed: {
-    opacity: 0.7,
   },
 
   // 진행률
