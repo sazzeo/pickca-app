@@ -121,7 +121,6 @@ export default function ExtractScreen() {
                 {inputText.length} / {maxLength}
               </Text>
             </View>
-            <View style={styles.divider} />
 
             <TextInput
               style={styles.textInput}
@@ -136,22 +135,21 @@ export default function ExtractScreen() {
               maxLength={maxLength}
             />
 
-            <View style={styles.inputBottomDivider} />
-
-            <Pressable
-              style={({ pressed }) => [styles.uploadButton, pressed && styles.uploadButtonPressed]}
-              onPress={handleImageUpload}
-              android_ripple={{ color: Colors.brand.greenMid }}
-              accessibilityRole="button"
-              accessibilityLabel="이미지 업로드"
-            >
-              <MaterialCommunityIcons
-                name="image-outline"
-                size={18}
-                color={Colors.text.secondary}
-              />
-              <Text style={styles.uploadButtonText}>이미지 업로드</Text>
-            </Pressable>
+            <View style={styles.inputCardFooter}>
+              <Pressable
+                style={({ pressed }) => [styles.uploadButton, pressed && styles.uploadButtonPressed]}
+                onPress={handleImageUpload}
+                android_ripple={{ color: Colors.brand.greenMid }}
+                accessibilityRole="button"
+                accessibilityLabel="이미지 업로드"
+              >
+                <MaterialCommunityIcons
+                  name="camera-outline"
+                  size={24}
+                  color={Colors.text.secondary}
+                />
+              </Pressable>
+            </View>
           </View>
         </View>
 
@@ -199,38 +197,40 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   title: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: "700",
     color: Colors.text.primary,
-    letterSpacing: -0.4,
-    lineHeight: 26,
+    letterSpacing: -1,
+    lineHeight: 34,
   },
   titleHighlight: {
     color: Colors.brand.green,
   },
   description: {
-    marginTop: 6,
+    marginTop: 4,
     marginBottom: 8,
     fontSize: 14,
     color: Colors.text.secondary,
-    letterSpacing: -0.2,
   },
   inputCard: {
     borderWidth: 1,
     borderColor: Colors.border.input,
-    borderRadius: 16,
+    borderRadius: 18,
     backgroundColor: Colors.bg.white,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 8,
+    overflow: "hidden",
   },
   inputHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 13,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border.input,
   },
   inputLabel: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: "700",
     color: Colors.text.secondary,
   },
@@ -238,42 +238,34 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.text.tertiary,
   },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.border.input,
-    marginTop: 10,
-  },
   textInput: {
     minHeight: 250,
     maxHeight: 280,
-    paddingTop: 14,
-    paddingHorizontal: 2,
+    paddingTop: 16,
+    paddingHorizontal: 16,
     fontSize: 14,
+    fontWeight: "300",
     color: Colors.text.secondary,
     lineHeight: 28,
   },
-  inputBottomDivider: {
-    height: 1,
-    backgroundColor: Colors.border.input,
-    marginBottom: 8,
+  inputCardFooter: {
+    borderTopWidth: 1,
+    borderTopColor: Colors.border.input,
+    paddingHorizontal: 16,
+    paddingTop: 13,
+    paddingBottom: 12,
+    alignItems: "flex-end",
   },
   uploadButton: {
-    alignSelf: "flex-end",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: Colors.brand.greenSurface,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 9,
+    backgroundColor: Colors.brand.greenLight,
+    borderWidth: 1,
+    borderColor: Colors.border.input,
+    borderRadius: 9,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
   },
   uploadButtonPressed: {
     opacity: 0.8,
-  },
-  uploadButtonText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: Colors.text.secondary,
   },
   extractButton: {
     marginTop: "auto",
@@ -288,8 +280,8 @@ const styles = StyleSheet.create({
   },
   extractButtonText: {
     color: Colors.disabled.text,
-    fontSize: 14,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "600",
   },
   extractButtonTextEnabled: {
     color: Colors.text.white,
