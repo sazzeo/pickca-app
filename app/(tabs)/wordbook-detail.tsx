@@ -14,6 +14,7 @@ import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
+import { WordbookStatsCard } from "@/components/wordbook/WordbookStatsCard";
 import { Colors } from "@/lib/colors";
 import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 
@@ -223,6 +224,12 @@ export default function WordbookDetailScreen() {
             </View>
           </View>
         ) : null}
+
+        <WordbookStatsCard
+          memorizedCount={filterCounts.MEMORIZED}
+          learningCount={filterCounts.LEARNING}
+          streakDays={0}
+        />
 
         <ScrollView
           horizontal
