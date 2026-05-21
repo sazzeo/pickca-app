@@ -273,20 +273,22 @@ export default function WordCardScreen() {
         onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}
       >
         <GestureDetector gesture={panGesture}>
-          <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
-            {cards.map((card, index) => (
-              <View key={card.id} style={styles.cardWrapper}>
-                <WordCard
-                  item={card}
-                  index={index}
-                  total={total}
-                  width={CARD_WIDTH}
-                  height={cardHeight}
-                  showSwipeHint={total > 1 && index === 0 && currentIndex === 0}
-                />
-              </View>
-            ))}
-          </Animated.View>
+          <View style={styles.gestureArea}>
+            <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
+              {cards.map((card, index) => (
+                <View key={card.id} style={styles.cardWrapper}>
+                  <WordCard
+                    item={card}
+                    index={index}
+                    total={total}
+                    width={CARD_WIDTH}
+                    height={cardHeight}
+                    showSwipeHint={total > 1 && index === 0 && currentIndex === 0}
+                  />
+                </View>
+              ))}
+            </Animated.View>
+          </View>
         </GestureDetector>
       </View>
     </View>
@@ -351,6 +353,10 @@ const styles = StyleSheet.create({
     flex: 1,
     overflow: "hidden",
     marginVertical: 12,
+  },
+  gestureArea: {
+    flex: 1,
+    overflow: "hidden",
   },
   cardsRow: {
     flexDirection: "row",
