@@ -102,39 +102,36 @@ export function ConfirmDialog({
 const styles = StyleSheet.create({
   modalContainer: {
     marginHorizontal: 16,
-    borderRadius: 12,
+    borderRadius: 8,
     backgroundColor: Colors.bg.white,
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 16,
+    paddingVertical: 32,
+    gap: 16,
   },
   title: {
-    fontSize: 17,
-    fontWeight: "700",
+    fontSize: 20,
+    fontWeight: "600",
     color: Colors.text.primary,
     textAlign: "center",
   },
   description: {
-    marginTop: 8,
-    fontSize: 14,
-    color: Colors.text.tertiary,
+    fontSize: 16,
+    color: Colors.text.subtitle,
     textAlign: "center",
   },
   input: {
-    marginTop: 12,
     backgroundColor: Colors.bg.white,
     height: 40,
   },
   buttonRow: {
-    marginTop: 16,
     flexDirection: "row",
     gap: 8,
   },
   buttonBase: {
     flex: 1,
-    minHeight: 46,
+    minHeight: 48,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -144,12 +141,12 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "600",
     color: Colors.text.primary,
   },
   confirmButtonText: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "600",
     color: Colors.text.white,
   },
   disabledButton: {

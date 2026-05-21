@@ -2,7 +2,7 @@
 export const Colors = {
   /** 브랜드 그린 계열 */
   brand: {
-    green: "#3D5420",
+    green: "#3D6420",
     greenDark: "#3A6218",
     greenLight: "#E6EDDB",
     greenMid: "#C8DDA8",
@@ -24,6 +24,7 @@ export const Colors = {
   text: {
     primary: "#1A1A1A",
     secondary: "#666666",
+    subtitle: "#5E6B63",
     tertiary: "#999999",
     white: "#FFFFFF",
   },
@@ -36,7 +37,7 @@ export const Colors = {
     /** 덱 뒷장 등 무채색 서브 서페이스 */
     muted: "#E8E8E8",
     /** 취소 버튼 배경 */
-    cancelButton: "#E7E5E1",
+    cancelButton: "#F5F4ED",
   },
 
   /** 탭바 */

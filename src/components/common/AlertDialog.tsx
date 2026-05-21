@@ -49,39 +49,36 @@ export function AlertDialog({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    marginHorizontal: 8,
-    borderRadius: 12,
+    marginHorizontal: 16,
+    borderRadius: 8,
     backgroundColor: Colors.bg.white,
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 34,
-    paddingBottom: 16,
+    paddingVertical: 32,
+    gap: 16,
   },
   title: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: "600",
     color: Colors.text.primary,
     textAlign: "center",
-    letterSpacing: -0.2,
   },
   description: {
-    marginTop: 8,
-    fontSize: 15,
-    color: Colors.text.tertiary,
+    fontSize: 16,
+    color: Colors.text.subtitle,
     textAlign: "center",
   },
   actionButton: {
-    marginTop: 22,
     minHeight: 48,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.brand.green,
   },
   actionButtonText: {
-    fontSize: 17,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "600",
     color: Colors.text.white,
   },
   pressedButton: {
