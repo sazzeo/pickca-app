@@ -16,6 +16,7 @@ import {
   useGetWordbooks,
 } from "@/api/generated/wordbooks/wordbooks";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 type ModalView = "select" | "existing" | "new";
 
@@ -269,38 +270,38 @@ export function WordbookSelectModal({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    marginHorizontal: 16,
-    borderRadius: 16,
+    marginHorizontal: Spacing.lg,
+    borderRadius: Radius.card,
     backgroundColor: Colors.bg.white,
     overflow: "hidden",
   },
   content: {
-    paddingHorizontal: 20,
+    paddingHorizontal: Spacing.xl,
     paddingTop: 28,
-    paddingBottom: 20,
+    paddingBottom: Spacing.xl,
   },
   title: {
-    fontSize: 18,
+    fontSize: FontSize.section,
     fontWeight: "700",
     color: Colors.text.primary,
     textAlign: "center",
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 13,
+    fontSize: FontSize.caption,
     color: Colors.text.tertiary,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: Spacing.xl,
   },
   optionButton: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 14,
     paddingHorizontal: 14,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     backgroundColor: Colors.brand.greenLight,
     marginBottom: 10,
-    gap: 12,
+    gap: Spacing.md,
   },
   optionButtonPressed: {
     opacity: 0.8,
@@ -317,35 +318,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionLabel: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "700",
     color: Colors.text.primary,
   },
   optionDesc: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: FontSize.sm,
     color: Colors.text.secondary,
   },
   cancelButton: {
     marginTop: 6,
-    paddingVertical: 12,
+    paddingVertical: Spacing.md,
     alignItems: "center",
   },
   cancelButtonPressed: {
     opacity: 0.7,
   },
   cancelLabel: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.secondary,
   },
   backRow: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 14,
-    gap: 2,
+    gap: Spacing.xxs,
   },
   backLabel: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.secondary,
     fontWeight: "500",
   },
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.tertiary,
     textAlign: "center",
   },
@@ -371,9 +372,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 14,
     paddingHorizontal: 14,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     backgroundColor: Colors.brand.greenLight,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   wordbookRowPressed: {
     opacity: 0.8,
@@ -382,29 +383,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   wordbookName: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "700",
     color: Colors.brand.greenDark,
   },
   wordbookCount: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: FontSize.sm,
     color: Colors.text.secondary,
   },
   nameInput: {
     borderWidth: 1.5,
     borderColor: Colors.border.input,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    fontSize: 15,
+    paddingVertical: Spacing.md,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.primary,
-    marginBottom: 16,
-    marginTop: 4,
+    marginBottom: Spacing.lg,
+    marginTop: Spacing.xs,
   },
   submitButton: {
     height: 48,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     backgroundColor: Colors.brand.greenDark,
     alignItems: "center",
     justifyContent: "center",
@@ -416,7 +417,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
   submitLabel: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "700",
     color: Colors.text.white,
   },

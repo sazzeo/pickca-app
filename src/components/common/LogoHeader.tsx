@@ -7,6 +7,7 @@ import { SvgXml } from "react-native-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 const LOGO_SVG = `<svg viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -67,17 +68,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingBottom: 4,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xs,
     backgroundColor: Colors.bg.white,
   },
   logoGroup: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   logoText: {
-    fontSize: 24,
+    fontSize: FontSize.display,
     lineHeight: 36,
   },
   logoPick: {
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   settingsBtn: {
     width: 36,
     height: 36,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.border.settings,
     backgroundColor: Colors.bg.white,

@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 const SEGMENT_COLORS = {
   memorized: Colors.brand.greenLight,
@@ -101,9 +102,9 @@ export function WordbookSelectCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.bg.white,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
+    borderRadius: Radius.card,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.divider,
   },
@@ -114,18 +115,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
-    marginBottom: 12,
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
   },
   title: {
     flex: 1,
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "700",
     color: Colors.text.primary,
     lineHeight: 22,
   },
   wordCount: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "600",
     color: Colors.text.secondary,
   },
@@ -134,19 +135,19 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 3,
     overflow: "hidden",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   progressSegment: {
     height: "100%",
   },
   legendRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: Spacing.md,
   },
   legendItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   legendDot: {
     width: 8,

@@ -10,6 +10,7 @@ import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { ScreenTitleBlock } from "@/components/common/ScreenTitleBlock";
 import { useAuth } from "@/contexts/AuthContext";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 import { saveExtractDraft } from "@/lib/extractDraftStorage";
 import { isLikelyNetworkError, mapWord } from "@/lib/wordExtraction";
 
@@ -197,9 +198,9 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.md,
   },
   titleHighlight: {
     color: Colors.brand.green,
@@ -212,33 +213,33 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   inputCardSpaced: {
-    marginTop: 12,
+    marginTop: Spacing.md,
   },
   inputHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
     paddingBottom: 13,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border.input,
   },
   inputLabel: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "700",
     color: Colors.text.secondary,
   },
   counter: {
-    fontSize: 12,
+    fontSize: FontSize.sm,
     color: Colors.text.tertiary,
   },
   textInput: {
     minHeight: 250,
     maxHeight: 280,
-    paddingTop: 16,
-    paddingHorizontal: 16,
-    fontSize: 14,
+    paddingTop: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    fontSize: FontSize.body,
     fontWeight: "300",
     color: Colors.text.secondary,
     lineHeight: 28,
@@ -246,9 +247,9 @@ const styles = StyleSheet.create({
   inputCardFooter: {
     borderTopWidth: 1,
     borderTopColor: Colors.border.input,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.lg,
     paddingTop: 13,
-    paddingBottom: 12,
+    paddingBottom: Spacing.md,
     alignItems: "flex-end",
   },
   uploadButton: {
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
   },
   extractButton: {
     marginTop: "auto",
-    borderRadius: 8,
+    borderRadius: Radius.sm,
     backgroundColor: Colors.disabled.bg,
     height: 44,
     alignItems: "center",
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
   },
   extractButtonText: {
     color: Colors.disabled.text,
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
   },
   extractButtonTextEnabled: {

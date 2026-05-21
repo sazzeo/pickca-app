@@ -26,6 +26,7 @@ import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { EllipsisDropdownItem } from "@/components/common/EllipsisDropdownMenu";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
 import { Colors } from "@/lib/colors";
+import { FontSize, Spacing } from "@/lib/tokens";
 
 export default function WordbookScreen() {
   const insets = useSafeAreaInsets();
@@ -261,11 +262,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexDirection: "column",
-    paddingHorizontal: 20,
-    paddingTop: 8,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.sm,
   },
   titleBlock: {
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   searchRow: {
     flexDirection: "row",
@@ -275,11 +276,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   searchInput: {
     flex: 1,
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.primary,
     paddingVertical: 0,
   },
@@ -287,18 +288,18 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   centerBlock: {
-    paddingVertical: 32,
+    paddingVertical: Spacing.xxxl,
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
+    gap: Spacing.md,
   },
   errorText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.secondary,
     textAlign: "center",
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.secondary,
     textAlign: "center",
   },

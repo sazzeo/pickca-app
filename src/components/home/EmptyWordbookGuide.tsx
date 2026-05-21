@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface EmptyWordbookGuideProps {
   onExtractPress: () => void;
@@ -39,59 +40,59 @@ export function EmptyWordbookGuide({ onExtractPress }: EmptyWordbookGuideProps) 
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    gap: 12,
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.md,
   },
   ctaCard: {
     backgroundColor: Colors.brand.greenLight,
-    borderRadius: 16,
-    paddingHorizontal: 24,
+    borderRadius: Radius.card,
+    paddingHorizontal: Spacing.xxl,
     paddingTop: 28,
-    paddingBottom: 24,
+    paddingBottom: Spacing.xxl,
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   ctaTitle: {
-    fontSize: 18,
+    fontSize: FontSize.section,
     fontWeight: "700",
     color: Colors.text.primary,
     textAlign: "center",
   },
   ctaDescription: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.secondary,
     textAlign: "center",
     lineHeight: 20,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   ctaButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.brand.green,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     paddingVertical: 14,
-    paddingHorizontal: 24,
-    gap: 4,
+    paddingHorizontal: Spacing.xxl,
+    gap: Spacing.xs,
     alignSelf: "stretch",
   },
   ctaButtonPressed: {
     opacity: 0.85,
   },
   ctaButtonText: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "700",
     color: Colors.text.white,
   },
   placeholderCard: {
     backgroundColor: Colors.bg.muted,
-    borderRadius: 16,
-    paddingVertical: 32,
-    paddingHorizontal: 24,
+    borderRadius: Radius.card,
+    paddingVertical: Spacing.xxxl,
+    paddingHorizontal: Spacing.xxl,
     alignItems: "center",
   },
   placeholderText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.tertiary,
     textAlign: "center",
     lineHeight: 20,

@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 export type TagType = "CONFUSED" | "FREQUENTLY_WRONG" | "FIRST_MEMORIZED";
 
@@ -44,19 +45,19 @@ export function TodayLearningCard({ word }: TodayLearningCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.brand.greenSurface,
-    borderRadius: 16,
-    paddingVertical: 24,
-    paddingHorizontal: 20,
+    borderRadius: Radius.card,
+    paddingVertical: Spacing.xxl,
+    paddingHorizontal: Spacing.xl,
     gap: 6,
   },
   lemma: {
-    fontSize: 24,
+    fontSize: FontSize.display,
     fontWeight: "700",
     color: Colors.text.primary,
     letterSpacing: -0.5,
   },
   meaning: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "400",
     color: Colors.text.secondary,
   },
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    marginTop: 8,
+    marginTop: Spacing.sm,
   },
   tagDot: {
     width: 10,
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   tagText: {
-    fontSize: 12,
+    fontSize: FontSize.sm,
     fontWeight: "500",
     color: Colors.text.secondary,
   },

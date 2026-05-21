@@ -6,6 +6,7 @@ import {
   type EllipsisDropdownItem,
 } from "@/components/common/EllipsisDropdownMenu";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface WordbookCardProps {
   title: string;
@@ -142,11 +143,11 @@ export function WordbookCard({
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.bg.white,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 16,
-    marginBottom: 12,
-    gap: 4,
+    borderRadius: Radius.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.lg,
+    marginBottom: Spacing.md,
+    gap: Spacing.xs,
     shadowColor: Colors.shadow,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.2,
@@ -160,18 +161,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    gap: 8,
+    gap: Spacing.sm,
   },
   title: {
     flex: 1,
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
     color: Colors.text.primary,
     lineHeight: 24,
   },
   progressSection: {
-    gap: 8,
-    paddingVertical: 4,
+    gap: Spacing.sm,
+    paddingVertical: Spacing.xs,
   },
   progressBar: {
     flexDirection: "row",
@@ -184,12 +185,12 @@ const styles = StyleSheet.create({
   },
   legendRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.sm,
   },
   legendItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   legendDot: {
     width: 8,
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
     borderRadius: 1,
   },
   legendText: {
-    fontSize: 10,
+    fontSize: FontSize.xs,
     color: Colors.text.secondary,
     fontWeight: "300",
   },
@@ -209,15 +210,15 @@ const styles = StyleSheet.create({
   wordCountRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    paddingVertical: 4,
+    paddingVertical: Spacing.xs,
   },
   wordCountNumber: {
-    fontSize: 12,
+    fontSize: FontSize.sm,
     fontWeight: "500",
     color: Colors.text.secondary,
   },
   wordCountLabel: {
-    fontSize: 12,
+    fontSize: FontSize.sm,
     fontWeight: "300",
     color: Colors.text.secondary,
   },
@@ -225,10 +226,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   actionButton: {
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    margin: 4,
+    borderRadius: Radius.sm,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    margin: Spacing.xs,
   },
   actionButtonPressed: {
     opacity: 0.8,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bg.white,
   },
   quizButtonText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "400",
     color: Colors.text.secondary,
   },
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brand.green,
   },
   viewButtonText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "400",
     color: Colors.text.white,
   },

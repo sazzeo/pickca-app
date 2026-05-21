@@ -12,6 +12,7 @@ import { Text } from "react-native-paper";
 
 import { TodayLearningCard, type TodayWord } from "./TodayLearningCard";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 const MAX_CARDS = 5;
 const CARD_H_MARGIN = 20;
@@ -134,23 +135,23 @@ export function TodayLearningSection({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 16,
+    marginTop: Spacing.lg,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     marginBottom: 9,
   },
   title: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "400",
     color: Colors.text.secondary,
   },
   cta: {
-    fontSize: 13,
+    fontSize: FontSize.caption,
     fontWeight: "600",
     color: Colors.brand.green,
   },
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 6,
-    marginTop: 12,
+    marginTop: Spacing.md,
   },
   dot: {
     width: 6,
@@ -177,36 +178,36 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brand.green,
   },
   emptyCard: {
-    marginHorizontal: 16,
+    marginHorizontal: Spacing.lg,
     backgroundColor: Colors.bg.default,
-    borderRadius: 8,
-    paddingVertical: 32,
-    paddingHorizontal: 16,
+    borderRadius: Radius.sm,
+    paddingVertical: Spacing.xxxl,
+    paddingHorizontal: Spacing.lg,
     alignItems: "center",
-    gap: 16,
+    gap: Spacing.lg,
   },
   emptyText: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "400",
     color: Colors.text.secondary,
     textAlign: "center",
   },
   emptySubText: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "400",
     color: Colors.text.secondary,
     textAlign: "center",
   },
   emptyButton: {
     backgroundColor: Colors.bg.white,
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    borderRadius: Radius.sm,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     width: "100%",
     alignItems: "center",
   },
   emptyButtonText: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
     color: Colors.brand.green,
   },

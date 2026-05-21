@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, type ViewStyle } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
 type ButtonSize = "lg" | "md" | "sm";
@@ -19,9 +20,9 @@ interface ButtonProps {
 }
 
 const SIZE_STYLES: Record<ButtonSize, { paddingVertical: number; fontSize: number; borderRadius: number; paddingHorizontal: number }> = {
-  lg: { paddingVertical: 16, fontSize: 17, borderRadius: 12, paddingHorizontal: 24 },
-  md: { paddingVertical: 12, fontSize: 15, borderRadius: 10, paddingHorizontal: 20 },
-  sm: { paddingVertical: 8, fontSize: 13, borderRadius: 10, paddingHorizontal: 14 },
+  lg: { paddingVertical: Spacing.lg, fontSize: 17, borderRadius: Radius.lg, paddingHorizontal: Spacing.xxl },
+  md: { paddingVertical: Spacing.md, fontSize: FontSize.bodyMd, borderRadius: Radius.md, paddingHorizontal: Spacing.xl },
+  sm: { paddingVertical: Spacing.sm, fontSize: FontSize.caption, borderRadius: Radius.md, paddingHorizontal: 14 },
 };
 
 const VARIANT_STYLES: Record<ButtonVariant, { bg: string; text: string; borderColor?: string }> = {

@@ -9,6 +9,7 @@ import { useGetSummary } from "@/api/generated/wrong-quiz/wrong-quiz";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 const LEARNING_STATUS_OPTIONS = [
   { key: "NOT_STARTED", label: "학습 전" },
@@ -300,65 +301,65 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   resetText: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.secondary,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    gap: 12,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.lg,
+    gap: Spacing.md,
   },
   section: {
     backgroundColor: Colors.bg.white,
-    borderRadius: 16,
+    borderRadius: Radius.card,
     borderWidth: 1,
     borderColor: Colors.divider,
-    padding: 20,
+    padding: Spacing.xl,
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "700",
     color: Colors.text.primary,
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   totalCount: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.secondary,
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   wordbookRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
+    gap: Spacing.md,
   },
   wordbookLabel: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "600",
     color: Colors.text.primary,
   },
   wordbookName: {
     flex: 1,
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.secondary,
     textAlign: "right",
   },
   chipRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 8,
+    gap: Spacing.sm,
   },
   chip: {
     width: "31%",
-    paddingVertical: 8,
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: Colors.border.button,
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   chipText: {
-    fontSize: 13,
+    fontSize: FontSize.caption,
     fontWeight: "500",
     color: Colors.text.primary,
   },
@@ -389,14 +390,14 @@ const styles = StyleSheet.create({
     color: Colors.disabled.text,
   },
   emptyText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.secondary,
     textAlign: "center",
-    paddingVertical: 8,
+    paddingVertical: Spacing.sm,
   },
   footer: {
-    paddingHorizontal: 20,
-    paddingTop: 12,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
     backgroundColor: Colors.bg.white,
   },
 });

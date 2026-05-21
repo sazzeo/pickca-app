@@ -9,6 +9,7 @@ import { useGetWordbooks } from "@/api/generated/wordbooks/wordbooks";
 import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { ScreenTitleBlock } from "@/components/common/ScreenTitleBlock";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface QuizMenuItem {
   key: string;
@@ -125,26 +126,26 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: 17,
-    paddingTop: 8,
+    paddingTop: Spacing.sm,
   },
   titleBlock: {
-    marginBottom: 20,
+    marginBottom: Spacing.xl,
   },
   sectionLabel: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     color: Colors.text.subtitle,
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   cardList: {
-    gap: 16,
+    gap: Spacing.lg,
   },
   card: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.bg.white,
-    borderRadius: 8,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+    borderRadius: Radius.sm,
+    paddingVertical: Spacing.xxl,
+    paddingHorizontal: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.border.settings,
   },
@@ -154,22 +155,22 @@ const styles = StyleSheet.create({
   iconCircle: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: Radius.lg,
     alignItems: "center",
     justifyContent: "center",
   },
   cardTextArea: {
     flex: 1,
-    marginLeft: 16,
-    gap: 4,
+    marginLeft: Spacing.lg,
+    gap: Spacing.xs,
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: FontSize.title,
     fontWeight: "500",
     color: Colors.text.primary,
   },
   cardSubtitle: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     color: Colors.text.secondary,
   },
 });

@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Modal, Portal, Text, TextInput } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 type ConfirmTone = "primary" | "danger";
 
@@ -101,23 +102,23 @@ export function ConfirmDialog({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    marginHorizontal: 16,
-    borderRadius: 8,
+    marginHorizontal: Spacing.lg,
+    borderRadius: Radius.sm,
     backgroundColor: Colors.bg.white,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingVertical: 32,
-    gap: 16,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.xxxl,
+    gap: Spacing.lg,
   },
   title: {
-    fontSize: 20,
+    fontSize: FontSize.title,
     fontWeight: "600",
     color: Colors.text.primary,
     textAlign: "center",
   },
   description: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     color: Colors.text.subtitle,
     textAlign: "center",
   },
@@ -127,12 +128,12 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: Spacing.sm,
   },
   buttonBase: {
     flex: 1,
     minHeight: 48,
-    borderRadius: 8,
+    borderRadius: Radius.sm,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -140,12 +141,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bg.cancelButton,
   },
   cancelButtonText: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
     color: Colors.text.primary,
   },
   confirmButtonText: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
     color: Colors.text.white,
   },

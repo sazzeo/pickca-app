@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Spacing } from "@/lib/tokens";
 
 interface GreetingSectionProps {
   isReturningUser?: boolean;
@@ -25,18 +26,18 @@ export function GreetingSection({ isReturningUser = true }: GreetingSectionProps
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 20,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xxl,
+    paddingBottom: Spacing.xl,
     gap: 6,
   },
   greetingSmall: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     color: Colors.text.secondary,
     fontWeight: "400",
   },
   titleLine: {
-    fontSize: 24,
+    fontSize: FontSize.display,
     fontWeight: "700",
     lineHeight: 34,
     color: Colors.text.primary,

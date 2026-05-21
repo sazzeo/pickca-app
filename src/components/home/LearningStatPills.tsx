@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface LearningStatPillsProps {
   memorizedCount: number;
@@ -44,23 +45,23 @@ export function LearningStatPills({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    paddingHorizontal: 20,
-    gap: 8,
+    paddingHorizontal: Spacing.xl,
+    gap: Spacing.sm,
   },
   pill: {
     flex: 1,
     backgroundColor: Colors.bg.white,
-    borderRadius: 12,
-    paddingVertical: 12,
+    borderRadius: Radius.lg,
+    paddingVertical: Spacing.md,
     paddingHorizontal: 14,
     borderWidth: 1,
     borderColor: Colors.divider,
   },
   label: {
-    fontSize: 12,
+    fontSize: FontSize.sm,
     fontWeight: "500",
     color: Colors.text.secondary,
-    marginBottom: 4,
+    marginBottom: Spacing.xs,
   },
   value: {
     fontSize: 22,
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   unit: {
-    fontSize: 13,
+    fontSize: FontSize.caption,
     fontWeight: "500",
     color: Colors.text.secondary,
   },

@@ -5,6 +5,7 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface AppHeaderProps {
   onSettingsPress?: () => void;
@@ -51,23 +52,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: Spacing.xl,
   },
   logoRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: Spacing.sm,
   },
   logoIconBox: {
     width: 30,
     height: 30,
-    borderRadius: 8,
+    borderRadius: Radius.sm,
     backgroundColor: Colors.brand.green,
     alignItems: "center",
     justifyContent: "center",
   },
   logoText: {
-    fontSize: 20,
+    fontSize: FontSize.title,
     fontWeight: "700",
     letterSpacing: -0.5,
   },
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
   settingsButton: {
     width: 36,
     height: 36,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.divider,
     backgroundColor: Colors.bg.white,

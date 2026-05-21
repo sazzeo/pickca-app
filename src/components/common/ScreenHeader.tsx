@@ -6,6 +6,7 @@ import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Spacing } from "@/lib/tokens";
 
 interface ScreenHeaderProps {
   title: string;
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.lg,
     backgroundColor: Colors.bg.white,
   },
   headerBorder: {
@@ -69,18 +70,18 @@ const styles = StyleSheet.create({
   backButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 2,
+    gap: Spacing.xxs,
     minWidth: 60,
   },
   pressed: {
     opacity: 0.85,
   },
   backText: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.primary,
   },
   title: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
     color: Colors.text.primary,
   },

@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface WrongAnswerBannerProps {
   hasWrongWords: boolean;
@@ -44,10 +45,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: 20,
+    marginHorizontal: Spacing.xl,
     borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
   },
   bannerClear: {
     backgroundColor: Colors.brand.greenLight,
@@ -60,34 +61,34 @@ const styles = StyleSheet.create({
     gap: 2,
   },
   titleClear: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "700",
     color: Colors.brand.green,
   },
   subtitleClear: {
-    fontSize: 13,
+    fontSize: FontSize.caption,
     color: Colors.text.secondary,
   },
   titleWrong: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     fontWeight: "700",
     color: Colors.text.primary,
   },
   subtitleWrong: {
-    fontSize: 13,
+    fontSize: FontSize.caption,
     color: Colors.text.secondary,
   },
   reviewButton: {
     backgroundColor: Colors.action.orange,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     paddingVertical: 10,
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.lg,
   },
   reviewButtonPressed: {
     opacity: 0.85,
   },
   reviewButtonText: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "700",
     color: Colors.text.primary,
   },

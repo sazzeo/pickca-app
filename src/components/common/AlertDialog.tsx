@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { Modal, Portal, Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface AlertDialogProps {
   visible: boolean;
@@ -49,35 +50,35 @@ export function AlertDialog({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    marginHorizontal: 16,
-    borderRadius: 8,
+    marginHorizontal: Spacing.lg,
+    borderRadius: Radius.sm,
     backgroundColor: Colors.bg.white,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingVertical: 32,
-    gap: 16,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.xxxl,
+    gap: Spacing.lg,
   },
   title: {
-    fontSize: 20,
+    fontSize: FontSize.title,
     fontWeight: "600",
     color: Colors.text.primary,
     textAlign: "center",
   },
   description: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     color: Colors.text.subtitle,
     textAlign: "center",
   },
   actionButton: {
     minHeight: 48,
-    borderRadius: 8,
+    borderRadius: Radius.sm,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: Colors.brand.green,
   },
   actionButtonText: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
     color: Colors.text.white,
   },

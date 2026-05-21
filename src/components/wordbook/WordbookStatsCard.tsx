@@ -2,6 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface WordbookStatsCardProps {
   memorizedCount: number;
@@ -52,31 +53,31 @@ export function WordbookStatsCard({ memorizedCount, learningCount, streakDays }:
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.bg.default,
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    borderRadius: Radius.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 12,
+    marginBottom: Spacing.md,
   },
   statItem: {
     width: 82,
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   labelRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: Spacing.xs,
   },
   label: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "300",
     color: Colors.text.secondary,
   },
   fireEmoji: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "600",
   },
   valueRow: {
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   count: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "600",
     color: Colors.text.primary,
     lineHeight: 24,
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     color: Colors.brand.green,
   },
   unit: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "400",
     color: Colors.text.primary,
     lineHeight: 24,

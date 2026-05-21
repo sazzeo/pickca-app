@@ -25,6 +25,7 @@ import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Skeleton } from "@/components/common/Skeleton";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 interface QuizQuestion extends Question {
   isRetry?: boolean;
@@ -504,7 +505,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bg.white,
   },
   headerCount: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.secondary,
     minWidth: 60,
     textAlign: "right",
@@ -521,8 +522,8 @@ const styles = StyleSheet.create({
   progressBarContainer: {
     height: 8,
     backgroundColor: Colors.divider,
-    marginHorizontal: 20,
-    borderRadius: 4,
+    marginHorizontal: Spacing.xl,
+    borderRadius: Radius.xs,
   },
   progressBar: {
     height: 8,
@@ -532,14 +533,14 @@ const styles = StyleSheet.create({
 
   // 문제 카드
   questionCardWrapper: {
-    marginHorizontal: 20,
-    marginTop: 24,
+    marginHorizontal: Spacing.xl,
+    marginTop: Spacing.xxl,
   },
   questionCard: {
     height: 190,
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.xxl,
     backgroundColor: Colors.bg.default,
-    borderRadius: 16,
+    borderRadius: Radius.card,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -560,20 +561,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: 20,
-    marginTop: 24,
-    marginBottom: 16,
+    marginHorizontal: Spacing.xl,
+    marginTop: Spacing.xxl,
+    marginBottom: Spacing.lg,
   },
   skeletonGuideRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: 20,
-    marginTop: 24,
-    marginBottom: 16,
+    marginHorizontal: Spacing.xl,
+    marginTop: Spacing.xxl,
+    marginBottom: Spacing.lg,
   },
   guideText: {
-    fontSize: 15,
+    fontSize: FontSize.bodyMd,
     color: Colors.text.secondary,
   },
   timerContainer: {
@@ -588,7 +589,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   timerText: {
-    fontSize: 13,
+    fontSize: FontSize.caption,
     fontWeight: "700",
     color: Colors.brand.green,
   },
@@ -598,15 +599,15 @@ const styles = StyleSheet.create({
 
   // 선택지
   optionsContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: Spacing.xl,
     gap: 10,
   },
   option: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
+    gap: Spacing.md,
+    padding: Spacing.lg,
+    borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.border.button,
     backgroundColor: Colors.bg.white,
@@ -614,9 +615,9 @@ const styles = StyleSheet.create({
   optionSelected: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
+    gap: Spacing.md,
+    padding: Spacing.lg,
+    borderRadius: Radius.lg,
     borderWidth: 1,
     borderColor: Colors.brand.green,
     backgroundColor: Colors.brand.greenSurface,
@@ -624,49 +625,49 @@ const styles = StyleSheet.create({
   optionCorrect: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
+    gap: Spacing.md,
+    padding: Spacing.lg,
+    borderRadius: Radius.lg,
     backgroundColor: Colors.brand.greenLight,
   },
   optionWrong: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
+    gap: Spacing.md,
+    padding: Spacing.lg,
+    borderRadius: Radius.lg,
     backgroundColor: Colors.semantic.dangerLight,
   },
   optionLabel: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "600",
     color: Colors.text.secondary,
   },
   optionLabelCorrect: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "600",
     color: Colors.brand.green,
   },
   optionLabelWrong: {
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "600",
     color: Colors.semantic.danger,
   },
   optionText: {
     flex: 1,
-    fontSize: 18,
+    fontSize: FontSize.section,
     fontWeight: "500",
     color: Colors.text.primary,
   },
   optionTextCorrect: {
     flex: 1,
-    fontSize: 18,
+    fontSize: FontSize.section,
     fontWeight: "500",
     color: Colors.brand.green,
   },
   optionTextWrong: {
     flex: 1,
-    fontSize: 18,
+    fontSize: FontSize.section,
     fontWeight: "500",
     color: Colors.semantic.danger,
   },
@@ -675,8 +676,8 @@ const styles = StyleSheet.create({
   footer: {
     flex: 1,
     justifyContent: "flex-end",
-    paddingHorizontal: 20,
-    paddingTop: 12,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
   },
 
   // 빈 상태
@@ -686,7 +687,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     color: Colors.text.secondary,
   },
 });

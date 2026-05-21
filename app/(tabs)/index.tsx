@@ -10,6 +10,7 @@ import { TodayLearningSection } from "@/components/home/TodayLearningSection";
 import { WordbookCard } from "@/components/wordbook/WordbookCard";
 import { WordbookStatsCard } from "@/components/wordbook/WordbookStatsCard";
 import { Colors } from "@/lib/colors";
+import { FontSize, Spacing } from "@/lib/tokens";
 import type { TodayWord } from "@/components/home/TodayLearningCard";
 
 // TODO: API 연동 시 제거
@@ -212,24 +213,24 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   pillsSection: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginTop: 8,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    marginTop: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "400",
     color: Colors.text.secondary,
   },
   sectionLink: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "500",
     color: Colors.brand.green,
   },

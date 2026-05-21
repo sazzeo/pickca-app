@@ -4,6 +4,7 @@ import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 export type EllipsisDropdownTone = "default" | "danger";
 
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   menuButton: {
     marginTop: -4,
     marginRight: -4,
-    padding: 4,
+    padding: Spacing.xs,
   },
   menuButtonPressed: {
     opacity: 0.75,
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     minWidth: DROPDOWN_MIN_WIDTH,
     backgroundColor: Colors.bg.white,
-    borderRadius: 10,
+    borderRadius: Radius.md,
     borderWidth: 1,
     borderColor: Colors.divider,
     shadowColor: Colors.text.primary,
@@ -154,8 +155,8 @@ const styles = StyleSheet.create({
   dropdownItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 12,
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     height: DROPDOWN_ITEM_HEIGHT,
   },
   dropdownItemPressed: {
@@ -167,12 +168,12 @@ const styles = StyleSheet.create({
   },
   dropdownItemText: {
     color: Colors.text.primary,
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "500",
   },
   dangerItemText: {
     color: Colors.semantic.danger,
-    fontSize: 14,
+    fontSize: FontSize.body,
     fontWeight: "500",
   },
 });

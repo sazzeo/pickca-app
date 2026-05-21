@@ -3,6 +3,7 @@ import { Text } from "react-native-paper";
 
 import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
 import { Colors } from "@/lib/colors";
+import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
 const LEARNING_STATUS_LABEL: Record<WordbookWordResponseLearningStatus, string> = {
   NOT_STARTED: "학습 전",
@@ -42,14 +43,14 @@ export function LearningStatusChip({ status }: LearningStatusChipProps) {
 
 const styles = StyleSheet.create({
   chip: {
-    borderRadius: 4,
+    borderRadius: Radius.xs,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
   },
   chipText: {
-    fontSize: 16,
+    fontSize: FontSize.bodyLg,
     fontWeight: "500",
   },
 });
