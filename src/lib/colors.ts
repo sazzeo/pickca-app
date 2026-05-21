@@ -70,6 +70,8 @@ export const Colors = {
     button: "#D0D0D0",
     /** TextInput 비활성 아웃라인 */
     inputOutline: "#A9B0A6",
+    /** 설정 버튼 테두리 */
+    settings: "#E2DED6",
   },
 
   /** 시맨틱 — 성공·오류·경고 (추후 확장) */
