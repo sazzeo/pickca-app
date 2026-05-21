@@ -98,7 +98,7 @@ export function TodayLearningSection({
           <ScrollView
             ref={scrollViewRef}
             horizontal
-            nestedScrollEnabled
+            pagingEnabled
             showsHorizontalScrollIndicator={false}
             onScroll={handleScroll}
             scrollEventThrottle={16}
