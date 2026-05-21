@@ -35,6 +35,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="study" options={{ title: "학습" }} />
       {/* 탭바 미노출 화면 */}
       <Tabs.Screen name="wordbook-detail" options={{ href: null }} />
+      <Tabs.Screen name="word-card" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
     </Tabs>
   );

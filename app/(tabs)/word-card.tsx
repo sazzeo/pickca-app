@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Dimensions, Pressable, StyleSheet, View } from "react-native";
@@ -27,7 +27,7 @@ import { resolvePrimaryMeaning, resolvePartOfSpeech } from "@/lib/wordHelpers";
 const PEEK_SIZE = 20;
 const CARD_GAP = 12;
 const CARD_H_PADDING = PEEK_SIZE + CARD_GAP;
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = SCREEN_WIDTH - CARD_H_PADDING * 2;
 const SNAP_INTERVAL = CARD_WIDTH + CARD_GAP;
 
@@ -121,6 +121,7 @@ export default function WordCardScreen() {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const currentIndexSV = useSharedValue(initialIndex);
   const translateX = useSharedValue(-initialIndex * SNAP_INTERVAL);
+  const [cardHeight, setCardHeight] = useState(0);
 
   // 초기 카드 학습 처리
   const wordsLoaded = words.length > 0;
@@ -129,10 +130,6 @@ export default function WordCardScreen() {
       studyWord(initialIndex);
     }
   }, [wordsLoaded]); // 단어 데이터 최초 로드 시 1회만 실행
-
-  const headerHeight = insets.top + 52 + 48;
-  const footerHeight = Math.max(insets.bottom, 16);
-  const cardHeight = SCREEN_HEIGHT - headerHeight - footerHeight - 48;
 
   const progressRatio = total > 0 ? (currentIndex + 1) / total : 0;
 
@@ -270,7 +267,10 @@ export default function WordCardScreen() {
 
       {/* 카드 덱 */}
       <GestureDetector gesture={panGesture}>
-        <View style={styles.deckViewport}>
+        <View
+          style={styles.deckViewport}
+          onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}
+        >
           <Animated.View style={[styles.cardsRow, animatedRowStyle]}>
             {cards.map((card, index) => (
               <View key={card.id} style={styles.cardWrapper}>
@@ -287,8 +287,6 @@ export default function WordCardScreen() {
           </Animated.View>
         </View>
       </GestureDetector>
-
-      <View style={{ height: footerHeight }} />
     </View>
   );
 }
@@ -350,7 +348,7 @@ const styles = StyleSheet.create({
   deckViewport: {
     flex: 1,
     overflow: "hidden",
-    marginTop: 20,
+    marginVertical: 12,
   },
   cardsRow: {
     flexDirection: "row",
