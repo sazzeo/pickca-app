@@ -35,7 +35,7 @@ export default function StudyScreen() {
       key: "wordbook",
       icon: "minus",
       iconColor: Colors.brand.green,
-      iconBg: Colors.brand.greenMid,
+      iconBg: Colors.brand.greenCard,
       title: "단어장 선택",
       subtitle: "특정 단어장으로 풀기",
       onPress: () => {
@@ -59,7 +59,7 @@ export default function StudyScreen() {
     {
       key: "all",
       icon: "dots-grid",
-      iconColor: Colors.text.white,
+      iconColor: Colors.text.subtitle,
       iconBg: Colors.bg.muted,
       title: "전체 단어",
       subtitle: `모든 단어장 · ${totalWordCount.toLocaleString()}개`,
@@ -124,39 +124,39 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 17,
     paddingTop: 8,
   },
   titleBlock: {
     marginBottom: 20,
   },
   screenTitle: {
-    fontSize: 24,
-    fontWeight: "700",
+    fontSize: 28,
+    fontWeight: "400",
     color: Colors.text.primary,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   screenSubtitle: {
     fontSize: 14,
     color: Colors.text.secondary,
   },
   sectionLabel: {
-    fontSize: 12,
-    color: Colors.text.secondary,
-    fontWeight: "500",
-    marginBottom: 12,
+    fontSize: 16,
+    color: Colors.text.subtitle,
+    marginBottom: 8,
   },
   cardList: {
-    gap: 12,
+    gap: 16,
   },
   card: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: Colors.bg.white,
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: 8,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: Colors.divider,
+    borderColor: Colors.border.settings,
   },
   cardPressed: {
     opacity: 0.85,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   iconCircle: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -174,12 +174,12 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 20,
+    fontWeight: "500",
     color: Colors.text.primary,
   },
   cardSubtitle: {
-    fontSize: 13,
+    fontSize: 16,
     color: Colors.text.secondary,
   },
 });
