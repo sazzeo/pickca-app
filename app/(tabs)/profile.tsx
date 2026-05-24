@@ -2,7 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 import { useUpdateNickname } from "@/api/generated/member/member";
@@ -16,6 +16,7 @@ const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
 export default function ProfileScreen() {
   const { user, updateUser, signOut } = useAuth();
 
+  const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const [isNicknameDialogVisible, setIsNicknameDialogVisible] = useState(false);
   const [nicknameInput, setNicknameInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -130,12 +131,7 @@ export default function ProfileScreen() {
           <View style={styles.divider} />
           <Pressable
             style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
-            onPress={() =>
-              Alert.alert("로그아웃", "정말 로그아웃하시겠습니까?", [
-                { text: "취소", style: "cancel" },
-                { text: "로그아웃", style: "destructive", onPress: signOut },
-              ])
-            }
+            onPress={() => setIsLogoutDialogVisible(true)}
             accessibilityRole="button"
             accessibilityLabel="로그아웃"
           >
@@ -163,6 +159,18 @@ export default function ProfileScreen() {
         }}
         onCancel={() => setIsNicknameDialogVisible(false)}
         onConfirm={handleNicknameConfirm}
+      />
+
+      <ConfirmDialog
+        visible={isLogoutDialogVisible}
+        title="정말 로그아웃하시겠습니까?"
+        confirmLabel="로그아웃"
+        tone="danger"
+        onCancel={() => setIsLogoutDialogVisible(false)}
+        onConfirm={() => {
+          setIsLogoutDialogVisible(false);
+          signOut();
+        }}
       />
     </View>
   );
