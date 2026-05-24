@@ -151,8 +151,8 @@ const styles = StyleSheet.create({
     color: Colors.text.secondary,
   },
   cta: {
-    fontSize: FontSize.caption,
-    fontWeight: "600",
+    fontSize: FontSize.bodyLg,
+    fontWeight: "500",
     color: Colors.brand.green,
   },
   scrollView: {

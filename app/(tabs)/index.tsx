@@ -168,12 +168,13 @@ export default function HomeScreen() {
                 onPress={() => router.push("/(tabs)/wordbook")}
                 hitSlop={8}
                 accessibilityRole="link"
-                accessibilityLabel="전체보기"
+                accessibilityLabel="전체 보기"
               >
-                <Text style={styles.sectionLink}>전체보기</Text>
+                <Text style={styles.sectionLink}>전체 보기</Text>
               </Pressable>
             </View>
 
+            <View style={styles.wordbookList}>
             {wordbooks.map((wb) => (
               <WordbookCard
                 key={wb.id}
@@ -193,6 +194,7 @@ export default function HomeScreen() {
                 }
               />
             ))}
+            </View>
           </>
         ) : (
           <EmptyWordbookGuide onExtractPress={() => router.push("/(tabs)/extract")} />
@@ -233,5 +235,9 @@ const styles = StyleSheet.create({
     fontSize: FontSize.bodyLg,
     fontWeight: "500",
     color: Colors.brand.green,
+  },
+  wordbookList: {
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.sm,
   },
 });
