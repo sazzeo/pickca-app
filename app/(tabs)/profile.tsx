@@ -130,7 +130,12 @@ export default function ProfileScreen() {
           <View style={styles.divider} />
           <Pressable
             style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
-            onPress={signOut}
+            onPress={() =>
+              Alert.alert("로그아웃", "정말 로그아웃하시겠습니까?", [
+                { text: "취소", style: "cancel" },
+                { text: "로그아웃", style: "destructive", onPress: signOut },
+              ])
+            }
             accessibilityRole="button"
             accessibilityLabel="로그아웃"
           >
