@@ -15,6 +15,7 @@ import {
   useCreateWordbook,
   useGetWordbooks,
 } from "@/api/generated/wordbooks/wordbooks";
+import { Button } from "@/components/common/Button";
 import { Colors } from "@/lib/colors";
 import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
@@ -113,41 +114,20 @@ export function WordbookSelectModal({
               {wordIds.length}개 단어를 저장할 단어장을 선택해 주세요.
             </Text>
 
-            <Pressable
-              style={({ pressed }) => [styles.optionButton, pressed && styles.optionButtonPressed]}
-              onPress={() => setView("existing")}
-              accessibilityRole="button"
-              accessibilityLabel="기존 단어장에 추가하기"
-            >
-              <View style={styles.optionIcon}>
-                <MaterialCommunityIcons
-                  name="book-open-variant"
-                  size={22}
-                  color={Colors.brand.greenDark}
-                />
-              </View>
-              <View style={styles.optionTextCol}>
-                <Text style={styles.optionLabel}>기존 단어장에 추가하기</Text>
-                <Text style={styles.optionDesc}>저장해 둔 단어장에 바로 추가해요</Text>
-              </View>
-              <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.text.tertiary} />
-            </Pressable>
-
-            <Pressable
-              style={({ pressed }) => [styles.optionButton, pressed && styles.optionButtonPressed]}
-              onPress={() => setView("new")}
-              accessibilityRole="button"
-              accessibilityLabel="새 단어장 만들기"
-            >
-              <View style={styles.optionIcon}>
-                <MaterialCommunityIcons name="book-plus" size={22} color={Colors.brand.greenDark} />
-              </View>
-              <View style={styles.optionTextCol}>
-                <Text style={styles.optionLabel}>새 단어장 만들기</Text>
-                <Text style={styles.optionDesc}>새 단어장을 만들고 단어를 저장해요</Text>
-              </View>
-              <MaterialCommunityIcons name="chevron-right" size={20} color={Colors.text.tertiary} />
-            </Pressable>
+            <View style={styles.buttonGroup}>
+              <Button
+                label="기존 단어장에 추가하기"
+                onPress={() => setView("existing")}
+                variant="primary"
+                size="lg"
+              />
+              <Button
+                label="새 단어장 만들기"
+                onPress={() => setView("new")}
+                variant="secondary"
+                size="lg"
+              />
+            </View>
 
             <Pressable
               style={({ pressed }) => [styles.cancelButton, pressed && styles.cancelButtonPressed]}
@@ -293,39 +273,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: Spacing.xl,
   },
-  optionButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    borderRadius: Radius.lg,
-    backgroundColor: Colors.brand.greenLight,
-    marginBottom: 10,
-    gap: Spacing.md,
-  },
-  optionButtonPressed: {
-    opacity: 0.8,
-  },
-  optionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: Colors.bg.white,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  optionTextCol: {
-    flex: 1,
-  },
-  optionLabel: {
-    fontSize: FontSize.bodyMd,
-    fontWeight: "700",
-    color: Colors.text.primary,
-  },
-  optionDesc: {
-    marginTop: 2,
-    fontSize: FontSize.sm,
-    color: Colors.text.secondary,
+  buttonGroup: {
+    gap: Spacing.sm,
   },
   cancelButton: {
     marginTop: 6,
