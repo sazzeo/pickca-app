@@ -1,13 +1,14 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Modal, Portal, Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useGetWords, useGetSources, useRemoveWord } from "@/api/generated/wordbooks/wordbooks";
 import type { WordbookWordResponse } from "@/api/generated/pickcaAPI.schemas";
 import { WordbookWordResponseLearningStatus } from "@/api/generated/pickcaAPI.schemas";
+import { AlertDialog } from "@/components/common/AlertDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { LearningStatusChip } from "@/components/common/LearningStatusChip";
 import { EllipsisDropdownMenu } from "@/components/common/EllipsisDropdownMenu";
@@ -74,6 +75,9 @@ export default function WordbookDetailScreen() {
   const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
   const [selectedFilter, setSelectedFilter] = useState<FilterTabKey>("all");
   const [deletingWordId, setDeletingWordId] = useState<number | null>(null);
+  const [alertState, setAlertState] = useState<{ title: string; description?: string } | null>(
+    null
+  );
   const [sourceSheetVisible, setSourceSheetVisible] = useState(false);
   const [sourceIndex, setSourceIndex] = useState(0);
 
@@ -101,7 +105,7 @@ export default function WordbookDetailScreen() {
         refetch();
       },
       onError: () => {
-        Alert.alert("오류", "단어 삭제에 실패했어요. 다시 시도해 주세요.");
+        setAlertState({ title: "오류", description: "단어 삭제에 실패했어요. 다시 시도해 주세요." });
         setDeletingWordId(null);
       },
     },
@@ -303,7 +307,10 @@ export default function WordbookDetailScreen() {
                           tone: "danger",
                           onPress: () => {
                             if (word.id == null) {
-                              Alert.alert("안내", "아직 수집되지 않은 단어는 삭제할 수 없어요.");
+                              setAlertState({
+                                title: "안내",
+                                description: "아직 수집되지 않은 단어는 삭제할 수 없어요.",
+                              });
                               return;
                             }
                             setDeletingWordId(word.id);
@@ -345,6 +352,13 @@ export default function WordbookDetailScreen() {
           if (deletingWordId == null) return;
           removeWord({ wordbookId, wordId: deletingWordId });
         }}
+      />
+
+      <AlertDialog
+        visible={alertState !== null}
+        title={alertState?.title ?? ""}
+        description={alertState?.description}
+        onAction={() => setAlertState(null)}
       />
 
       <Portal>

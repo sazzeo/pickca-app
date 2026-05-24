@@ -4,10 +4,11 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import axios from "axios";
-import { useEffect, useRef } from "react";
-import { Alert, Platform, StyleSheet, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Platform, StyleSheet, View } from "react-native";
 
 import { useGoogleLogin } from "@/api/generated/auth/auth";
+import { AlertDialog } from "@/components/common/AlertDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { createMemberIdFromEmail } from "@/lib/member";
 
@@ -15,6 +16,9 @@ export function GoogleSignInPanel() {
   const { signIn } = useAuth();
   const inFlight = useRef(false);
   const { mutateAsync: googleLogin } = useGoogleLogin();
+  const [alertState, setAlertState] = useState<{ title: string; description?: string } | null>(
+    null
+  );
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -39,11 +43,11 @@ export function GoogleSignInPanel() {
       const email = data?.user?.email;
 
       if (!idToken) {
-        Alert.alert("오류", "Google 인증 토큰을 가져오지 못했습니다.");
+        setAlertState({ title: "오류", description: "Google 인증 토큰을 가져오지 못했습니다." });
         return;
       }
       if (!email) {
-        Alert.alert("오류", "Google 계정 이메일을 가져오지 못했습니다.");
+        setAlertState({ title: "오류", description: "Google 계정 이메일을 가져오지 못했습니다." });
         return;
       }
 
@@ -57,7 +61,7 @@ export function GoogleSignInPanel() {
         payloadWithId?.memberId ?? payloadWithId?.id ?? payloadWithId?.userId;
 
       if (!accessToken || !refreshToken || !nickname) {
-        Alert.alert("오류", "로그인 응답 형식이 올바르지 않습니다.");
+        setAlertState({ title: "오류", description: "로그인 응답 형식이 올바르지 않습니다." });
         return;
       }
 
@@ -73,7 +77,7 @@ export function GoogleSignInPanel() {
         if (code === statusCodes.SIGN_IN_CANCELLED) return;
         if (code === statusCodes.IN_PROGRESS) return;
         if (code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-          Alert.alert("오류", "Google Play Services를 사용할 수 없습니다.");
+          setAlertState({ title: "오류", description: "Google Play Services를 사용할 수 없습니다." });
           return;
         }
       }
@@ -84,7 +88,7 @@ export function GoogleSignInPanel() {
           ? error.message
           : "알 수 없는 오류";
 
-      Alert.alert("로그인 오류", message);
+      setAlertState({ title: "로그인 오류", description: message });
     } finally {
       inFlight.current = false;
     }
@@ -96,6 +100,13 @@ export function GoogleSignInPanel() {
         size={GoogleSigninButton.Size.Wide}
         color={GoogleSigninButton.Color.Dark}
         onPress={handleGoogleSignIn}
+      />
+
+      <AlertDialog
+        visible={alertState !== null}
+        title={alertState?.title ?? ""}
+        description={alertState?.description}
+        onAction={() => setAlertState(null)}
       />
     </View>
   );

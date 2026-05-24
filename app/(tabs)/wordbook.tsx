@@ -1,15 +1,7 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -19,6 +11,7 @@ import {
   useUpdateWordbookName,
 } from "@/api/generated/wordbooks/wordbooks";
 import type { Item } from "@/api/generated/pickcaAPI.schemas";
+import { AlertDialog } from "@/components/common/AlertDialog";
 import { LogoHeaderWithSettings } from "@/components/common/LogoHeader";
 import { Button } from "@/components/common/Button";
 import { ScreenTitleBlock } from "@/components/common/ScreenTitleBlock";
@@ -37,6 +30,9 @@ export default function WordbookScreen() {
   const [editInput, setEditInput] = useState("");
   const [isUpdatingName, setIsUpdatingName] = useState(false);
   const [isDeletingWordbook, setIsDeletingWordbook] = useState(false);
+  const [alertState, setAlertState] = useState<{ title: string; description?: string } | null>(
+    null
+  );
 
   const { data: wordbooksData, isPending, isError, refetch } = useGetWordbooks();
   const { mutateAsync: updateWordbookName } = useUpdateWordbookName();
@@ -110,7 +106,7 @@ export default function WordbookScreen() {
       setEditInput("");
       await refetch();
     } catch {
-      Alert.alert("오류", "단어장 이름 수정에 실패했어요.");
+      setAlertState({ title: "오류", description: "단어장 이름 수정에 실패했어요." });
     } finally {
       setIsUpdatingName(false);
     }
@@ -132,7 +128,7 @@ export default function WordbookScreen() {
       setDeletingWordbookId(null);
       await refetch();
     } catch {
-      Alert.alert("오류", "단어장 삭제에 실패했어요.");
+      setAlertState({ title: "오류", description: "단어장 삭제에 실패했어요." });
     } finally {
       setIsDeletingWordbook(false);
     }
@@ -248,6 +244,13 @@ export default function WordbookScreen() {
         confirmDisabled={isDeletingWordbook}
         onCancel={() => setDeletingWordbookId(null)}
         onConfirm={() => void handleConfirmDelete()}
+      />
+
+      <AlertDialog
+        visible={alertState !== null}
+        title={alertState?.title ?? ""}
+        description={alertState?.description}
+        onAction={() => setAlertState(null)}
       />
     </View>
   );

@@ -120,13 +120,13 @@ const tabBarApproxHeight = 60 + Math.max(insets.bottom, 10);
 SafeAreaView 사용 시 edges 명시. 하단: `Math.max(insets.bottom, N)`.
 
 ## 다이얼로그
-- 확인/취소 선택이 필요한 경우: `ConfirmDialog` 사용. `Alert.alert`로 confirm 구현 금지.
-- 단순 알림(확인 버튼만): `AlertDialog` 또는 `Alert.alert` 허용.
+- 확인/취소 선택이 필요한 경우: `ConfirmDialog` 사용.
+- 단순 알림(확인 버튼만): `AlertDialog` 사용.
+- `Alert.alert` 사용 금지. 모든 다이얼로그는 공통 컴포넌트를 사용한다.
 
 ## 에러 처리
 ```tsx
-Alert.alert("오류", "메시지");  // 단순
-showAlertDialog({ title: "...", actionLabel: "..." });  // 액션 필요
+setAlertState({ title: "오류", description: "메시지" });  // AlertDialog 사용
 
 const handleSubmit = async () => {
   setIsSubmitting(true);

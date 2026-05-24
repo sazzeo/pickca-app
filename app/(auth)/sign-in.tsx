@@ -1,18 +1,12 @@
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import type { ComponentType } from "react";
 import { Suspense, lazy, useCallback, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Platform,
-  StyleSheet,
-  TextInput as RNTextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Platform, StyleSheet, TextInput as RNTextInput, View } from "react-native";
 
 import { Button, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { AlertDialog } from "@/components/common/AlertDialog";
 import { useAuth } from "@/contexts/AuthContext";
 import axiosInstance from "@/lib/axios";
 import { createMemberIdFromEmail } from "@/lib/member";
@@ -36,12 +30,15 @@ function ExpoGoDevLoginForm() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState("dev@pickca.local");
   const [submitting, setSubmitting] = useState(false);
+  const [alertState, setAlertState] = useState<{ title: string; description?: string } | null>(
+    null
+  );
 
   const handleDevSignIn = useCallback(async () => {
     const normalizedEmail = email.trim().toLowerCase();
     const isEmailValid = /\S+@\S+\.\S+/.test(normalizedEmail);
     if (!isEmailValid) {
-      Alert.alert("입력 오류", "올바른 이메일을 입력하세요.");
+      setAlertState({ title: "입력 오류", description: "올바른 이메일을 입력하세요." });
       return;
     }
 
@@ -68,7 +65,7 @@ function ExpoGoDevLoginForm() {
           ? `DB에 존재하지 않는 이메일입니다.\n(${normalizedEmail})`
           : (axiosError.response?.data?.error?.message ??
             (e instanceof Error ? e.message : "알 수 없는 오류"));
-      Alert.alert("로그인 오류", message);
+      setAlertState({ title: "로그인 오류", description: message });
     } finally {
       setSubmitting(false);
     }
@@ -92,6 +89,13 @@ function ExpoGoDevLoginForm() {
       <Button mode="contained" onPress={handleDevSignIn} loading={submitting} disabled={submitting}>
         개발용 로그인
       </Button>
+
+      <AlertDialog
+        visible={alertState !== null}
+        title={alertState?.title ?? ""}
+        description={alertState?.description}
+        onAction={() => setAlertState(null)}
+      />
     </View>
   );
 }

@@ -3,9 +3,11 @@ import Constants from "expo-constants";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+
 import { Text } from "react-native-paper";
 
 import { useUpdateNickname } from "@/api/generated/member/member";
+import { AlertDialog } from "@/components/common/AlertDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,6 +18,9 @@ const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
 export default function ProfileScreen() {
   const { user, updateUser, signOut } = useAuth();
 
+  const [alertState, setAlertState] = useState<{ title: string; description?: string } | null>(
+    null
+  );
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const [isNicknameDialogVisible, setIsNicknameDialogVisible] = useState(false);
   const [nicknameInput, setNicknameInput] = useState("");
@@ -38,14 +43,14 @@ export default function ProfileScreen() {
       await updateUser({ ...user, nickname: nicknameInput.trim() });
       setIsNicknameDialogVisible(false);
     } catch {
-      Alert.alert("오류", "닉네임 변경에 실패했습니다.");
+      setAlertState({ title: "오류", description: "닉네임 변경에 실패했습니다." });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleNotReady = () => {
-    Alert.alert("안내", "서비스 준비 중입니다.");
+    setAlertState({ title: "안내", description: "서비스 준비 중입니다." });
   };
 
   return (
@@ -171,6 +176,13 @@ export default function ProfileScreen() {
           setIsLogoutDialogVisible(false);
           signOut();
         }}
+      />
+
+      <AlertDialog
+        visible={alertState !== null}
+        title={alertState?.title ?? ""}
+        description={alertState?.description}
+        onAction={() => setAlertState(null)}
       />
     </View>
   );
