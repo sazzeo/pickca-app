@@ -15,7 +15,6 @@ import {
   useCreateWordbook,
   useGetWordbooks,
 } from "@/api/generated/wordbooks/wordbooks";
-import { Button } from "@/components/common/Button";
 import { Colors } from "@/lib/colors";
 import { FontSize, Radius, Spacing } from "@/lib/tokens";
 
@@ -110,33 +109,33 @@ export function WordbookSelectModal({
         {view === "select" && (
           <View style={styles.content}>
             <Text style={styles.title}>단어장에 추가하기</Text>
-            <Text style={styles.subtitle}>
-              {wordIds.length}개 단어를 저장할 단어장을 선택해 주세요.
-            </Text>
 
-            <View style={styles.buttonGroup}>
-              <Button
-                label="기존 단어장에 추가하기"
+            <View style={styles.buttonColumn}>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.buttonBase,
+                  styles.confirmButton,
+                  pressed && styles.pressedButton,
+                ]}
                 onPress={() => setView("existing")}
-                variant="primary"
-                size="lg"
-              />
-              <Button
-                label="새 단어장 만들기"
+                accessibilityRole="button"
+                accessibilityLabel="기존 단어장에 추가하기"
+              >
+                <Text style={styles.confirmButtonText}>기존 단어장에 추가하기</Text>
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.buttonBase,
+                  styles.cancelButton,
+                  pressed && styles.pressedButton,
+                ]}
                 onPress={() => setView("new")}
-                variant="secondary"
-                size="lg"
-              />
+                accessibilityRole="button"
+                accessibilityLabel="새 단어장 만들기"
+              >
+                <Text style={styles.cancelButtonText}>새 단어장 만들기</Text>
+              </Pressable>
             </View>
-
-            <Pressable
-              style={({ pressed }) => [styles.cancelButton, pressed && styles.cancelButtonPressed]}
-              onPress={handleDismiss}
-              accessibilityRole="button"
-              accessibilityLabel="취소"
-            >
-              <Text style={styles.cancelLabel}>취소</Text>
-            </Pressable>
           </View>
         )}
 
@@ -251,42 +250,48 @@ export function WordbookSelectModal({
 const styles = StyleSheet.create({
   modalContainer: {
     marginHorizontal: Spacing.lg,
-    borderRadius: Radius.card,
+    borderRadius: Radius.sm,
     backgroundColor: Colors.bg.white,
-    overflow: "hidden",
   },
   content: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: 28,
-    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.xxxl,
+    gap: Spacing.lg,
   },
   title: {
-    fontSize: FontSize.section,
-    fontWeight: "700",
+    fontSize: FontSize.title,
+    fontWeight: "600",
     color: Colors.text.primary,
     textAlign: "center",
-    marginBottom: 6,
   },
-  subtitle: {
-    fontSize: FontSize.caption,
-    color: Colors.text.tertiary,
-    textAlign: "center",
-    marginBottom: Spacing.xl,
-  },
-  buttonGroup: {
+  buttonColumn: {
+    flexDirection: "column",
     gap: Spacing.sm,
   },
-  cancelButton: {
-    marginTop: 6,
-    paddingVertical: Spacing.md,
+  buttonBase: {
+    minHeight: 48,
+    borderRadius: Radius.sm,
     alignItems: "center",
+    justifyContent: "center",
   },
-  cancelButtonPressed: {
-    opacity: 0.7,
+  confirmButton: {
+    backgroundColor: Colors.brand.green,
   },
-  cancelLabel: {
-    fontSize: FontSize.bodyMd,
-    color: Colors.text.secondary,
+  confirmButtonText: {
+    fontSize: FontSize.bodyLg,
+    fontWeight: "600",
+    color: Colors.text.white,
+  },
+  cancelButton: {
+    backgroundColor: Colors.bg.cancelButton,
+  },
+  cancelButtonText: {
+    fontSize: FontSize.bodyLg,
+    fontWeight: "600",
+    color: Colors.text.primary,
+  },
+  pressedButton: {
+    opacity: 0.85,
   },
   backRow: {
     flexDirection: "row",

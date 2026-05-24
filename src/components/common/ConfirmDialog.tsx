@@ -22,6 +22,7 @@ interface ConfirmDialogProps {
   confirmLabel: string;
   tone?: ConfirmTone;
   confirmDisabled?: boolean;
+  buttonDirection?: "row" | "column";
   input?: ConfirmInputProps;
   onCancel: () => void;
   onConfirm: () => void;
@@ -35,6 +36,7 @@ export function ConfirmDialog({
   confirmLabel,
   tone = "primary",
   confirmDisabled = false,
+  buttonDirection = "row",
   input,
   onCancel,
   onConfirm,
@@ -65,34 +67,66 @@ export function ConfirmDialog({
             />
           ) : null}
 
-          <View style={styles.buttonRow}>
-            <Pressable
-              onPress={onCancel}
-              style={({ pressed }) => [
-                styles.buttonBase,
-                styles.cancelButton,
-                pressed && styles.pressedButton,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel={cancelLabel}
-            >
-              <Text style={styles.cancelButtonText}>{cancelLabel}</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={onConfirm}
-              disabled={confirmDisabled}
-              style={({ pressed }) => [
-                styles.buttonBase,
-                { backgroundColor: confirmBackgroundColor },
-                confirmDisabled && styles.disabledButton,
-                pressed && !confirmDisabled && styles.pressedButton,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel={confirmLabel}
-            >
-              <Text style={styles.confirmButtonText}>{confirmLabel}</Text>
-            </Pressable>
+          <View style={buttonDirection === "column" ? styles.buttonColumn : styles.buttonRow}>
+            {buttonDirection === "column" ? (
+              <>
+                <Pressable
+                  onPress={onConfirm}
+                  disabled={confirmDisabled}
+                  style={({ pressed }) => [
+                    styles.buttonBase,
+                    { backgroundColor: confirmBackgroundColor },
+                    confirmDisabled && styles.disabledButton,
+                    pressed && !confirmDisabled && styles.pressedButton,
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={confirmLabel}
+                >
+                  <Text style={styles.confirmButtonText}>{confirmLabel}</Text>
+                </Pressable>
+                <Pressable
+                  onPress={onCancel}
+                  style={({ pressed }) => [
+                    styles.buttonBase,
+                    styles.cancelButton,
+                    pressed && styles.pressedButton,
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={cancelLabel}
+                >
+                  <Text style={styles.cancelButtonText}>{cancelLabel}</Text>
+                </Pressable>
+              </>
+            ) : (
+              <>
+                <Pressable
+                  onPress={onCancel}
+                  style={({ pressed }) => [
+                    styles.buttonBase,
+                    styles.cancelButton,
+                    pressed && styles.pressedButton,
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={cancelLabel}
+                >
+                  <Text style={styles.cancelButtonText}>{cancelLabel}</Text>
+                </Pressable>
+                <Pressable
+                  onPress={onConfirm}
+                  disabled={confirmDisabled}
+                  style={({ pressed }) => [
+                    styles.buttonBase,
+                    { backgroundColor: confirmBackgroundColor },
+                    confirmDisabled && styles.disabledButton,
+                    pressed && !confirmDisabled && styles.pressedButton,
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={confirmLabel}
+                >
+                  <Text style={styles.confirmButtonText}>{confirmLabel}</Text>
+                </Pressable>
+              </>
+            )}
           </View>
         </View>
       </Modal>
@@ -128,6 +162,10 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  buttonColumn: {
+    flexDirection: "column",
     gap: Spacing.sm,
   },
   buttonBase: {
