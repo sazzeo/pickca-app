@@ -11,6 +11,7 @@ import { AlertDialog } from "@/components/common/AlertDialog";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { useAuth } from "@/contexts/AuthContext";
+import { fetcher } from "@/lib/axios";
 import { Colors } from "@/lib/colors";
 
 const APP_VERSION = Constants.expoConfig?.version ?? "1.0.0";
@@ -23,6 +24,8 @@ export default function ProfileScreen() {
   );
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const [isNicknameDialogVisible, setIsNicknameDialogVisible] = useState(false);
+  const [isWithdrawalDialogVisible, setIsWithdrawalDialogVisible] = useState(false);
+  const [withdrawalReason, setWithdrawalReason] = useState("");
   const [nicknameInput, setNicknameInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,6 +47,29 @@ export default function ProfileScreen() {
       setIsNicknameDialogVisible(false);
     } catch {
       setAlertState({ title: "오류", description: "닉네임 변경에 실패했습니다." });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleWithdrawalPress = () => {
+    setWithdrawalReason("");
+    setIsWithdrawalDialogVisible(true);
+  };
+
+  const handleWithdrawalConfirm = async () => {
+    setIsSubmitting(true);
+    try {
+      await fetcher({
+        url: "/api/members/me/withdrawal",
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        data: { reason: withdrawalReason.trim() || null },
+      });
+      setIsWithdrawalDialogVisible(false);
+      signOut();
+    } catch {
+      setAlertState({ title: "오류", description: "탈퇴 처리에 실패했습니다. 다시 시도해주세요." });
     } finally {
       setIsSubmitting(false);
     }
@@ -122,7 +148,7 @@ export default function ProfileScreen() {
         <View style={styles.card}>
           <Pressable
             style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
-            onPress={handleNotReady}
+            onPress={handleWithdrawalPress}
             accessibilityRole="button"
             accessibilityLabel="탈퇴하기"
           >
@@ -164,6 +190,23 @@ export default function ProfileScreen() {
         }}
         onCancel={() => setIsNicknameDialogVisible(false)}
         onConfirm={handleNicknameConfirm}
+      />
+
+      <ConfirmDialog
+        visible={isWithdrawalDialogVisible}
+        title="정말 탈퇴하시겠습니까?"
+        description="탈퇴 시 모든 단어장과 학습 기록이 삭제됩니다."
+        confirmLabel="탈퇴하기"
+        confirmDisabled={isSubmitting}
+        tone="danger"
+        input={{
+          value: withdrawalReason,
+          onChangeText: setWithdrawalReason,
+          placeholder: "탈퇴 사유 (선택)",
+          maxLength: 500,
+        }}
+        onCancel={() => setIsWithdrawalDialogVisible(false)}
+        onConfirm={handleWithdrawalConfirm}
       />
 
       <ConfirmDialog
