@@ -3,6 +3,8 @@ const brand = {
   greenDark: "#3A6218",
   greenLight: "#E6EDDB",
   greenMid: "#C8DDA8",
+  /** 프로그래스바 외움 세그먼트·퀴즈 타이머(10~7초) */
+  greenVivid: "#7BA05B",
   /** 입력 카드·업로드 버튼 등 연한 그린 서페이스 */
   greenSurface: "#DDE6D1",
   /** 단어 카드 배경 */

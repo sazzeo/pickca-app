@@ -20,7 +20,7 @@ interface WordbookCardProps {
 }
 
 const SEGMENT_COLORS = {
-  memorized: Colors.brand.greenMid,
+  memorized: Colors.brand.greenVivid,
   learning: Colors.action.orangeLight,
   notStarted: Colors.bg.muted,
 } as const;
