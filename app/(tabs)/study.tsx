@@ -66,7 +66,10 @@ export default function StudyScreen() {
       title: "전체 단어",
       subtitle: `모든 단어장 · ${totalWordCount.toLocaleString()}개`,
       onPress: () => {
-        // TODO: 전체 단어 퀴즈 화면으로 이동
+        router.push({
+          pathname: "/quiz-settings",
+          params: { quizType: "all" },
+        });
       },
     },
   ];

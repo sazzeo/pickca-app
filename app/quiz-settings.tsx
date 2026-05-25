@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { useGetAllQuizSummary } from "@/api/generated/all-quiz/all-quiz";
 import { useGetWordbookSummary } from "@/api/generated/wordbooks/wordbooks";
 import { useGetSummary } from "@/api/generated/wrong-quiz/wrong-quiz";
 import { Button } from "@/components/common/Button";
@@ -37,14 +38,21 @@ export default function QuizSettingsScreen() {
   }>();
 
   const isWrongMode = quizType === "wrong";
+  const isAllMode = quizType === "all";
+  const isCrossWordbookMode = isWrongMode || isAllMode;
 
   const { data: wrongSummaryData } = useGetSummary({
     query: { enabled: isWrongMode },
   });
   const wrongQuizTotalCount = wrongSummaryData?.data?.totalCount ?? 0;
 
+  const { data: allQuizSummaryData } = useGetAllQuizSummary({
+    query: { enabled: isAllMode },
+  });
+  const allQuizTotalCount = allQuizSummaryData?.data?.totalCount ?? 0;
+
   const { data: summaryData } = useGetWordbookSummary(Number(wordbookId), {
-    query: { enabled: !isWrongMode && !!wordbookId },
+    query: { enabled: !isCrossWordbookMode && !!wordbookId },
   });
   const summary = summaryData?.data;
 
@@ -56,13 +64,14 @@ export default function QuizSettingsScreen() {
 
   const filteredWordCount = useMemo(() => {
     if (isWrongMode) return wrongQuizTotalCount;
+    if (isAllMode) return allQuizTotalCount;
     if (!summary?.countByStatus) return 0;
     const counts = summary.countByStatus;
     return Array.from(selectedStatuses).reduce(
       (sum, status) => sum + (counts[status] ?? 0),
       0
     );
-  }, [isWrongMode, wrongQuizTotalCount, summary?.countByStatus, selectedStatuses]);
+  }, [isWrongMode, isAllMode, wrongQuizTotalCount, allQuizTotalCount, summary?.countByStatus, selectedStatuses]);
 
   const visibleCountOptions = useMemo(() => {
     const filtered = WORD_COUNT_OPTIONS.filter((count) => count < filteredWordCount);
@@ -97,11 +106,11 @@ export default function QuizSettingsScreen() {
   };
 
   const handleStart = () => {
-    if (isWrongMode) {
+    if (isCrossWordbookMode) {
       router.push({
         pathname: "/quiz",
         params: {
-          quizType: "wrong",
+          quizType: quizType as string,
           count: String(resolvedCount),
           mode: selectedMode,
         },
@@ -149,8 +158,8 @@ export default function QuizSettingsScreen() {
         contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* 단어장 (오답모음 모드에서 숨김) */}
-        {!isWrongMode && (
+        {/* 단어장 (오답모음/전체단어 모드에서 숨김) */}
+        {!isCrossWordbookMode && (
           <View style={styles.section}>
             <View style={styles.wordbookRow}>
               <Text style={styles.wordbookLabel}>단어장</Text>
@@ -161,8 +170,8 @@ export default function QuizSettingsScreen() {
           </View>
         )}
 
-        {/* 단어 상태 (오답모음 모드에서 숨김) */}
-        {!isWrongMode && (
+        {/* 단어 상태 (오답모음/전체단어 모드에서 숨김) */}
+        {!isCrossWordbookMode && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>단어 상태</Text>
             <View style={styles.chipRow}>
@@ -197,8 +206,10 @@ export default function QuizSettingsScreen() {
             <Text style={styles.sectionTitle}>단어 개수</Text>
             <Text style={styles.totalCount}>총 {filteredWordCount}개</Text>
           </View>
-          {isWrongMode && filteredWordCount === 0 ? (
-            <Text style={styles.emptyText}>틀린 단어가 없어요</Text>
+          {isCrossWordbookMode && filteredWordCount === 0 ? (
+            <Text style={styles.emptyText}>
+              {isWrongMode ? "틀린 단어가 없어요" : "저장된 단어가 없어요"}
+            </Text>
           ) : (
             <View style={styles.chipRow}>
               {visibleCountOptions.counts.map((count) => {

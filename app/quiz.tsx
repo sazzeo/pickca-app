@@ -15,12 +15,13 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Path } from "react-native-svg";
 
+import { useGenerateAllQuiz } from "@/api/generated/all-quiz/all-quiz";
 import {
   useGenerateQuiz,
   useRecordQuizResult,
 } from "@/api/generated/wordbooks/wordbooks";
 import { useGenerateQuiz1 } from "@/api/generated/wrong-quiz/wrong-quiz";
-import { Question, QuizGenerateRequestMode, WrongQuizGenerateRequestMode, WrongQuizQuestion } from "@/api/generated/pickcaAPI.schemas";
+import { AllQuizGenerateRequestMode, AllQuizQuestion, Question, QuizGenerateRequestMode, WrongQuizGenerateRequestMode, WrongQuizQuestion } from "@/api/generated/pickcaAPI.schemas";
 import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { Skeleton } from "@/components/common/Skeleton";
@@ -51,6 +52,8 @@ export default function QuizScreen() {
   }>();
 
   const isWrongMode = quizType === "wrong";
+  const isAllMode = quizType === "all";
+  const isCrossWordbookMode = isWrongMode || isAllMode;
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -84,6 +87,7 @@ export default function QuizScreen() {
 
   const generateQuiz = useGenerateQuiz();
   const generateWrongQuiz = useGenerateQuiz1();
+  const generateAllQuiz = useGenerateAllQuiz();
   const recordResult = useRecordQuizResult();
 
   // ref 동기화
@@ -143,6 +147,33 @@ export default function QuizScreen() {
             },
           }
         );
+      } else if (isAllMode) {
+        generateAllQuiz.mutate(
+          {
+            data: {
+              count: Number(count) || 20,
+              mode: (mode as AllQuizGenerateRequestMode) ?? "MIXED",
+            },
+          },
+          {
+            onSuccess: (response) => {
+              const allQuestions = response.data?.questions ?? [];
+              const mapped: QuizQuestion[] = allQuestions.map((q: AllQuizQuestion) => ({
+                wordId: q.wordId,
+                question: q.question,
+                answer: q.answer,
+                options: q.options,
+                wordbookId: q.wordbookId,
+              }));
+              setQuestions(mapped);
+              setOriginalTotal(mapped.length);
+              setIsLoaded(true);
+            },
+            onError: () => {
+              setIsLoaded(true);
+            },
+          }
+        );
       } else {
         generateQuiz.mutate(
           {
@@ -172,7 +203,7 @@ export default function QuizScreen() {
           autoAdvanceRef.current = null;
         }
       };
-    }, [isWrongMode, wordbookId, statuses, count, mode])
+    }, [isWrongMode, isAllMode, wordbookId, statuses, count, mode])
   );
 
   const currentQuestion = questions[currentIndex];
