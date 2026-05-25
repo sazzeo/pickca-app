@@ -32,23 +32,31 @@ type QuizModeKey = (typeof QUIZ_MODE_OPTIONS)[number]["key"];
 
 export default function QuizSettingsScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId, quizType } = useLocalSearchParams<{
+  const { wordbookId, wordbookIds, quizType } = useLocalSearchParams<{
     wordbookId?: string;
+    wordbookIds?: string;
     quizType?: string;
   }>();
 
   const isWrongMode = quizType === "wrong";
   const isAllMode = quizType === "all";
-  const isCrossWordbookMode = isWrongMode || isAllMode;
+  const isMultiMode = quizType === "multi";
+  const isCrossWordbookMode = isWrongMode || isAllMode || isMultiMode;
+
+  const parsedWordbookIds = useMemo(
+    () => wordbookIds?.split(",").map(Number).filter(Boolean) ?? [],
+    [wordbookIds],
+  );
 
   const { data: wrongSummaryData } = useGetSummary({
     query: { enabled: isWrongMode },
   });
   const wrongQuizTotalCount = wrongSummaryData?.data?.totalCount ?? 0;
 
-  const { data: allQuizSummaryData } = useGetAllQuizSummary({
-    query: { enabled: isAllMode },
-  });
+  const { data: allQuizSummaryData } = useGetAllQuizSummary(
+    { wordbookIds: isMultiMode ? parsedWordbookIds : undefined },
+    { query: { enabled: isAllMode || isMultiMode } },
+  );
   const allQuizTotalCount = allQuizSummaryData?.data?.totalCount ?? 0;
 
   const { data: summaryData } = useGetWordbookSummary(Number(wordbookId), {
@@ -113,6 +121,7 @@ export default function QuizSettingsScreen() {
           quizType: quizType as string,
           count: String(resolvedCount),
           mode: selectedMode,
+          ...(isMultiMode && wordbookIds ? { wordbookIds } : {}),
         },
       });
     } else {

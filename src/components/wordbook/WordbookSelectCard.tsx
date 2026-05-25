@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
@@ -16,6 +17,7 @@ interface WordbookSelectCardProps {
   memorizedRate: number;
   learningRate: number;
   notStartedRate: number;
+  selected?: boolean;
   onPress: () => void;
 }
 
@@ -25,17 +27,30 @@ export function WordbookSelectCard({
   memorizedRate,
   learningRate,
   notStartedRate,
+  selected,
   onPress,
 }: WordbookSelectCardProps) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      style={({ pressed }) => [
+        styles.card,
+        selected && styles.cardSelected,
+        pressed && styles.cardPressed,
+      ]}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={`${title} 단어장 선택`}
+      accessibilityState={selected != null ? { selected } : undefined}
     >
-      {/* 헤더: 타이틀 + 단어 수 */}
+      {/* 헤더: 체크박스 + 타이틀 + 단어 수 */}
       <View style={styles.header}>
+        {selected != null && (
+          <MaterialCommunityIcons
+            name={selected ? "checkbox-marked" : "checkbox-blank-outline"}
+            size={22}
+            color={selected ? Colors.brand.green : Colors.text.tertiary}
+          />
+        )}
         <Text style={styles.title} numberOfLines={1}>
           {title}
         </Text>
@@ -107,6 +122,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.divider,
+  },
+  cardSelected: {
+    borderColor: Colors.brand.green,
+    backgroundColor: Colors.brand.greenSurface,
   },
   cardPressed: {
     opacity: 0.85,

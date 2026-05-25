@@ -43,8 +43,9 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function QuizScreen() {
   const insets = useSafeAreaInsets();
-  const { wordbookId, statuses, count, mode, quizType } = useLocalSearchParams<{
+  const { wordbookId, wordbookIds, statuses, count, mode, quizType } = useLocalSearchParams<{
     wordbookId?: string;
+    wordbookIds?: string;
     statuses?: string;
     count: string;
     mode: string;
@@ -53,7 +54,8 @@ export default function QuizScreen() {
 
   const isWrongMode = quizType === "wrong";
   const isAllMode = quizType === "all";
-  const isCrossWordbookMode = isWrongMode || isAllMode;
+  const isMultiMode = quizType === "multi";
+  const isCrossWordbookMode = isWrongMode || isAllMode || isMultiMode;
 
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -147,10 +149,12 @@ export default function QuizScreen() {
             },
           }
         );
-      } else if (isAllMode) {
+      } else if (isAllMode || isMultiMode) {
+        const parsedWordbookIds = wordbookIds?.split(",").map(Number).filter(Boolean);
         generateAllQuiz.mutate(
           {
             data: {
+              wordbookIds: isMultiMode ? parsedWordbookIds : undefined,
               count: Number(count) || 20,
               mode: (mode as AllQuizGenerateRequestMode) ?? "MIXED",
             },
@@ -203,7 +207,7 @@ export default function QuizScreen() {
           autoAdvanceRef.current = null;
         }
       };
-    }, [isWrongMode, isAllMode, wordbookId, statuses, count, mode])
+    }, [isWrongMode, isAllMode, isMultiMode, wordbookId, wordbookIds, statuses, count, mode])
   );
 
   const currentQuestion = questions[currentIndex];

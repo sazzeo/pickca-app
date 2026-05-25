@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -17,10 +18,13 @@ import { Button } from "@/components/common/Button";
 import { ScreenHeader } from "@/components/common/ScreenHeader";
 import { WordbookSelectCard } from "@/components/wordbook/WordbookSelectCard";
 import { Colors } from "@/lib/colors";
+import { FontSize, Spacing } from "@/lib/tokens";
 
 export default function WordbookSelectScreen() {
   const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState("");
+  const [multiMode, setMultiMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const { data: wordbooksData, isPending, isError, refetch } = useGetWordbooks();
 
@@ -39,22 +43,68 @@ export default function WordbookSelectScreen() {
   const showError = isError || Boolean(apiErrorMessage);
 
   const handleSelectWordbook = (wordbook: Item) => {
+    if (multiMode) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(wordbook.id)) {
+          next.delete(wordbook.id);
+        } else {
+          next.add(wordbook.id);
+        }
+        return next;
+      });
+    } else {
+      router.push({
+        pathname: "/quiz-settings",
+        params: { wordbookId: String(wordbook.id) },
+      });
+    }
+  };
+
+  const toggleMultiMode = () => {
+    if (multiMode) {
+      setSelectedIds(new Set());
+    }
+    setMultiMode(!multiMode);
+  };
+
+  const handleMultiStart = () => {
+    if (selectedIds.size === 0) return;
     router.push({
       pathname: "/quiz-settings",
-      params: { wordbookId: String(wordbook.id) },
+      params: {
+        quizType: "multi",
+        wordbookIds: Array.from(selectedIds).join(","),
+      },
     });
   };
 
   return (
     <View style={styles.container}>
       {/* 헤더 */}
-      <ScreenHeader title="단어장 선택" showBorder />
+      <ScreenHeader
+        title="단어장 선택"
+        showBorder
+        right={
+          <Pressable
+            style={({ pressed }) => [styles.modeButton, pressed && styles.modeButtonPressed]}
+            onPress={toggleMultiMode}
+            accessibilityRole="button"
+            accessibilityLabel={multiMode ? "단일 선택 모드" : "여러 개 선택"}
+            hitSlop={12}
+          >
+            <Text style={[styles.modeButtonText, multiMode && styles.modeButtonTextActive]}>
+              {multiMode ? "취소" : "여러 개 선택"}
+            </Text>
+          </Pressable>
+        }
+      />
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: Math.max(insets.bottom, 12) + 24 },
+          { paddingBottom: Math.max(insets.bottom, 12) + (multiMode ? 80 : 24) },
         ]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -106,6 +156,7 @@ export default function WordbookSelectScreen() {
                   memorizedRate={memorizedRate}
                   learningRate={learningRate}
                   notStartedRate={notStartedRate}
+                  selected={multiMode ? selectedIds.has(item.id) : undefined}
                   onPress={() => handleSelectWordbook(item)}
                 />
               );
@@ -113,6 +164,17 @@ export default function WordbookSelectScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* 멀티 선택 모드 하단 버튼 */}
+      {multiMode && (
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+          <Button
+            label={`${selectedIds.size}개 단어장으로 퀴즈`}
+            onPress={handleMultiStart}
+            disabled={selectedIds.size === 0}
+          />
+        </View>
+      )}
     </View>
   );
 }
@@ -144,6 +206,21 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     paddingVertical: 0,
   },
+  modeButton: {
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  modeButtonPressed: {
+    opacity: 0.85,
+  },
+  modeButtonText: {
+    fontSize: FontSize.bodyMd,
+    color: Colors.text.secondary,
+  },
+  modeButtonTextActive: {
+    color: Colors.brand.green,
+    fontWeight: "600",
+  },
   cardList: {
     flexDirection: "column",
   },
@@ -162,5 +239,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.text.secondary,
     textAlign: "center",
+  },
+  footer: {
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
+    backgroundColor: Colors.bg.white,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border.settings,
   },
 });
