@@ -15,7 +15,7 @@ export interface AdminMeaningReplaceRequest {
 export type MeaningInputPartOfSpeech = typeof MeaningInputPartOfSpeech[keyof typeof MeaningInputPartOfSpeech];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MeaningInputPartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -42,7 +42,7 @@ export interface MeaningInput {
 export type AdminWordResponseCefr = typeof AdminWordResponseCefr[keyof typeof AdminWordResponseCefr];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordResponseCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -58,7 +58,7 @@ export const AdminWordResponseCefr = {
 export type AdminWordResponseCollectStatus = typeof AdminWordResponseCollectStatus[keyof typeof AdminWordResponseCollectStatus];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -72,7 +72,7 @@ export const AdminWordResponseCollectStatus = {
 export type AdminWordResponseSource = typeof AdminWordResponseSource[keyof typeof AdminWordResponseSource];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordResponseSource = {
   AI: 'AI',
   CSV: 'CSV',
@@ -141,7 +141,7 @@ export interface WordExtractResponse {
 export type WordMeaningResponsePartOfSpeech = typeof WordMeaningResponsePartOfSpeech[keyof typeof WordMeaningResponsePartOfSpeech];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordMeaningResponsePartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -170,7 +170,7 @@ export interface WordMeaningResponse {
 export type WordResponseCollectStatus = typeof WordResponseCollectStatus[keyof typeof WordResponseCollectStatus];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -229,11 +229,11 @@ export interface WordbookAddWordsRequest {
   /** 단어장에 추가할 단어 ID 목록 */
   wordIds: number[];
   /**
-   * 단어 추출에 사용한 원본 문장 (최대 2000자)
-   * @minLength 0
+   * 단어 추출에 사용한 원본 문장 (선택, 최대 2000자)
+   * @minLength 1
    * @maxLength 2000
    */
-  sourceText: string;
+  sourceText?: string;
 }
 
 export type ApiResponseData = { [key: string]: unknown };
@@ -254,13 +254,24 @@ export interface BatchStudyRequest {
   wordIds: number[];
 }
 
+export type QuizGenerateRequestStatusesItem = typeof QuizGenerateRequestStatusesItem[keyof typeof QuizGenerateRequestStatusesItem];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const QuizGenerateRequestStatusesItem = {
+  NOT_STARTED: 'NOT_STARTED',
+  LEARNING: 'LEARNING',
+  MEMORIZED_WRONG: 'MEMORIZED_WRONG',
+  MEMORIZED: 'MEMORIZED',
+} as const;
+
 /**
  * 퀴즈 모드
  */
 export type QuizGenerateRequestMode = typeof QuizGenerateRequestMode[keyof typeof QuizGenerateRequestMode];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const QuizGenerateRequestMode = {
   EN_TO_KO: 'EN_TO_KO',
   KO_TO_EN: 'KO_TO_EN',
@@ -269,7 +280,7 @@ export const QuizGenerateRequestMode = {
 
 export interface QuizGenerateRequest {
   /** 필터링할 학습 상태 목록 */
-  statuses: string[];
+  statuses: QuizGenerateRequestStatusesItem[];
   /**
    * 출제할 문제 수 (최대 100)
    * @minimum 1
@@ -302,13 +313,18 @@ export interface QuizResponse {
   questions: Question[];
 }
 
+export interface WithdrawalRequest {
+  /** 탈퇴 사유 (선택) */
+  reason?: string;
+}
+
 /**
  * 퀴즈 모드
  */
 export type WrongQuizGenerateRequestMode = typeof WrongQuizGenerateRequestMode[keyof typeof WrongQuizGenerateRequestMode];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WrongQuizGenerateRequestMode = {
   EN_TO_KO: 'EN_TO_KO',
   KO_TO_EN: 'KO_TO_EN',
@@ -348,6 +364,56 @@ export interface WrongQuizQuestion {
 export interface WrongQuizResponse {
   /** 퀴즈 문제 목록 */
   questions: WrongQuizQuestion[];
+}
+
+/**
+ * 퀴즈 모드
+ */
+export type AllQuizGenerateRequestMode = typeof AllQuizGenerateRequestMode[keyof typeof AllQuizGenerateRequestMode];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AllQuizGenerateRequestMode = {
+  EN_TO_KO: 'EN_TO_KO',
+  KO_TO_EN: 'KO_TO_EN',
+  MIXED: 'MIXED',
+} as const;
+
+export interface AllQuizGenerateRequest {
+  /** 특정 단어장만 필터 (미지정 시 전체) */
+  wordbookIds?: number[];
+  /**
+   * 출제할 문제 수 (최대 100)
+   * @minimum 1
+   * @maximum 100
+   */
+  count: number;
+  /** 퀴즈 모드 */
+  mode: AllQuizGenerateRequestMode;
+}
+
+export interface AllQuizQuestion {
+  /** 단어 ID (퀴즈 결과 기록용) */
+  wordId: number;
+  /** 단어장 ID (퀴즈 결과 기록용) */
+  wordbookId: number;
+  /** 문제 텍스트 */
+  question: string;
+  /** 정답 텍스트 */
+  answer: string;
+  /** 선택지 목록 (정답 포함, 셔플됨) */
+  options: string[];
+}
+
+export interface AllQuizResponse {
+  /** 퀴즈 문제 목록 */
+  questions: AllQuizQuestion[];
+}
+
+export interface ApiResponseAllQuizResponse {
+  success: boolean;
+  data?: AllQuizResponse;
+  error?: ApiError;
 }
 
 export interface TokenRefreshRequest {
@@ -419,7 +485,7 @@ export interface DevLoginRequest {
 export type AdminWordCreateRequestCefr = typeof AdminWordCreateRequestCefr[keyof typeof AdminWordCreateRequestCefr];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordCreateRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -500,7 +566,7 @@ export interface UpdateNicknameRequest {
 export type UpdateCefrLevelRequestCefrLevel = typeof UpdateCefrLevelRequestCefrLevel[keyof typeof UpdateCefrLevelRequestCefrLevel];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UpdateCefrLevelRequestCefrLevel = {
   A1: 'A1',
   A2: 'A2',
@@ -521,7 +587,7 @@ export interface UpdateCefrLevelRequest {
 export type AdminWordUpdateRequestCefr = typeof AdminWordUpdateRequestCefr[keyof typeof AdminWordUpdateRequestCefr];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordUpdateRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -537,7 +603,7 @@ export const AdminWordUpdateRequestCefr = {
 export type AdminWordUpdateRequestCollectStatus = typeof AdminWordUpdateRequestCollectStatus[keyof typeof AdminWordUpdateRequestCollectStatus];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordUpdateRequestCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -597,7 +663,7 @@ export interface WordbookWordListResponse {
 export type WordbookWordMeaningResponsePartOfSpeech = typeof WordbookWordMeaningResponsePartOfSpeech[keyof typeof WordbookWordMeaningResponsePartOfSpeech];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordbookWordMeaningResponsePartOfSpeech = {
   NOUN: 'NOUN',
   VERB: 'VERB',
@@ -626,7 +692,7 @@ export interface WordbookWordMeaningResponse {
 export type WordbookWordResponseCollectStatus = typeof WordbookWordResponseCollectStatus[keyof typeof WordbookWordResponseCollectStatus];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordbookWordResponseCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -640,7 +706,7 @@ export const WordbookWordResponseCollectStatus = {
 export type WordbookWordResponseLearningStatus = typeof WordbookWordResponseLearningStatus[keyof typeof WordbookWordResponseLearningStatus];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const WordbookWordResponseLearningStatus = {
   NOT_STARTED: 'NOT_STARTED',
   LEARNING: 'LEARNING',
@@ -716,13 +782,88 @@ export interface WrongQuizSummaryResponse {
   totalCount: number;
 }
 
+export interface AllQuizSummaryResponse {
+  /** 전체 단어 수 (DONE + primaryMeanings 있는 고유 단어) */
+  totalCount: number;
+}
+
+export interface ApiResponseAllQuizSummaryResponse {
+  success: boolean;
+  data?: AllQuizSummaryResponse;
+  error?: ApiError;
+}
+
+export interface ApiResponseHomeSummaryResponse {
+  success: boolean;
+  data?: HomeSummaryResponse;
+  error?: ApiError;
+}
+
+export interface HomeSummaryResponse {
+  /** 전체 MEMORIZED 단어 수 (고유) */
+  memorizedCount: number;
+  /** 전체 LEARNING 단어 수 (고유) */
+  learningCount: number;
+  /** 연속 학습 일수 (Phase 1: 0 고정) */
+  streakDays: number;
+  /** 오늘 틀린 단어 목록 (최대 5개) */
+  todayWrongWords: TodayWordItem[];
+  /** 오늘 MEMORIZED 전환된 단어 목록 (최대 5개) */
+  todayMemorizedWords: TodayWordItem[];
+  /** 최근 학습한 단어장 (최대 3개) */
+  recentWordbooks: RecentWordbookItem[];
+}
+
+export interface RecentWordbookItem {
+  /** 단어장 ID */
+  id: number;
+  /** 단어장 이름 */
+  name: string;
+  /** 단어 수 */
+  wordCount: number;
+  /** 암기 완료 비율 (0~100) */
+  memorizedRate: number;
+  /** 학습 중 비율 (0~100) */
+  learningRate: number;
+  /** 학습 전 비율 (0~100) */
+  notStartedRate: number;
+}
+
+/**
+ * 태그 유형
+ */
+export type TodayWordItemTagType = typeof TodayWordItemTagType[keyof typeof TodayWordItemTagType];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TodayWordItemTagType = {
+  CONFUSED: 'CONFUSED',
+  FREQUENTLY_WRONG: 'FREQUENTLY_WRONG',
+  FIRST_MEMORIZED: 'FIRST_MEMORIZED',
+} as const;
+
+export interface TodayWordItem {
+  /** 단어 ID */
+  wordId: number;
+  /** 영단어 원형 */
+  lemma: string;
+  /** 품사 약어 (adj, n, v 등) */
+  partOfSpeech?: string;
+  /** 대표 뜻 */
+  meaning?: string;
+  /** 화면 표시용 태그 텍스트 */
+  tag: string;
+  /** 태그 유형 */
+  tagType: TodayWordItemTagType;
+}
+
 /**
  * 수집 상태 필터
  */
 export type AdminWordListRequestCollectStatus = typeof AdminWordListRequestCollectStatus[keyof typeof AdminWordListRequestCollectStatus];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordListRequestCollectStatus = {
   PENDING: 'PENDING',
   PARTIAL: 'PARTIAL',
@@ -736,7 +877,7 @@ export const AdminWordListRequestCollectStatus = {
 export type AdminWordListRequestSource = typeof AdminWordListRequestSource[keyof typeof AdminWordListRequestSource];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordListRequestSource = {
   AI: 'AI',
   CSV: 'CSV',
@@ -749,7 +890,7 @@ export const AdminWordListRequestSource = {
 export type AdminWordListRequestCefr = typeof AdminWordListRequestCefr[keyof typeof AdminWordListRequestCefr];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const AdminWordListRequestCefr = {
   A1: 'A1',
   A2: 'A2',
@@ -816,7 +957,7 @@ learningStatus?: GetWordsLearningStatus;
 export type GetWordsLearningStatus = typeof GetWordsLearningStatus[keyof typeof GetWordsLearningStatus];
 
 
- 
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetWordsLearningStatus = {
   NOT_STARTED: 'NOT_STARTED',
   LEARNING: 'LEARNING',
@@ -833,5 +974,12 @@ export type CefrImportBody = {
 
 export type GetWords1Params = {
 words: string[];
+};
+
+export type GetAllQuizSummaryParams = {
+/**
+ * 특정 단어장만 필터 (미지정 시 전체)
+ */
+wordbookIds?: number[];
 };
 
