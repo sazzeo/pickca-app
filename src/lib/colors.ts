@@ -106,8 +106,5 @@ export const Colors = {
     /** 외움 */
     memorizedBg: brand.greenCard,
     memorizedText: brand.green,
-    /** 여러번 수집 */
-    relearningBg: "#FFF3CD",
-    relearningText: "#856404",
   },
 } as const;
