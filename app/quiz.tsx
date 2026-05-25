@@ -155,6 +155,7 @@ export default function QuizScreen() {
           {
             data: {
               wordbookIds: isMultiMode ? parsedWordbookIds : undefined,
+              statuses: statuses?.split(",") ?? [],
               count: Number(count) || 20,
               mode: (mode as AllQuizGenerateRequestMode) ?? "MIXED",
             },

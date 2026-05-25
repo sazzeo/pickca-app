@@ -41,7 +41,8 @@ export default function QuizSettingsScreen() {
   const isWrongMode = quizType === "wrong";
   const isAllMode = quizType === "all";
   const isMultiMode = quizType === "multi";
-  const isCrossWordbookMode = isWrongMode || isAllMode || isMultiMode;
+  const isAllOrMultiMode = isAllMode || isMultiMode;
+  const isCrossWordbookMode = isWrongMode || isAllOrMultiMode;
 
   const parsedWordbookIds = useMemo(
     () => wordbookIds?.split(",").map(Number).filter(Boolean) ?? [],
@@ -55,9 +56,9 @@ export default function QuizSettingsScreen() {
 
   const { data: allQuizSummaryData } = useGetAllQuizSummary(
     { wordbookIds: isMultiMode ? parsedWordbookIds : undefined },
-    { query: { enabled: isAllMode || isMultiMode } },
+    { query: { enabled: isAllOrMultiMode } },
   );
-  const allQuizTotalCount = allQuizSummaryData?.data?.totalCount ?? 0;
+  const allQuizSummary = allQuizSummaryData?.data;
 
   const { data: summaryData } = useGetWordbookSummary(Number(wordbookId), {
     query: { enabled: !isCrossWordbookMode && !!wordbookId },
@@ -72,14 +73,21 @@ export default function QuizSettingsScreen() {
 
   const filteredWordCount = useMemo(() => {
     if (isWrongMode) return wrongQuizTotalCount;
-    if (isAllMode) return allQuizTotalCount;
+    if (isAllOrMultiMode) {
+      if (!allQuizSummary?.countByStatus) return 0;
+      const counts = allQuizSummary.countByStatus;
+      return Array.from(selectedStatuses).reduce(
+        (sum, status) => sum + ((counts as Record<string, number>)[status] ?? 0),
+        0
+      );
+    }
     if (!summary?.countByStatus) return 0;
     const counts = summary.countByStatus;
     return Array.from(selectedStatuses).reduce(
-      (sum, status) => sum + (counts[status] ?? 0),
+      (sum, status) => sum + ((counts as Record<string, number>)[status] ?? 0),
       0
     );
-  }, [isWrongMode, isAllMode, wrongQuizTotalCount, allQuizTotalCount, summary?.countByStatus, selectedStatuses]);
+  }, [isWrongMode, isAllOrMultiMode, wrongQuizTotalCount, allQuizSummary?.countByStatus, summary?.countByStatus, selectedStatuses]);
 
   const visibleCountOptions = useMemo(() => {
     const filtered = WORD_COUNT_OPTIONS.filter((count) => count < filteredWordCount);
@@ -114,11 +122,21 @@ export default function QuizSettingsScreen() {
   };
 
   const handleStart = () => {
-    if (isCrossWordbookMode) {
+    if (isWrongMode) {
+      router.push({
+        pathname: "/quiz",
+        params: {
+          quizType: "wrong",
+          count: String(resolvedCount),
+          mode: selectedMode,
+        },
+      });
+    } else if (isAllOrMultiMode) {
       router.push({
         pathname: "/quiz",
         params: {
           quizType: quizType as string,
+          statuses: Array.from(selectedStatuses).join(","),
           count: String(resolvedCount),
           mode: selectedMode,
           ...(isMultiMode && wordbookIds ? { wordbookIds } : {}),
@@ -179,8 +197,8 @@ export default function QuizSettingsScreen() {
           </View>
         )}
 
-        {/* 단어 상태 (오답모음/전체단어 모드에서 숨김) */}
-        {!isCrossWordbookMode && (
+        {/* 단어 상태 (오답모음에서만 숨김) */}
+        {!isWrongMode && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>단어 상태</Text>
             <View style={styles.chipRow}>
