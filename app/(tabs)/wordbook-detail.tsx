@@ -87,8 +87,8 @@ export default function WordbookDetailScreen() {
     query: { enabled: wordbookId > 0 },
   });
 
-  const { data: sourcesData, isPending: isSourcesPending } = useGetSources(wordbookId, {
-    query: { enabled: wordbookId > 0 },
+  const { data: sourcesData, isPending: isSourcesPending, refetch: refetchSources } = useGetSources(wordbookId, {
+    query: { enabled: false },
   });
 
   // word-card에서 돌아올 때 학습 상태 갱신
@@ -122,9 +122,7 @@ export default function WordbookDetailScreen() {
         (w) => w.learningStatus === WordbookWordResponseLearningStatus.NOT_STARTED
       ).length,
       LEARNING: words.filter(
-        (w) =>
-          w.learningStatus === WordbookWordResponseLearningStatus.LEARNING ||
-          w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING
+        (w) => w.learningStatus === WordbookWordResponseLearningStatus.LEARNING
       ).length,
       MEMORIZED: words.filter(
         (w) => w.learningStatus === WordbookWordResponseLearningStatus.MEMORIZED
@@ -137,9 +135,7 @@ export default function WordbookDetailScreen() {
     if (selectedFilter === "all") return words;
     if (selectedFilter === "LEARNING") {
       return words.filter(
-        (w) =>
-          w.learningStatus === WordbookWordResponseLearningStatus.LEARNING ||
-          w.learningStatus === WordbookWordResponseLearningStatus.RELEARNING
+        (w) => w.learningStatus === WordbookWordResponseLearningStatus.LEARNING
       );
     }
     return words.filter((w) => w.learningStatus === selectedFilter);
@@ -169,6 +165,7 @@ export default function WordbookDetailScreen() {
   function openSourceSheet() {
     setSourceIndex(0);
     setSourceSheetVisible(true);
+    refetchSources();
   }
 
   return (

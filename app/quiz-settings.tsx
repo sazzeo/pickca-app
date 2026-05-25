@@ -66,7 +66,7 @@ export default function QuizSettingsScreen() {
   const summary = summaryData?.data;
 
   const [selectedStatuses, setSelectedStatuses] = useState<Set<LearningStatusKey>>(
-    new Set(["NOT_STARTED", "LEARNING", "RELEARNING"])
+    new Set(["NOT_STARTED", "LEARNING", "MEMORIZED_WRONG"])
   );
   const [selectedCount, setSelectedCount] = useState<number | "ALL">(5);
   const [selectedMode, setSelectedMode] = useState<QuizModeKey>("MIXED");

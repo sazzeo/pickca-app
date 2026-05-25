@@ -9,7 +9,6 @@ const LEARNING_STATUS_LABEL: Record<WordbookWordResponseLearningStatus, string> 
   NOT_STARTED: "학습 전",
   LEARNING: "학습 중",
   MEMORIZED: "외움",
-  RELEARNING: "여러번 수집",
 };
 
 function resolveChipStyle(status: WordbookWordResponseLearningStatus) {
@@ -18,8 +17,7 @@ function resolveChipStyle(status: WordbookWordResponseLearningStatus) {
       return { bg: Colors.chip.memorizedBg, text: Colors.chip.memorizedText };
     case WordbookWordResponseLearningStatus.LEARNING:
       return { bg: Colors.chip.learningBg, text: Colors.chip.learningText };
-    case WordbookWordResponseLearningStatus.RELEARNING:
-      return { bg: Colors.chip.relearningBg, text: Colors.chip.relearningText };
+    case WordbookWordResponseLearningStatus.NOT_STARTED:
     default:
       return { bg: Colors.chip.notStartedBg, text: Colors.chip.notStartedText };
   }
