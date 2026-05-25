@@ -366,6 +366,17 @@ export interface WrongQuizResponse {
   questions: WrongQuizQuestion[];
 }
 
+export type AllQuizGenerateRequestStatusesItem = typeof AllQuizGenerateRequestStatusesItem[keyof typeof AllQuizGenerateRequestStatusesItem];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const AllQuizGenerateRequestStatusesItem = {
+  NOT_STARTED: 'NOT_STARTED',
+  LEARNING: 'LEARNING',
+  MEMORIZED_WRONG: 'MEMORIZED_WRONG',
+  MEMORIZED: 'MEMORIZED',
+} as const;
+
 /**
  * 퀴즈 모드
  */
@@ -382,6 +393,8 @@ export const AllQuizGenerateRequestMode = {
 export interface AllQuizGenerateRequest {
   /** 특정 단어장만 필터 (미지정 시 전체) */
   wordbookIds?: number[];
+  /** 필터링할 학습 상태 */
+  statuses: AllQuizGenerateRequestStatusesItem[];
   /**
    * 출제할 문제 수 (최대 100)
    * @minimum 1
@@ -783,8 +796,10 @@ export interface WrongQuizSummaryResponse {
 }
 
 export interface AllQuizSummaryResponse {
-  /** 전체 단어 수 (DONE + primaryMeanings 있는 고유 단어) */
+  /** 전체 단어 수 */
   totalCount: number;
+  /** 학습 상태별 단어 수 */
+  countByStatus: CountByStatus;
 }
 
 export interface ApiResponseAllQuizSummaryResponse {

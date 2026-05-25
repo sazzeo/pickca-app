@@ -100,7 +100,7 @@ export const useGenerateAllQuiz = <TError = unknown,
       return useMutation(mutationOptions, queryClient);
     }
     /**
- * @summary 전체 단어 총 수 조회
+ * @summary 전체 단어 상태별 수 조회
  */
 export const getAllQuizSummary = (
     params?: GetAllQuizSummaryParams,
@@ -172,7 +172,7 @@ export function useGetAllQuizSummary<TData = Awaited<ReturnType<typeof getAllQui
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary 전체 단어 총 수 조회
+ * @summary 전체 단어 상태별 수 조회
  */
 
 export function useGetAllQuizSummary<TData = Awaited<ReturnType<typeof getAllQuizSummary>>, TError = unknown>(

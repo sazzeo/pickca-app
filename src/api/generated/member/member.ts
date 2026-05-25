@@ -17,7 +17,8 @@ import type {
 import type {
   ApiResponse,
   UpdateCefrLevelRequest,
-  UpdateNicknameRequest
+  UpdateNicknameRequest,
+  WithdrawalRequest
 } from '../pickcaAPI.schemas';
 
 import { fetcher } from '../../../lib/axios';
@@ -26,6 +27,70 @@ import { fetcher } from '../../../lib/axios';
 
 
 /**
+ * @summary 회원 탈퇴
+ */
+export const withdrawal = (
+    withdrawalRequest: WithdrawalRequest,
+ signal?: AbortSignal
+) => {
+      
+      
+      return fetcher<ApiResponse>(
+      {url: `/api/members/me/withdrawal`, method: 'POST',
+      headers: {'Content-Type': 'application/json', },
+      data: withdrawalRequest, signal
+    },
+      );
+    }
+  
+
+
+export const getWithdrawalMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof withdrawal>>, TError,{data: WithdrawalRequest}, TContext>, }
+): UseMutationOptions<Awaited<ReturnType<typeof withdrawal>>, TError,{data: WithdrawalRequest}, TContext> => {
+
+const mutationKey = ['withdrawal'];
+const {mutation: mutationOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof withdrawal>>, {data: WithdrawalRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  withdrawal(data,)
+        }
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type WithdrawalMutationResult = NonNullable<Awaited<ReturnType<typeof withdrawal>>>
+    export type WithdrawalMutationBody = WithdrawalRequest
+    export type WithdrawalMutationError = unknown
+
+    /**
+ * @summary 회원 탈퇴
+ */
+export const useWithdrawal = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof withdrawal>>, TError,{data: WithdrawalRequest}, TContext>, }
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof withdrawal>>,
+        TError,
+        {data: WithdrawalRequest},
+        TContext
+      > => {
+
+      const mutationOptions = getWithdrawalMutationOptions(options);
+
+      return useMutation(mutationOptions, queryClient);
+    }
+    /**
  * @summary 닉네임 변경
  */
 export const updateNickname = (
